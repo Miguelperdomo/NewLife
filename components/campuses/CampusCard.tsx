@@ -1,4 +1,5 @@
-import { ExternalLink, MapPin, Navigation, Star } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ExternalLink, MapPin, Navigation, Star } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { googleMapsDirectionsUrl, googleMapsSearchUrl } from "@/lib/maps";
@@ -49,6 +50,14 @@ export function CampusCard({ campus, tone = "brand" }: { campus: Campus; tone?: 
             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
           </Button>
         </div>
+
+        <Link
+          href={`/sedes/${campus.slug}`}
+          className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700"
+        >
+          Ver sede
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </Link>
       </div>
     </div>
   );

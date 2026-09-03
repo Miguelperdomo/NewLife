@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
-import { formatNewsDate } from "@/lib/news";
+import { formatNewsDate, formatReadingTime } from "@/lib/news";
 import type { NewsArticle } from "@/lib/types";
 import { FeaturedBadge } from "./FeaturedBadge";
 
@@ -36,6 +36,8 @@ export function NewsCard({ article, index = 0 }: { article: NewsArticle; index?:
               <span>{article.category}</span>
             </>
           )}
+          <span aria-hidden="true">·</span>
+          <span>{formatReadingTime(article.content)}</span>
         </div>
         <h3 className="mt-2 font-heading text-lg font-semibold text-slate-900">{article.title}</h3>
         <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{article.summary}</p>

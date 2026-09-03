@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Crown } from "lucide-react";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { cn } from "@/lib/utils";
@@ -13,7 +14,10 @@ export function PastorCard({
   const isLead = variant === "lead";
 
   return (
-    <div className="flex w-56 flex-col items-center text-center">
+    <Link
+      href={`/pastores/${pastor.slug}`}
+      className="group flex w-56 flex-col items-center text-center transition-transform hover:-translate-y-1"
+    >
       <div className="relative">
         {isLead && (
           <div
@@ -43,7 +47,7 @@ export function PastorCard({
 
       <h3
         className={cn(
-          "font-heading font-bold text-white",
+          "font-heading font-bold text-white transition-colors group-hover:text-accent-400",
           isLead ? "mt-6 text-2xl sm:text-3xl" : "mt-4 text-lg"
         )}
       >
@@ -61,6 +65,6 @@ export function PastorCard({
       {isLead && pastor.bio && (
         <p className="mt-4 max-w-md text-sm leading-relaxed text-white/70">{pastor.bio}</p>
       )}
-    </div>
+    </Link>
   );
 }

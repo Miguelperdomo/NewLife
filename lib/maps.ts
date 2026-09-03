@@ -11,3 +11,8 @@ export function googleMapsSearchUrl(query: string) {
 export function googleMapsDirectionsUrl(query: string) {
   return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
 }
+
+/** Mapa embebido (iframe) sin API key — suficiente para mostrar el punto, sin reseñas ni Street View interactivo. */
+export function googleMapsEmbedUrl(query: string) {
+  return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+}

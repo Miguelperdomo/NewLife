@@ -31,6 +31,13 @@ export interface Ministry {
   social?: SocialLink[];
 }
 
+/** Una foto de la galería de instalaciones de una sede (ver Campus.gallery). */
+export interface CampusGalleryImage {
+  label: string;
+  /** Ruta local de la foto real, si ya se subió. Sin `src`, se muestra un placeholder de marca. */
+  src?: string;
+}
+
 export interface Campus {
   slug: string;
   name: string;
@@ -42,6 +49,12 @@ export interface Campus {
   /** Ruta local de la foto real, si ya se subió (ver /public/sedes). */
   imageSrc?: string;
   isMain?: boolean;
+  /** Slug de data/pastors.ts — pastor/líder responsable de esta sede. */
+  leadPastorSlug?: string;
+  /** Fotos de las instalaciones, además de la portada. */
+  gallery?: CampusGalleryImage[];
+  /** Si se define, se usa en vez del WhatsApp general de New Life para esta sede. */
+  whatsappNumber?: string;
 }
 
 export interface LiveLinks {

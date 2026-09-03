@@ -1,14 +1,15 @@
-import { CalendarDays, Newspaper } from "lucide-react";
+import { CalendarDays, MapPin, Newspaper } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const kindConfig = {
   event: { label: "Evento", Icon: CalendarDays },
   news: { label: "Noticia", Icon: Newspaper },
+  campus: { label: "Sede", Icon: MapPin },
 } as const;
 
 /**
- * Portada de marca para cuando un Evento o Noticia no tiene imagen. Pensada
- * para reutilizarse donde haga falta (hoy: panel admin), no solo aquí.
+ * Portada de marca para cuando un Evento, Noticia o Sede no tiene imagen.
+ * Pensada para reutilizarse donde haga falta (hoy: panel admin), no solo aquí.
  */
 export function ContentCover({
   kind,

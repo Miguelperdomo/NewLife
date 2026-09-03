@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Clock, MapPin, MessageCircle, User, Users } from "lucide-react";
 import { EventCard } from "@/components/events/EventCard";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
@@ -23,6 +24,8 @@ export function MinistryTemplate({ ministry }: { ministry: Ministry }) {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Ministerios", href: "/ministerios" }, { label: ministry.name }]} />
+
       <section className="relative overflow-hidden bg-slate-950">
         <PlaceholderImage
           label={ministry.imageLabel}

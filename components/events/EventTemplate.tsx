@@ -2,12 +2,16 @@ import Link from "next/link";
 import { ArrowLeft, Clock, MapPin, MessageCircle, Tag } from "lucide-react";
 import type { ReactNode } from "react";
 import { EventBadge } from "@/components/events/EventBadge";
+import { EventCard } from "@/components/events/EventCard";
 import { MinistryIcon } from "@/components/ministries/ministryIcons";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { ShareButtons } from "@/components/ui/ShareButtons";
 import { siteConfig } from "@/data/site";
-import { getCampusBySlug, getMinistryBySlug } from "@/lib/content";
+import { getCampusBySlug, getMinistryBySlug, getRelatedEvents } from "@/lib/content";
 import { formatEventDate, getEventStatus } from "@/lib/events";
 import type { ChurchEvent } from "@/lib/types";
 import { buildWhatsAppLink, eventInscriptionMessage } from "@/lib/whatsapp";
@@ -23,6 +27,7 @@ export function EventTemplate({ event }: { event: ChurchEvent }) {
   const ministryLabel = ministry?.name ?? "General";
   const place = [campus?.name, event.location].filter(Boolean).join(" — ");
 
+  const related = getRelatedEvents(event, 3);
   const canRegister = status !== "finalizado" && event.registrationByWhatsApp !== false;
   const whatsappHref = buildWhatsAppLink(
     siteConfig.whatsappNumber,
@@ -65,6 +70,8 @@ export function EventTemplate({ event }: { event: ChurchEvent }) {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Eventos", href: "/eventos" }, { label: event.name }]} />
+
       <section className="relative overflow-hidden bg-slate-950">
         <PlaceholderImage
           label={event.imageLabel}
@@ -130,9 +137,24 @@ export function EventTemplate({ event }: { event: ChurchEvent }) {
                   : "Este evento no requiere inscripción previa."}
               </p>
             )}
+
+            <ShareButtons title={event.name} className="mt-6 border-t border-slate-100 pt-4" />
           </aside>
         </Container>
       </section>
+
+      {related.length > 0 && (
+        <section className="bg-slate-50 py-16 sm:py-24">
+          <Container>
+            <SectionHeading eyebrow="Eventos" title="Eventos relacionados" align="left" />
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((item, index) => (
+                <EventCard key={item.slug} event={item} index={index} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
     </>
   );
 }

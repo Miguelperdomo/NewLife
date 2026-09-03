@@ -1,4 +1,5 @@
-import { CalendarClock, CalendarDays, FileEdit, Newspaper } from "lucide-react";
+import { CalendarClock, CalendarDays, FileEdit, Newspaper, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface StatCard {
   label: string;
@@ -12,11 +13,14 @@ export function DashboardStats({
   totalNews,
   totalDrafts,
   totalScheduled,
+  totalMinistries,
 }: {
   totalEvents: number;
   totalNews: number;
   totalDrafts: number;
   totalScheduled: number;
+  /** Opcional: solo se agrega una 5ª tarjeta si se pasa (no cambia el layout de quien no la use). */
+  totalMinistries?: number;
 }) {
   const stats: StatCard[] = [
     { label: "Eventos", value: totalEvents, icon: CalendarDays, accent: "bg-brand-50 text-brand-600" },
@@ -25,8 +29,12 @@ export function DashboardStats({
     { label: "Programados", value: totalScheduled, icon: CalendarClock, accent: "bg-accent-50 text-accent-600" },
   ];
 
+  if (typeof totalMinistries === "number") {
+    stats.push({ label: "Ministerios", value: totalMinistries, icon: Users, accent: "bg-brand-50 text-brand-600" });
+  }
+
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div className={cn("grid grid-cols-2 gap-4", stats.length > 4 ? "lg:grid-cols-5" : "lg:grid-cols-4")}>
       {stats.map(({ label, value, icon: Icon, accent }) => (
         <div
           key={label}

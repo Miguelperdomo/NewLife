@@ -1,5 +1,5 @@
-import { getEvents, getNews } from "@/lib/content";
-import type { AdminEvent, AdminNews } from "@/lib/admin/types";
+import { getCampuses, getEvents, getNews } from "@/lib/content";
+import type { AdminCampus, AdminEvent, AdminNews } from "@/lib/admin/types";
 
 const STORAGE_KEY = "newlife-admin-content-v1";
 
@@ -78,4 +78,53 @@ export function loadStore(): AdminStore {
 export function saveStore(store: AdminStore) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+}
+
+const CAMPUS_STORAGE_KEY = "newlife-admin-campuses-v1";
+
+/**
+ * Almacén separado del de eventos/noticias: las sedes son otro módulo, sin
+ * estado editorial (borrador/publicado/etc.) — mismo patrón mock, su propia
+ * llave de localStorage.
+ */
+function seedCampusStore(): AdminCampus[] {
+  const now = new Date().toISOString();
+  return getCampuses().map((campus) => ({
+    id: crypto.randomUUID(),
+    slug: campus.slug,
+    name: campus.name,
+    fullName: campus.fullName,
+    address: campus.address,
+    mapQuery: campus.mapQuery,
+    imageSrc: campus.imageSrc,
+    isMain: campus.isMain,
+    leadPastorSlug: campus.leadPastorSlug,
+    whatsappNumber: campus.whatsappNumber,
+    createdAt: now,
+    updatedAt: now,
+  }));
+}
+
+export function loadCampusStore(): AdminCampus[] {
+  if (typeof window === "undefined") return [];
+
+  const raw = window.localStorage.getItem(CAMPUS_STORAGE_KEY);
+  if (!raw) {
+    const seeded = seedCampusStore();
+    saveCampusStore(seeded);
+    return seeded;
+  }
+
+  try {
+    return JSON.parse(raw) as AdminCampus[];
+  } catch {
+    const seeded = seedCampusStore();
+    saveCampusStore(seeded);
+    return seeded;
+  }
+}
+
+export function saveCampusStore(campuses: AdminCampus[]) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(CAMPUS_STORAGE_KEY, JSON.stringify(campuses));
 }

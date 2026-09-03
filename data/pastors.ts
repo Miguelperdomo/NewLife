@@ -11,6 +11,11 @@ export const pastors: Pastor[] = [
     bio: "[CONTENIDO TEMPORAL] Biografía oficial del Pastor Giovany, fundador y cabeza de New Life Church.",
     imageLabel: "[FOTOGRAFÍA PASTOR GIOVANY]",
     tier: 1,
+    // [LINKS PLACEHOLDER] Reemplazar con las redes oficiales del pastor.
+    social: [
+      { platform: "instagram", label: "Instagram", url: "#" },
+      { platform: "facebook", label: "Facebook", url: "#" },
+    ],
   },
   {
     slug: "lider-2",

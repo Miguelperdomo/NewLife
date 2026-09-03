@@ -68,6 +68,140 @@ export const newsFormSchema = z
 
 export type NewsFormValues = z.infer<typeof newsFormSchema>;
 
+export const campusFormSchema = z.object({
+  name: z.string().trim().min(2, "El nombre es obligatorio."),
+  fullName: z.string().trim().min(2, "El nombre completo es obligatorio."),
+  address: z.string().trim().min(5, "La dirección es obligatoria."),
+  mapQuery: z.string().trim().min(2, "Agrega un texto de búsqueda para Google Maps."),
+  imageSrc: z.string().trim().optional(),
+  isMain: z.boolean().optional(),
+  leadPastorSlug: z.string().trim().optional(),
+  whatsappNumber: z.string().trim().optional(),
+});
+
+export type CampusFormValues = z.infer<typeof campusFormSchema>;
+
+const ministryStatusEnum = z.enum(["active", "archived"]);
+
+export const ministryFormSchema = z.object({
+  name: z.string().trim().min(2, "El nombre es obligatorio.").max(80, "Máximo 80 caracteres."),
+  // Editable a mano (a diferencia de eventos/noticias/sedes), por eso vive en
+  // el propio schema en vez de generarse solo del lado del hook.
+  slug: z
+    .string()
+    .trim()
+    .min(2, "El slug es obligatorio.")
+    .max(80, "Máximo 80 caracteres.")
+    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Usa solo minúsculas, números y guiones (ej. mi-ministerio)."),
+  shortDescription: z
+    .string()
+    .trim()
+    .min(10, "La descripción corta es obligatoria.")
+    .max(160, "Máximo 160 caracteres."),
+  description: z.string().trim().min(20, "La descripción completa es obligatoria."),
+  imageSrc: z.string().trim().optional(),
+  leader: z.string().trim().optional(),
+  whatsapp: z.string().trim().optional(),
+  meetingSchedule: z.string().trim().optional(),
+  meetingLocation: z.string().trim().optional(),
+  status: ministryStatusEnum,
+  // String (no z.coerce) por la misma razón que "capacity" en eventFormSchema.
+  displayOrder: z
+    .string()
+    .trim()
+    .min(1, "El orden es obligatorio.")
+    .refine((value) => /^\d+$/.test(value), "Debe ser un número entero positivo."),
+  showPublicly: z.boolean(),
+});
+
+export type MinistryFormValues = z.infer<typeof ministryFormSchema>;
+
+const hexColor = (label: string) =>
+  z
+    .string()
+    .trim()
+    .regex(/^#[0-9a-fA-F]{6}$/, `${label}: usa un color hexadecimal, ej. #7c3aed.`);
+
+export const siteSettingsFormSchema = z.object({
+  churchName: z.string().trim().min(2, "El nombre es obligatorio.").max(80, "Máximo 80 caracteres."),
+  description: z.string().trim().optional(),
+  logoUrl: z.string().trim().optional(),
+  faviconUrl: z.string().trim().optional(),
+  phone: z.string().trim().optional(),
+  whatsappNumber: z.string().trim().min(1, "El WhatsApp principal es obligatorio."),
+  email: z.string().trim().optional(),
+  address: z.string().trim().optional(),
+  city: z.string().trim().optional(),
+  generalSchedule: z.string().trim().optional(),
+
+  primaryColor: hexColor("Color principal"),
+  secondaryColor: hexColor("Color secundario"),
+  accentColor: hexColor("Color de acento"),
+  coverImageUrl: z.string().trim().optional(),
+  footerText: z.string().trim().optional(),
+
+  facebookUrl: z.string().trim().optional(),
+  facebookEnabled: z.boolean(),
+  instagramUrl: z.string().trim().optional(),
+  instagramEnabled: z.boolean(),
+  youtubeUrl: z.string().trim().optional(),
+  youtubeEnabled: z.boolean(),
+  tiktokUrl: z.string().trim().optional(),
+  tiktokEnabled: z.boolean(),
+  whatsappSocialUrl: z.string().trim().optional(),
+  whatsappSocialEnabled: z.boolean(),
+
+  showMinistries: z.boolean(),
+  showLive: z.boolean(),
+  showEvents: z.boolean(),
+  showNews: z.boolean(),
+  showAgenda: z.boolean(),
+  showCampuses: z.boolean(),
+  showHelp: z.boolean(),
+
+  whatsappDefaultMessage: z.string().trim().min(3, "Escribe un mensaje predeterminado."),
+  supportPhone: z.string().trim().optional(),
+  contactEmail: z.string().trim().optional(),
+});
+
+export type SiteSettingsFormValues = z.infer<typeof siteSettingsFormSchema>;
+
+const pastorStatusEnum = z.enum(["active", "archived"]);
+
+export const pastorFormSchema = z.object({
+  name: z.string().trim().min(2, "El nombre es obligatorio.").max(80, "Máximo 80 caracteres."),
+  // Editable a mano, igual que en ministryFormSchema.
+  slug: z
+    .string()
+    .trim()
+    .min(2, "El slug es obligatorio.")
+    .max(80, "Máximo 80 caracteres.")
+    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Usa solo minúsculas, números y guiones (ej. pastor-juan)."),
+  role: z.string().trim().min(2, "El cargo es obligatorio.").max(120, "Máximo 120 caracteres."),
+  bio: z.string().trim().min(10, "La biografía es obligatoria."),
+  imageSrc: z.string().trim().optional(),
+  // String (no z.coerce) por la misma razón que "displayOrder" en ministryFormSchema.
+  tier: z
+    .string()
+    .trim()
+    .min(1, "El nivel es obligatorio.")
+    .refine((value) => /^\d+$/.test(value), "Debe ser un número entero positivo."),
+  status: pastorStatusEnum,
+  showPublicly: z.boolean(),
+  facebookUrl: z.string().trim().optional(),
+  facebookEnabled: z.boolean(),
+  instagramUrl: z.string().trim().optional(),
+  instagramEnabled: z.boolean(),
+  youtubeUrl: z.string().trim().optional(),
+  youtubeEnabled: z.boolean(),
+  tiktokUrl: z.string().trim().optional(),
+  tiktokEnabled: z.boolean(),
+  whatsappUrl: z.string().trim().optional(),
+  whatsappEnabled: z.boolean(),
+});
+
+export type PastorFormValues = z.infer<typeof pastorFormSchema>;
+
 export const loginFormSchema = z.object({
   email: z.string().trim().min(1, "Ingresa tu correo electrónico.").email("Ingresa un correo válido."),
   password: z.string().min(1, "Ingresa tu contraseña."),

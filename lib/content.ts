@@ -32,6 +32,10 @@ export function getPastors(): Pastor[] {
   return [...pastors].sort((a, b) => a.tier - b.tier);
 }
 
+export function getPastorBySlug(slug: string): Pastor | undefined {
+  return pastors.find((pastor) => pastor.slug === slug);
+}
+
 const statusOrder = { hoy: 0, proximo: 1, finalizado: 2 } as const;
 
 /** Ordenados: hoy primero, luego los próximos (más cercano primero), y al final los ya finalizados (más reciente primero). */
@@ -60,6 +64,16 @@ export function getUpcomingEvents(limit?: number): ChurchEvent[] {
 export function getUpcomingEventsByMinistry(ministrySlug: string, limit?: number): ChurchEvent[] {
   const upcoming = getUpcomingEvents().filter((event) => event.ministry === ministrySlug);
   return limit ? upcoming.slice(0, limit) : upcoming;
+}
+
+/** Prioriza eventos del mismo ministerio; completa con los próximos si hacen falta. Análoga a getRelatedNews. */
+export function getRelatedEvents(event: ChurchEvent, limit = 3): ChurchEvent[] {
+  const rest = getEvents().filter((candidate) => candidate.slug !== event.slug);
+  const sameMinistry = event.ministry
+    ? rest.filter((candidate) => candidate.ministry === event.ministry)
+    : [];
+  const others = rest.filter((candidate) => !sameMinistry.includes(candidate));
+  return [...sameMinistry, ...others].slice(0, limit);
 }
 
 /** Solo publicadas (status !== "draft"), más recientes primero. */

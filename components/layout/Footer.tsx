@@ -5,6 +5,12 @@ import { SocialIcon } from "@/components/ui/SocialIcon";
 import { navLinks, siteConfig, socialLinks } from "@/data/site";
 import { getCampuses, getMinistries } from "@/lib/content";
 import type { NavLink } from "@/lib/types";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
+
+// Número de contacto de Providentia Tech (el desarrollador), no de New Life.
+const PROVIDENTIA_TECH_WHATSAPP = "573133854821";
+const PROVIDENTIA_TECH_MESSAGE =
+  "Hola Providentia Tech, vi el sitio de New Life y quiero más información sobre sus servicios.";
 
 function FooterColumn({ title, links }: { title: string; links: NavLink[] }) {
   return (
@@ -93,8 +99,12 @@ export function Footer() {
         <Container className="mt-3 text-center text-xs text-slate-600">
           <p>
             Diseñado y desarrollado por{" "}
-            {/* [ENLACE PROVIDENTIA TECH — PLACEHOLDER] Reemplazar "#" cuando exista la web oficial. */}
-            <a href="#" className="font-medium text-slate-400 transition-colors hover:text-white">
+            <a
+              href={buildWhatsAppLink(PROVIDENTIA_TECH_WHATSAPP, PROVIDENTIA_TECH_MESSAGE)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-slate-400 transition-colors hover:text-white"
+            >
               Providentia Tech
             </a>{" "}
             · Ibagué, Colombia

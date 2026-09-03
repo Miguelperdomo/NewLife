@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { EventList } from "@/components/events/EventList";
+import { EventsView } from "@/components/events/EventsView";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { siteConfig } from "@/data/site";
@@ -15,6 +16,8 @@ export default function EventosPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Eventos" }]} />
+
       <section className="relative overflow-hidden bg-slate-950">
         <PlaceholderImage
           label="[FOTOGRAFÍA / COMPOSICIÓN EVENTOS NEW LIFE]"
@@ -38,7 +41,7 @@ export default function EventosPage() {
 
       <section className="py-16 sm:py-24">
         <Container>
-          <EventList events={events} />
+          <EventsView events={events} />
         </Container>
       </section>
     </>

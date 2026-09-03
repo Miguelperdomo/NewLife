@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  CalendarDays,
+  Contact,
   LayoutDashboard,
   LayoutGrid,
   MapPin,
@@ -15,10 +15,10 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutGrid, active: true, exact: true },
   { label: "Contenido", href: "/admin/contenido", icon: LayoutDashboard, active: true, exact: false },
-  { label: "Ministerios", href: "#", icon: Users, active: false },
-  { label: "Sedes", href: "#", icon: MapPin, active: false },
-  { label: "Pastores", href: "#", icon: CalendarDays, active: false },
-  { label: "Configuración", href: "#", icon: Settings, active: false },
+  { label: "Ministerios", href: "/admin/ministerios", icon: Users, active: true, exact: false },
+  { label: "Sedes", href: "/admin/sedes", icon: MapPin, active: true, exact: false },
+  { label: "Pastores", href: "/admin/pastores", icon: Contact, active: true, exact: false },
+  { label: "Configuración", href: "/admin/configuracion", icon: Settings, active: true, exact: false },
 ];
 
 export function AdminSidebarNav() {

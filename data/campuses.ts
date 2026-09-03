@@ -11,6 +11,13 @@ export const campuses: Campus[] = [
     imageSrc: "/sedes/principal.jpg",
     imageLabel: "Fachada de la sede principal de New Life Church",
     isMain: true,
+    leadPastorSlug: "giovany",
+    // [CONTENIDO TEMPORAL] Reemplazar con fotos reales de las instalaciones.
+    gallery: [
+      { label: "[FOTOGRAFÍA AUDITORIO PRINCIPAL]" },
+      { label: "[FOTOGRAFÍA ÁREA INFANTIL]" },
+      { label: "[FOTOGRAFÍA ZONA DE PARQUEO]" },
+    ],
   },
   {
     slug: "vasconia",
@@ -20,5 +27,7 @@ export const campuses: Campus[] = [
     mapQuery: "Casa 3 Vasconia Mz G, Ibagué, Tolima",
     imageLabel: "[FOTOGRAFÍA SEDE VASCONIA]",
     isMain: false,
+    leadPastorSlug: "lider-2",
+    gallery: [{ label: "[FOTOGRAFÍA SALÓN PRINCIPAL VASCONIA]" }],
   },
 ];

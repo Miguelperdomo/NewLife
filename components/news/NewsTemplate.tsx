@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { NewsCard } from "@/components/news/NewsCard";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { ShareButtons } from "@/components/ui/ShareButtons";
 import { getRelatedNews } from "@/lib/content";
-import { formatNewsDate } from "@/lib/news";
+import { formatNewsDate, formatReadingTime } from "@/lib/news";
 import type { NewsArticle } from "@/lib/types";
 import { FeaturedBadge } from "./FeaturedBadge";
 
@@ -20,6 +22,8 @@ export function NewsTemplate({ article }: { article: NewsArticle }) {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Noticias", href: "/noticias" }, { label: article.title }]} />
+
       <section className="relative overflow-hidden bg-slate-950">
         <PlaceholderImage
           label={article.imageLabel}
@@ -44,6 +48,8 @@ export function NewsTemplate({ article }: { article: NewsArticle }) {
           </h1>
           <div className="flex flex-wrap items-center justify-center gap-x-2 text-sm text-white/70">
             <time dateTime={article.publishedAt}>{formatNewsDate(article.publishedAt)}</time>
+            <span aria-hidden="true">·</span>
+            <span>{formatReadingTime(article.content)}</span>
             {article.category && (
               <>
                 <span aria-hidden="true">·</span>
@@ -68,6 +74,8 @@ export function NewsTemplate({ article }: { article: NewsArticle }) {
               <p key={index}>{paragraph}</p>
             ))}
           </div>
+
+          <ShareButtons title={article.title} className="mt-10 border-t border-slate-100 pt-6" />
         </Container>
       </section>
 

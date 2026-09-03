@@ -2,24 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { loadStore, saveStore } from "@/lib/admin/storage";
+import { slugify, uniqueSlug } from "@/lib/admin/slug";
 import type { AdminEvent, AdminNews } from "@/lib/admin/types";
-
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(new RegExp("[\\u0300-\\u036f]", "g"), "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-function uniqueSlug(base: string, existing: string[]) {
-  const cleanBase = base || "contenido";
-  if (!existing.includes(cleanBase)) return cleanBase;
-  let i = 2;
-  while (existing.includes(`${cleanBase}-${i}`)) i++;
-  return `${cleanBase}-${i}`;
-}
 
 type NewEventInput = Omit<AdminEvent, "id" | "slug" | "createdAt" | "updatedAt"> & { slug?: string };
 type NewNewsInput = Omit<AdminNews, "id" | "slug" | "createdAt" | "updatedAt"> & { slug?: string };
@@ -66,7 +50,8 @@ export function useAdminContent() {
       const now = new Date().toISOString();
       const slug = uniqueSlug(
         input.slug || slugify(input.title),
-        events.map((event) => event.slug)
+        events.map((event) => event.slug),
+        "contenido"
       );
       const event: AdminEvent = { ...input, id: crypto.randomUUID(), slug, createdAt: now, updatedAt: now };
       persist([event, ...events], news);
@@ -93,7 +78,8 @@ export function useAdminContent() {
       const now = new Date().toISOString();
       const slug = uniqueSlug(
         `${original.slug}-copia`,
-        events.map((event) => event.slug)
+        events.map((event) => event.slug),
+        "contenido"
       );
       const copy: AdminEvent = {
         ...original,
@@ -117,7 +103,8 @@ export function useAdminContent() {
       const now = new Date().toISOString();
       const slug = uniqueSlug(
         input.slug || slugify(input.title),
-        news.map((article) => article.slug)
+        news.map((article) => article.slug),
+        "contenido"
       );
       const article: AdminNews = { ...input, id: crypto.randomUUID(), slug, createdAt: now, updatedAt: now };
       persist(events, [article, ...news]);
@@ -146,7 +133,8 @@ export function useAdminContent() {
       const now = new Date().toISOString();
       const slug = uniqueSlug(
         `${original.slug}-copia`,
-        news.map((article) => article.slug)
+        news.map((article) => article.slug),
+        "contenido"
       );
       const copy: AdminNews = {
         ...original,

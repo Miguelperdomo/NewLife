@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Compass, Eye, HandHeart, Users } from "lucide-react";
 import type { ComponentType } from "react";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
@@ -42,6 +43,8 @@ const blocks: {
 export default function NosotrosPage() {
   return (
     <>
+      <Breadcrumbs items={[{ label: "Conócenos" }]} />
+
       <section className="relative overflow-hidden bg-slate-950">
         <PlaceholderImage
           label="[FOTOGRAFÍA NEW LIFE — COMUNIDAD]"

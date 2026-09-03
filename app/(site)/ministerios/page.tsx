@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MinistryCard } from "@/components/ministries/MinistryCard";
@@ -14,20 +15,24 @@ export default function MinisteriosPage() {
   const ministries = getMinistries();
 
   return (
-    <section className="py-20 sm:py-28">
-      <Container>
-        <SectionHeading
-          eyebrow="Ministerios"
-          title="Encuentra tu lugar"
-          description="Sea cual sea tu edad o etapa de vida, hay un equipo esperándote en New Life."
-        />
+    <>
+      <Breadcrumbs items={[{ label: "Ministerios" }]} />
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {ministries.map((ministry, index) => (
-            <MinistryCard key={ministry.slug} ministry={ministry} index={index} />
-          ))}
-        </div>
-      </Container>
-    </section>
+      <section className="py-20 sm:py-28">
+        <Container>
+          <SectionHeading
+            eyebrow="Ministerios"
+            title="Encuentra tu lugar"
+            description="Sea cual sea tu edad o etapa de vida, hay un equipo esperándote en New Life."
+          />
+
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {ministries.map((ministry, index) => (
+              <MinistryCard key={ministry.slug} ministry={ministry} index={index} />
+            ))}
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { toContentRows } from "@/lib/admin/contentRows";
 import { useAdminContent } from "@/lib/admin/useAdminContent";
+import { useAdminMinistries } from "@/lib/admin/useAdminMinistries";
 import { getMinistries } from "@/lib/content";
 import { getEventStatus } from "@/lib/events";
 import { DashboardStats } from "./DashboardStats";
@@ -28,6 +29,7 @@ function useGreeting() {
 
 export function AdminDashboard() {
   const { events, news, isReady } = useAdminContent();
+  const { ministries: adminMinistries, isReady: ministriesReady } = useAdminMinistries();
   const ministries = useMemo(() => getMinistries(), []);
   const greeting = useGreeting();
 
@@ -80,6 +82,7 @@ export function AdminDashboard() {
         totalNews={news.length}
         totalDrafts={totalDrafts}
         totalScheduled={totalScheduled}
+        totalMinistries={ministriesReady ? adminMinistries.length : undefined}
       />
 
       <QuickActions />

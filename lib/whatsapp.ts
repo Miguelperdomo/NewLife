@@ -14,3 +14,7 @@ export function eventInscriptionMessage(eventName: string, ministryName?: string
   const base = `Hola New Life, quiero inscribirme en el evento "${eventName}".`;
   return ministryName ? `${base} Ministerio: ${ministryName}.` : base;
 }
+
+export function campusInquiryMessage(campusName: string) {
+  return `Hola New Life, tengo una pregunta sobre la ${campusName}.`;
+}
