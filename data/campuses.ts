@@ -27,7 +27,6 @@ export const campuses: Campus[] = [
     mapQuery: "Casa 3 Vasconia Mz G, Ibagué, Tolima",
     imageLabel: "[FOTOGRAFÍA SEDE VASCONIA]",
     isMain: false,
-    leadPastorSlug: "lider-2",
     gallery: [{ label: "[FOTOGRAFÍA SALÓN PRINCIPAL VASCONIA]" }],
   },
 ];

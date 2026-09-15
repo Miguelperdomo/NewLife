@@ -5,10 +5,14 @@ import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { siteConfig } from "@/data/site";
 import { getEvents } from "@/lib/content";
+import { buildOpenGraphMetadata } from "@/lib/seo";
+
+const description = "Hay un lugar para ti. Descubre lo que estamos viviendo juntos en New Life.";
 
 export const metadata: Metadata = {
   title: `Próximos eventos — ${siteConfig.name}`,
-  description: "Hay un lugar para ti. Descubre lo que estamos viviendo juntos en New Life.",
+  description,
+  ...buildOpenGraphMetadata({ title: `Próximos eventos — ${siteConfig.name}`, description }),
 };
 
 export default function EventosPage() {

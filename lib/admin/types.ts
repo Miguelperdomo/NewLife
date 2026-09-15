@@ -150,34 +150,6 @@ export interface AdminSiteSettings {
   updatedAt: string;
 }
 
-export type PastorStatus = "active" | "archived";
-
-export interface AdminPastor {
-  id: string;
-  slug: string;
-  name: string;
-  role: string;
-  bio: string;
-  imageSrc?: string;
-  /** Nivel en la pirámide de liderazgo: 1 = cabeza, 2 = siguiente nivel... también define el orden. */
-  tier: number;
-  status: PastorStatus;
-  /** Independiente de `status`: permite ocultar un pastor activo sin archivarlo. */
-  showPublicly: boolean;
-  facebookUrl?: string;
-  facebookEnabled: boolean;
-  instagramUrl?: string;
-  instagramEnabled: boolean;
-  youtubeUrl?: string;
-  youtubeEnabled: boolean;
-  tiktokUrl?: string;
-  tiktokEnabled: boolean;
-  whatsappUrl?: string;
-  whatsappEnabled: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export type AdminContentType = "event" | "news";
 
 /** Forma "aplanada" común usada por las listas del dashboard (tabla completa, resumen reciente...). */

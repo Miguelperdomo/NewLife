@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Sora } from "next/font/google";
 import { siteConfig } from "@/data/site";
+import { buildOpenGraphMetadata } from "@/lib/seo";
 import "./globals.css";
+
+// Sin dominio propio todavía: NEXT_PUBLIC_SITE_URL queda pendiente de fijar
+// el día que se publique el sitio (ver .env.local). Mientras tanto cae en
+// localhost, que solo importa para pruebas locales de Open Graph.
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,8 +26,13 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: `${siteConfig.name} — ${siteConfig.tagline}`,
   description: siteConfig.description,
+  ...buildOpenGraphMetadata({
+    title: `${siteConfig.name} — ${siteConfig.tagline}`,
+    description: siteConfig.description,
+  }),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

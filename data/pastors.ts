@@ -1,8 +1,9 @@
 import type { Pastor } from "@/lib/types";
 
-// [CONTENIDO TEMPORAL] Reemplazar biografías y fotos con la información oficial.
-// Para agregar más pastores/líderes, añade un objeto más a este arreglo con el
-// `tier` que le corresponda (2 = nivel bajo el pastor principal, 3 = el siguiente, etc.).
+// Solo el pastor principal de New Life — sin módulo admin ni base de datos
+// para esto a propósito: es una única persona fija, no una lista que vaya a
+// crecer. [CONTENIDO TEMPORAL] Reemplazar biografía, foto y redes por la
+// información oficial cuando la tengamos.
 export const pastors: Pastor[] = [
   {
     slug: "giovany",
@@ -16,21 +17,5 @@ export const pastors: Pastor[] = [
       { platform: "instagram", label: "Instagram", url: "#" },
       { platform: "facebook", label: "Facebook", url: "#" },
     ],
-  },
-  {
-    slug: "lider-2",
-    name: "[NOMBRE — PLACEHOLDER]",
-    role: "[CARGO — PLACEHOLDER]",
-    bio: "[CONTENIDO TEMPORAL]",
-    imageLabel: "[FOTOGRAFÍA — PLACEHOLDER]",
-    tier: 2,
-  },
-  {
-    slug: "lider-3",
-    name: "[NOMBRE — PLACEHOLDER]",
-    role: "[CARGO — PLACEHOLDER]",
-    bio: "[CONTENIDO TEMPORAL]",
-    imageLabel: "[FOTOGRAFÍA — PLACEHOLDER]",
-    tier: 2,
   },
 ];

@@ -2,12 +2,44 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, Play, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
 import { navLinks } from "@/data/site";
+import { liveLinks } from "@/data/live";
+import { useLiveStatus } from "@/lib/useLiveStatus";
 import { cn } from "@/lib/utils";
+
+function LiveNavBadge({ className }: { className?: string }) {
+  const { isLive, videoId } = useLiveStatus();
+  const href = isLive && videoId ? `https://youtube.com/watch?v=${videoId}` : liveLinks.youtube;
+
+  return (
+    <Link
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
+        isLive
+          ? "border-red-500/30 bg-red-500/10 uppercase tracking-wide text-red-600 hover:bg-red-500/20"
+          : "border-slate-200 bg-slate-50 text-slate-600 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700",
+        className
+      )}
+    >
+      {isLive ? (
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75 motion-reduce:animate-none" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+        </span>
+      ) : (
+        <Play className="h-3.5 w-3.5" aria-hidden="true" />
+      )}
+      {isLive ? "En vivo" : "Ver transmisiones"}
+    </Link>
+  );
+}
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -31,7 +63,8 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-3 md:flex">
+          <LiveNavBadge className="hidden lg:inline-flex" />
           <Button href="/ministerios" variant="primary" className="px-5 py-2.5 text-xs">
             Quiero ser parte
           </Button>
@@ -50,6 +83,7 @@ export function Navbar() {
 
       <div className={cn("md:hidden", open ? "block" : "hidden")}>
         <Container className="flex flex-col gap-1 border-t border-slate-100 pb-4 pt-2">
+          <LiveNavBadge className="mb-2 w-fit" />
           {navLinks.map((link) => (
             <Link
               key={link.href}

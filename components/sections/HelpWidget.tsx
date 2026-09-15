@@ -16,6 +16,8 @@ import {
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { helpOptions, helpWidgetContent, type HelpOptionSlug } from "@/data/help";
+import { siteConfig } from "@/data/site";
+import { buildWhatsAppLink, helpInquiryMessage } from "@/lib/whatsapp";
 
 type Visibility = "open" | "minimized" | "compact";
 type WidgetView = "main" | "options";
@@ -167,17 +169,21 @@ function OptionsView({
 
       <ul className="mt-4 space-y-2.5">
         {helpOptions.map((option) => (
-          <li
-            key={option.slug}
-            className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3"
-          >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-brand-600 shadow-sm">
-              <HelpOptionIcon slug={option.slug} className="h-4 w-4" />
-            </span>
-            <div>
-              <p className="text-sm font-semibold text-slate-900">{option.title}</p>
-              <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{option.description}</p>
-            </div>
+          <li key={option.slug}>
+            <a
+              href={buildWhatsAppLink(siteConfig.whatsappNumber, helpInquiryMessage(option.title))}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3 transition-colors hover:border-brand-200 hover:bg-brand-50"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-brand-600 shadow-sm">
+                <HelpOptionIcon slug={option.slug} className="h-4 w-4" />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">{option.title}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{option.description}</p>
+              </div>
+            </a>
           </li>
         ))}
       </ul>
@@ -186,11 +192,11 @@ function OptionsView({
 }
 
 /**
- * Widget flotante de ayuda/donaciones del Home. Puramente informativo por
- * ahora (ver data/help.ts) — nada de pagos, backend ni formularios. El
- * estado (abierto/minimizado/compacto) no se persiste: siempre arranca con
- * el valor por defecto según el ancho de pantalla, y siempre tiene una forma
- * visible de reabrirse (nunca desaparece del todo).
+ * Widget flotante de ayuda/donaciones del Home. Cada opción abre WhatsApp con
+ * un mensaje ya escrito (ver data/help.ts) — nada de pagos ni formularios
+ * propios todavía. El estado (abierto/minimizado/compacto) no se persiste:
+ * siempre arranca con el valor por defecto según el ancho de pantalla, y
+ * siempre tiene una forma visible de reabrirse (nunca desaparece del todo).
  */
 export function HelpWidget() {
   const [ready, setReady] = useState(false);

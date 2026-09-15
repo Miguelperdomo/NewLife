@@ -19,6 +19,7 @@ export function MinistriesDashboard() {
   const [filters, setFilters] = useState<MinistryFiltersValue>({ query: "", status: "all" });
   const [previewMinistry, setPreviewMinistry] = useState<AdminMinistry | null>(null);
   const [archiveTarget, setArchiveTarget] = useState<AdminMinistry | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const feedback =
     searchParams.get("created") === "1"
@@ -48,10 +49,32 @@ export function MinistriesDashboard() {
       .sort((a, b) => a.displayOrder - b.displayOrder);
   }, [ministries, filters]);
 
-  function confirmArchive() {
+  async function confirmArchive() {
     if (!archiveTarget) return;
-    archiveMinistry(archiveTarget.id);
+    try {
+      await archiveMinistry(archiveTarget.id);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "No se pudo archivar el ministerio.");
+    }
     setArchiveTarget(null);
+  }
+
+  async function handleDuplicate(ministry: AdminMinistry) {
+    setActionError(null);
+    try {
+      await duplicateMinistry(ministry.id);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "No se pudo duplicar el ministerio.");
+    }
+  }
+
+  async function handleActivate(ministry: AdminMinistry) {
+    setActionError(null);
+    try {
+      await activateMinistry(ministry.id);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "No se pudo activar el ministerio.");
+    }
   }
 
   return (
@@ -60,6 +83,12 @@ export function MinistriesDashboard() {
         <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
           <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
           {feedback}
+        </div>
+      )}
+
+      {actionError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {actionError}
         </div>
       )}
 
@@ -83,9 +112,9 @@ export function MinistriesDashboard() {
           ministries={rows}
           onView={setPreviewMinistry}
           onEdit={(ministry) => router.push(`/admin/ministerios/${ministry.id}/editar`)}
-          onDuplicate={(ministry) => duplicateMinistry(ministry.id)}
+          onDuplicate={handleDuplicate}
           onArchive={setArchiveTarget}
-          onActivate={(ministry) => activateMinistry(ministry.id)}
+          onActivate={handleActivate}
         />
       ) : (
         <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">

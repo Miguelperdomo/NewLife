@@ -7,10 +7,15 @@ import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/data/site";
+import { buildOpenGraphMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: `Conoce New Life — ${siteConfig.name}`,
   description: siteConfig.description,
+  ...buildOpenGraphMetadata({
+    title: `Conoce New Life — ${siteConfig.name}`,
+    description: siteConfig.description,
+  }),
 };
 
 const blocks: {

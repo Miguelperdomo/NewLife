@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { NewsTemplate } from "@/components/news/NewsTemplate";
 import { siteConfig } from "@/data/site";
 import { getNews, getNewsBySlug } from "@/lib/content";
+import { buildOpenGraphMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getNews().map((article) => ({ slug: article.slug }));
@@ -21,6 +22,12 @@ export async function generateMetadata(
   return {
     title: `${article.title} — ${siteConfig.name}`,
     description: article.summary,
+    ...buildOpenGraphMetadata({
+      title: article.title,
+      description: article.summary,
+      imageSrc: article.imageSrc,
+      type: "article",
+    }),
   };
 }
 

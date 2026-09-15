@@ -26,7 +26,7 @@ export function CampusForm({
 }: {
   defaultValues?: Partial<CampusFormValues>;
   submitLabel?: string;
-  onSubmit: (values: CampusFormValues) => void;
+  onSubmit: (values: CampusFormValues) => void | Promise<void>;
   onPreview: (values: CampusFormValues) => void;
 }) {
   const pastors = getPastors();

@@ -22,8 +22,8 @@ export function SystemPanel({
   onImport,
 }: {
   settings: AdminSiteSettings;
-  onResetDemo: () => void;
-  onImport: (data: AdminSiteSettings) => void;
+  onResetDemo: () => Promise<AdminSiteSettings>;
+  onImport: (data: AdminSiteSettings) => Promise<void>;
 }) {
   const [pending, setPending] = useState<PendingAction>(null);
   const [importError, setImportError] = useState<string | null>(null);
@@ -57,14 +57,14 @@ export function SystemPanel({
     reader.readAsText(file);
   }
 
-  function handleConfirm() {
+  async function handleConfirm() {
     if (pending === "reset") {
-      onResetDemo();
+      await onResetDemo();
     } else if (pending === "clear") {
       clearAllAdminData();
       window.location.reload();
     } else if (pending && typeof pending === "object") {
-      onImport(pending.data);
+      await onImport(pending.data);
     }
     setPending(null);
   }
@@ -82,7 +82,7 @@ export function SystemPanel({
             title: "Limpiar datos locales",
             confirmLabel: "Limpiar todo",
             description:
-              "¿Borrar todo el contenido guardado en el panel (Contenido, Sedes, Ministerios y Configuración)? Cada módulo se volverá a sembrar desde los datos públicos la próxima vez que se cargue. Esta acción no se puede deshacer.",
+              "¿Borrar el contenido de Contenido guardado en este navegador? Configuración, Sedes y Ministerios no se ven afectados (ya viven en Supabase). Se volverá a sembrar desde los datos públicos la próxima vez que se cargue. Esta acción no se puede deshacer.",
           }
         : pending
           ? {
@@ -106,8 +106,12 @@ export function SystemPanel({
             new Date(settings.updatedAt)
           )}
         />
-        <InfoRow icon={Database} label="Almacenamiento" value="localStorage (mock) — listo para migrar a base de datos" />
-        <InfoRow icon={Server} label="Conexión con API/base de datos" value="No conectada todavía" />
+        <InfoRow
+          icon={Database}
+          label="Configuración, Sedes y Ministerios"
+          value="Guardados en Supabase (base de datos real)"
+        />
+        <InfoRow icon={Server} label="Resto del contenido" value="Contenido: localStorage (pendiente de migrar)" />
       </dl>
 
       <div className="mt-6 rounded-2xl border border-red-100 bg-red-50/50 p-5">

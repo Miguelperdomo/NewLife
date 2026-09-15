@@ -8,7 +8,7 @@ export function SystemStatusCard() {
       </div>
       <ul className="mt-4 space-y-1.5 text-xs text-slate-400">
         <li>Contenido: almacenado localmente en este navegador (sin base de datos todavía).</li>
-        <li>Autenticación: pendiente de implementar.</li>
+        <li>Autenticación: conectada a Supabase Auth.</li>
       </ul>
     </div>
   );

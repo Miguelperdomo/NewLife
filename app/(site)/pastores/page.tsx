@@ -5,10 +5,14 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/data/site";
 import { getPastors } from "@/lib/content";
+import { buildOpenGraphMetadata } from "@/lib/seo";
+
+const description = "Conoce al equipo de liderazgo de New Life.";
 
 export const metadata: Metadata = {
   title: `Pastores — ${siteConfig.name}`,
-  description: "Conoce al equipo de liderazgo de New Life.",
+  description,
+  ...buildOpenGraphMetadata({ title: `Pastores — ${siteConfig.name}`, description }),
 };
 
 export default function PastoresPage() {

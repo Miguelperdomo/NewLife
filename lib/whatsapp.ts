@@ -18,3 +18,7 @@ export function eventInscriptionMessage(eventName: string, ministryName?: string
 export function campusInquiryMessage(campusName: string) {
   return `Hola New Life, tengo una pregunta sobre la ${campusName}.`;
 }
+
+export function helpInquiryMessage(optionTitle: string) {
+  return `Hola New Life, quiero ayudar con: "${optionTitle}".`;
+}

@@ -19,6 +19,7 @@ export function CampusEditFlow() {
   const router = useRouter();
   const { campuses, isReady, updateCampus } = useAdminCampuses();
   const [preview, setPreview] = useState<AdminCampus | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   if (!isReady) {
     return <p className="text-sm text-slate-500">Cargando…</p>;
@@ -34,16 +35,30 @@ export function CampusEditFlow() {
     );
   }
 
+  async function handleSubmit(values: CampusFormValues) {
+    if (!campus) return;
+    setError(null);
+    try {
+      await updateCampus(campus.id, campusFormValuesToInput(values));
+      router.push("/admin/sedes");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo guardar los cambios.");
+    }
+  }
+
   return (
     <div>
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </div>
+      )}
+
       <CampusForm
         submitLabel="Guardar cambios"
         defaultValues={campusToFormValues(campus)}
         onPreview={(values) => setPreview(draftCampusForPreview(values))}
-        onSubmit={(values) => {
-          updateCampus(campus.id, campusFormValuesToInput(values));
-          router.push("/admin/sedes");
-        }}
+        onSubmit={handleSubmit}
       />
 
       <Modal open={preview !== null} onClose={() => setPreview(null)} title="Vista previa">

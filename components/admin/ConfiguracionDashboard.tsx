@@ -12,6 +12,7 @@ import { SystemPanel } from "./SystemPanel";
 export function ConfiguracionDashboard() {
   const { settings, isReady, updateSettings, replaceSettings, resetToDemo } = useAdminSiteSettings();
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!saved) return;
@@ -19,9 +20,14 @@ export function ConfiguracionDashboard() {
     return () => clearTimeout(timeout);
   }, [saved]);
 
-  function handleSubmit(values: SiteSettingsFormValues) {
-    updateSettings(siteSettingsFormValuesToInput(values));
-    setSaved(true);
+  async function handleSubmit(values: SiteSettingsFormValues) {
+    setSaveError(null);
+    try {
+      await updateSettings(siteSettingsFormValuesToInput(values));
+      setSaved(true);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "No se pudo guardar la configuración.");
+    }
   }
 
   return (
@@ -30,6 +36,12 @@ export function ConfiguracionDashboard() {
         <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
           <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
           Configuración guardada correctamente.
+        </div>
+      )}
+
+      {saveError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {saveError}
         </div>
       )}
 

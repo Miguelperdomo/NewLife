@@ -166,42 +166,6 @@ export const siteSettingsFormSchema = z.object({
 
 export type SiteSettingsFormValues = z.infer<typeof siteSettingsFormSchema>;
 
-const pastorStatusEnum = z.enum(["active", "archived"]);
-
-export const pastorFormSchema = z.object({
-  name: z.string().trim().min(2, "El nombre es obligatorio.").max(80, "Máximo 80 caracteres."),
-  // Editable a mano, igual que en ministryFormSchema.
-  slug: z
-    .string()
-    .trim()
-    .min(2, "El slug es obligatorio.")
-    .max(80, "Máximo 80 caracteres.")
-    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Usa solo minúsculas, números y guiones (ej. pastor-juan)."),
-  role: z.string().trim().min(2, "El cargo es obligatorio.").max(120, "Máximo 120 caracteres."),
-  bio: z.string().trim().min(10, "La biografía es obligatoria."),
-  imageSrc: z.string().trim().optional(),
-  // String (no z.coerce) por la misma razón que "displayOrder" en ministryFormSchema.
-  tier: z
-    .string()
-    .trim()
-    .min(1, "El nivel es obligatorio.")
-    .refine((value) => /^\d+$/.test(value), "Debe ser un número entero positivo."),
-  status: pastorStatusEnum,
-  showPublicly: z.boolean(),
-  facebookUrl: z.string().trim().optional(),
-  facebookEnabled: z.boolean(),
-  instagramUrl: z.string().trim().optional(),
-  instagramEnabled: z.boolean(),
-  youtubeUrl: z.string().trim().optional(),
-  youtubeEnabled: z.boolean(),
-  tiktokUrl: z.string().trim().optional(),
-  tiktokEnabled: z.boolean(),
-  whatsappUrl: z.string().trim().optional(),
-  whatsappEnabled: z.boolean(),
-});
-
-export type PastorFormValues = z.infer<typeof pastorFormSchema>;
-
 export const loginFormSchema = z.object({
   email: z.string().trim().min(1, "Ingresa tu correo electrónico.").email("Ingresa un correo válido."),
   password: z.string().min(1, "Ingresa tu contraseña."),

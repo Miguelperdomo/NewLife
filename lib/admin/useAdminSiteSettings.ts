@@ -10,40 +10,42 @@ interface SiteSettingsState {
 }
 
 /**
- * Único punto de acceso a Configuración — mismo patrón que los demás hooks
- * del admin (localStorage por debajo, nada más lo toca directamente), pero
- * para un singleton en vez de una lista: no hay crear/duplicar/eliminar,
- * solo "actualizar" y "restablecer a demo".
+ * Único punto de acceso a Configuración — ahora respaldado por la tabla
+ * `site_settings` de Supabase (singleton) en vez de localStorage. Mismo
+ * patrón que antes (nada más toca la capa de datos directamente), solo que
+ * cargar/guardar ahora es asíncrono.
  */
 export function useAdminSiteSettings() {
   const [{ settings, isReady }, setState] = useState<SiteSettingsState>({ settings: null, isReady: false });
 
   useEffect(() => {
-    const stored = loadSiteSettings();
-    // Excepción deliberada, igual que en los otros hooks del admin:
-    // localStorage no existe en el render de servidor, así que se lee una
-    // sola vez tras el montaje para no romper la hidratación.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setState({ settings: stored, isReady: true });
-  }, []);
-
-  const updateSettings = useCallback((input: Partial<AdminSiteSettings>) => {
-    setState((prev) => {
-      if (!prev.settings) return prev;
-      const next: AdminSiteSettings = { ...prev.settings, ...input, updatedAt: new Date().toISOString() };
-      saveSiteSettings(next);
-      return { settings: next, isReady: true };
+    let cancelled = false;
+    loadSiteSettings().then((loaded) => {
+      if (!cancelled) setState({ settings: loaded, isReady: true });
     });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const replaceSettings = useCallback((next: AdminSiteSettings) => {
+  const updateSettings = useCallback(
+    async (input: Partial<AdminSiteSettings>) => {
+      if (!settings) return;
+      const next: AdminSiteSettings = { ...settings, ...input, updatedAt: new Date().toISOString() };
+      const saved = await saveSiteSettings(next);
+      setState({ settings: saved, isReady: true });
+    },
+    [settings]
+  );
+
+  const replaceSettings = useCallback(async (next: AdminSiteSettings) => {
     const withTimestamp: AdminSiteSettings = { ...next, updatedAt: new Date().toISOString() };
-    saveSiteSettings(withTimestamp);
-    setState({ settings: withTimestamp, isReady: true });
+    const saved = await saveSiteSettings(withTimestamp);
+    setState({ settings: saved, isReady: true });
   }, []);
 
-  const resetToDemo = useCallback(() => {
-    const fresh = resetSiteSettingsToDemo();
+  const resetToDemo = useCallback(async () => {
+    const fresh = await resetSiteSettingsToDemo();
     setState({ settings: fresh, isReady: true });
     return fresh;
   }, []);

@@ -1,8 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { loadCampusStore, saveCampusStore } from "@/lib/admin/storage";
-import { slugify, uniqueSlug } from "@/lib/admin/slug";
+import {
+  createCampus as createCampusRequest,
+  loadCampuses,
+  removeCampus as removeCampusRequest,
+  updateCampus as updateCampusRequest,
+} from "@/lib/admin/campuses";
 import type { AdminCampus } from "@/lib/admin/types";
 
 type NewCampusInput = Omit<AdminCampus, "id" | "slug" | "createdAt" | "updatedAt"> & { slug?: string };
@@ -13,64 +17,58 @@ interface CampusState {
 }
 
 /**
- * Único punto de acceso a las sedes del admin — mismo patrón que
- * useAdminContent.ts (localStorage por debajo, nada más lo toca
- * directamente). Aquí sí se elimina de verdad (sin "archivar"): a diferencia
- * de eventos/noticias, una sede no tiene estado editorial.
+ * Único punto de acceso a las sedes del admin — ahora respaldado por la
+ * tabla `campuses` de Supabase. Cada mutación vuelve a pedir la lista
+ * completa: es la forma más simple de reflejar de inmediato efectos
+ * secundarios en OTRAS filas (ej. desmarcar la sede principal anterior al
+ * marcar una nueva), sin tener que replicar esa lógica en el cliente.
  */
 export function useAdminCampuses() {
   const [{ campuses, isReady }, setState] = useState<CampusState>({ campuses: [], isReady: false });
 
-  useEffect(() => {
-    const stored = loadCampusStore();
-    // Excepción deliberada, igual que en useAdminContent: localStorage no
-    // existe en el render de servidor, así que se lee una sola vez tras el
-    // montaje para no romper la hidratación.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setState({ campuses: stored, isReady: true });
+  const refresh = useCallback(async () => {
+    const loaded = await loadCampuses();
+    setState({ campuses: loaded, isReady: true });
+    return loaded;
   }, []);
 
-  const persist = useCallback((next: AdminCampus[]) => {
-    setState({ campuses: next, isReady: true });
-    saveCampusStore(next);
+  useEffect(() => {
+    let cancelled = false;
+    loadCampuses().then((loaded) => {
+      if (!cancelled) setState({ campuses: loaded, isReady: true });
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const createCampus = useCallback(
-    (input: NewCampusInput) => {
-      const now = new Date().toISOString();
-      const slug = uniqueSlug(
-        input.slug || slugify(input.name),
-        campuses.map((campus) => campus.slug),
-        "sede"
+    async (input: NewCampusInput) => {
+      const created = await createCampusRequest(
+        input,
+        campuses.map((campus) => campus.slug)
       );
-      const campus: AdminCampus = { ...input, id: crypto.randomUUID(), slug, createdAt: now, updatedAt: now };
-      // Solo puede haber una "sede principal" a la vez.
-      const rest = input.isMain ? campuses.map((existing) => ({ ...existing, isMain: false })) : campuses;
-      persist([campus, ...rest]);
-      return campus;
+      await refresh();
+      return created;
     },
-    [campuses, persist]
+    [campuses, refresh]
   );
 
   const updateCampus = useCallback(
-    (id: string, input: Partial<AdminCampus>) => {
-      const now = new Date().toISOString();
-      const makingMain = input.isMain === true;
-      persist(
-        campuses.map((campus) => {
-          if (campus.id === id) return { ...campus, ...input, id: campus.id, updatedAt: now };
-          return makingMain ? { ...campus, isMain: false } : campus;
-        })
-      );
+    async (id: string, input: Partial<AdminCampus>) => {
+      const updated = await updateCampusRequest(id, input);
+      await refresh();
+      return updated;
     },
-    [campuses, persist]
+    [refresh]
   );
 
   const removeCampus = useCallback(
-    (id: string) => {
-      persist(campuses.filter((campus) => campus.id !== id));
+    async (id: string) => {
+      await removeCampusRequest(id);
+      await refresh();
     },
-    [campuses, persist]
+    [refresh]
   );
 
   return { campuses, isReady, createCampus, updateCampus, removeCampus };

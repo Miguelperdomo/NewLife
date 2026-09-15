@@ -5,10 +5,14 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/data/site";
 import { getNews } from "@/lib/content";
+import { buildOpenGraphMetadata } from "@/lib/seo";
+
+const description = "Mantente al día con lo que está pasando en New Life.";
 
 export const metadata: Metadata = {
   title: `Noticias — ${siteConfig.name}`,
-  description: "Mantente al día con lo que está pasando en New Life.",
+  description,
+  ...buildOpenGraphMetadata({ title: `Noticias — ${siteConfig.name}`, description }),
 };
 
 export default function NoticiasPage() {

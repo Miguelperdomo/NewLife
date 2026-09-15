@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { EventTemplate } from "@/components/events/EventTemplate";
 import { siteConfig } from "@/data/site";
 import { getEventBySlug, getEvents } from "@/lib/content";
+import { buildOpenGraphMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getEvents().map((event) => ({ slug: event.slug }));
@@ -21,6 +22,11 @@ export async function generateMetadata(
   return {
     title: `${event.name} — ${siteConfig.name}`,
     description: event.shortDescription,
+    ...buildOpenGraphMetadata({
+      title: event.name,
+      description: event.shortDescription,
+      imageSrc: event.imageSrc,
+    }),
   };
 }
 

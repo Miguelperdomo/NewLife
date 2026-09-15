@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { CampusTemplate } from "@/components/campuses/CampusTemplate";
 import { siteConfig } from "@/data/site";
 import { getCampusBySlug, getCampuses } from "@/lib/content";
+import { buildOpenGraphMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getCampuses().map((campus) => ({ slug: campus.slug }));
@@ -21,6 +22,11 @@ export async function generateMetadata(
   return {
     title: `${campus.fullName} — ${siteConfig.name}`,
     description: campus.address,
+    ...buildOpenGraphMetadata({
+      title: campus.fullName,
+      description: campus.address,
+      imageSrc: campus.imageSrc,
+    }),
   };
 }
 

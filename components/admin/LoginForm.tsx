@@ -3,19 +3,23 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { loginFormSchema, type LoginFormValues } from "@/lib/admin/schemas";
+import { createClient } from "@/lib/supabase/client";
 import { FormField, inputClass } from "./form/FormField";
 
 /**
- * Solo visual: no hay backend/API/sesión todavía. `onSubmit` únicamente
- * informa que la autenticación real llegará después — ver lib/admin/auth.ts
- * para el punto donde se conectará.
+ * Login real contra Supabase Auth. El mensaje de error es siempre el mismo
+ * genérico ("Correo o contraseña incorrectos") sin importar si falló por
+ * correo inexistente, contraseña incorrecta, o el usuario no está en
+ * `admins` — no hay que darle pistas a quien intenta adivinar.
  */
 export function LoginForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const {
     register,
@@ -26,8 +30,36 @@ export function LoginForm() {
     defaultValues: { email: "", password: "", remember: false },
   });
 
+  async function onSubmit(values: LoginFormValues) {
+    setAuthError(null);
+    const supabase = createClient();
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (error || !data.session) {
+      setAuthError("Correo o contraseña incorrectos.");
+      return;
+    }
+
+    // ¿La cuenta que inició sesión es realmente la administradora? (tabla
+    // `admins`, vía la función is_admin() — ver lib/admin/auth.ts). Si no lo
+    // es, se cierra la sesión de inmediato: no debe quedar "medio adentro".
+    const { data: isAdmin } = await supabase.rpc("is_admin");
+    if (!isAdmin) {
+      await supabase.auth.signOut();
+      setAuthError("Correo o contraseña incorrectos.");
+      return;
+    }
+
+    router.push("/admin");
+    router.refresh();
+  }
+
   return (
-    <form onSubmit={handleSubmit(() => setSubmitted(true))} noValidate className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
       <FormField label="Correo electrónico" htmlFor="email" required error={errors.email?.message}>
         <div className="relative mt-1.5">
           <Mail
@@ -81,12 +113,12 @@ export function LoginForm() {
 
       <Button type="submit" variant="primary" className="w-full justify-center" disabled={isSubmitting}>
         <LogIn className="h-4 w-4" aria-hidden="true" />
-        Iniciar sesión
+        {isSubmitting ? "Ingresando…" : "Iniciar sesión"}
       </Button>
 
-      {submitted && (
-        <p className="rounded-xl border border-brand-100 bg-brand-50 px-4 py-3 text-center text-sm text-brand-700">
-          La autenticación estará disponible próximamente.
+      {authError && (
+        <p className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
+          {authError}
         </p>
       )}
     </form>

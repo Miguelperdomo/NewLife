@@ -5,10 +5,14 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/data/site";
 import { getCampuses } from "@/lib/content";
+import { buildOpenGraphMetadata } from "@/lib/seo";
+
+const description = "Encuentra la sede de New Life más cercana a ti.";
 
 export const metadata: Metadata = {
   title: `Sedes — ${siteConfig.name}`,
-  description: "Encuentra la sede de New Life más cercana a ti.",
+  description,
+  ...buildOpenGraphMetadata({ title: `Sedes — ${siteConfig.name}`, description }),
 };
 
 const tones = ["dark", "brand"] as const;

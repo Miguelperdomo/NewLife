@@ -31,7 +31,7 @@ export function MinistryForm({
 }: {
   defaultValues?: Partial<MinistryFormValues>;
   submitLabel?: string;
-  onSubmit: (values: MinistryFormValues) => void;
+  onSubmit: (values: MinistryFormValues) => void | Promise<void>;
   onPreview: (values: MinistryFormValues) => void;
 }) {
   // En edición no se debe pisar un slug ya existente solo por cambiar el

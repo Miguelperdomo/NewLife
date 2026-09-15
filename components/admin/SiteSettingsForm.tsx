@@ -54,7 +54,7 @@ export function SiteSettingsForm({
   onSubmit,
 }: {
   defaultValues: SiteSettingsFormValues;
-  onSubmit: (values: SiteSettingsFormValues) => void;
+  onSubmit: (values: SiteSettingsFormValues) => void | Promise<void>;
 }) {
   const {
     register,

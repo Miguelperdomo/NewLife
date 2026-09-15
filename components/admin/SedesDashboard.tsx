@@ -16,10 +16,15 @@ export function SedesDashboard() {
   const { campuses, isReady, removeCampus } = useAdminCampuses();
   const [previewCampus, setPreviewCampus] = useState<AdminCampus | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminCampus | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!deleteTarget) return;
-    removeCampus(deleteTarget.id);
+    try {
+      await removeCampus(deleteTarget.id);
+    } catch (error) {
+      setDeleteError(error instanceof Error ? error.message : "No se pudo eliminar la sede.");
+    }
     setDeleteTarget(null);
   }
 
@@ -37,6 +42,12 @@ export function SedesDashboard() {
           Crear sede
         </Button>
       </div>
+
+      {deleteError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {deleteError}
+        </div>
+      )}
 
       {isReady ? (
         <CampusTable

@@ -5,10 +5,14 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MinistryCard } from "@/components/ministries/MinistryCard";
 import { getMinistries } from "@/lib/content";
 import { siteConfig } from "@/data/site";
+import { buildOpenGraphMetadata } from "@/lib/seo";
+
+const description = "Encuentra tu lugar en uno de los ministerios de New Life.";
 
 export const metadata: Metadata = {
   title: `Ministerios — ${siteConfig.name}`,
-  description: "Encuentra tu lugar en uno de los ministerios de New Life.",
+  description,
+  ...buildOpenGraphMetadata({ title: `Ministerios — ${siteConfig.name}`, description }),
 };
 
 export default function MinisteriosPage() {

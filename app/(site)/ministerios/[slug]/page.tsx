@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { MinistryTemplate } from "@/components/ministries/MinistryTemplate";
 import { getMinistries, getMinistryBySlug } from "@/lib/content";
 import { siteConfig } from "@/data/site";
+import { buildOpenGraphMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getMinistries().map((ministry) => ({ slug: ministry.slug }));
@@ -21,6 +22,11 @@ export async function generateMetadata(
   return {
     title: `${ministry.name} — ${siteConfig.name}`,
     description: ministry.shortDescription,
+    ...buildOpenGraphMetadata({
+      title: ministry.name,
+      description: ministry.shortDescription,
+      imageSrc: ministry.imageSrc,
+    }),
   };
 }
 

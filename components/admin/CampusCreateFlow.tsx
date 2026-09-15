@@ -18,16 +18,27 @@ export function CampusCreateFlow() {
   const router = useRouter();
   const { createCampus } = useAdminCampuses();
   const [preview, setPreview] = useState<AdminCampus | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(values: CampusFormValues) {
+    setError(null);
+    try {
+      await createCampus(campusFormValuesToInput(values));
+      router.push("/admin/sedes");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo crear la sede.");
+    }
+  }
 
   return (
     <div>
-      <CampusForm
-        onPreview={(values) => setPreview(draftCampusForPreview(values))}
-        onSubmit={(values) => {
-          createCampus(campusFormValuesToInput(values));
-          router.push("/admin/sedes");
-        }}
-      />
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </div>
+      )}
+
+      <CampusForm onPreview={(values) => setPreview(draftCampusForPreview(values))} onSubmit={handleSubmit} />
 
       <Modal open={preview !== null} onClose={() => setPreview(null)} title="Vista previa">
         {preview && <CampusPreview campus={preview} />}

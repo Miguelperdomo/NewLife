@@ -19,6 +19,7 @@ export function MinistryEditFlow() {
   const router = useRouter();
   const { ministries, isReady, updateMinistry } = useAdminMinistries();
   const [preview, setPreview] = useState<AdminMinistry | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   if (!isReady) {
     return <p className="text-sm text-slate-500">Cargando…</p>;
@@ -34,16 +35,30 @@ export function MinistryEditFlow() {
     );
   }
 
+  async function handleSubmit(values: MinistryFormValues) {
+    if (!ministry) return;
+    setError(null);
+    try {
+      await updateMinistry(ministry.id, ministryFormValuesToInput(values));
+      router.push("/admin/ministerios?updated=1");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo guardar los cambios.");
+    }
+  }
+
   return (
     <div>
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </div>
+      )}
+
       <MinistryForm
         submitLabel="Guardar cambios"
         defaultValues={ministryToFormValues(ministry)}
         onPreview={(values) => setPreview(draftMinistryForPreview(values))}
-        onSubmit={(values) => {
-          updateMinistry(ministry.id, ministryFormValuesToInput(values));
-          router.push("/admin/ministerios?updated=1");
-        }}
+        onSubmit={handleSubmit}
       />
 
       <Modal open={preview !== null} onClose={() => setPreview(null)} title="Vista previa" className="max-w-4xl">

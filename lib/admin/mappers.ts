@@ -3,7 +3,6 @@ import type {
   EventFormValues,
   MinistryFormValues,
   NewsFormValues,
-  PastorFormValues,
   SiteSettingsFormValues,
 } from "@/lib/admin/schemas";
 import type {
@@ -11,7 +10,6 @@ import type {
   AdminEvent,
   AdminMinistry,
   AdminNews,
-  AdminPastor,
   AdminSiteSettings,
 } from "@/lib/admin/types";
 
@@ -21,7 +19,6 @@ type NewCampusInput = Omit<AdminCampus, "id" | "slug" | "createdAt" | "updatedAt
 // A diferencia de los otros: el slug SÍ viene del formulario (es editable a
 // mano), así que aquí no se omite — solo id/createdAt/updatedAt los pone el hook.
 type NewMinistryInput = Omit<AdminMinistry, "id" | "createdAt" | "updatedAt">;
-type NewPastorInput = Omit<AdminPastor, "id" | "createdAt" | "updatedAt">;
 // Singleton: sin id/slug — solo updatedAt lo pone el hook al guardar.
 type SiteSettingsInput = Omit<AdminSiteSettings, "updatedAt">;
 
@@ -252,52 +249,5 @@ export function siteSettingsToFormValues(settings: AdminSiteSettings): SiteSetti
     whatsappDefaultMessage: settings.whatsappDefaultMessage,
     supportPhone: settings.supportPhone ?? "",
     contactEmail: settings.contactEmail ?? "",
-  };
-}
-
-export function pastorFormValuesToInput(values: PastorFormValues): NewPastorInput {
-  return {
-    name: values.name,
-    slug: values.slug,
-    role: values.role,
-    bio: values.bio,
-    imageSrc: orUndefined(values.imageSrc),
-    tier: Number(values.tier),
-    status: values.status,
-    showPublicly: values.showPublicly,
-    facebookUrl: orUndefined(values.facebookUrl),
-    facebookEnabled: values.facebookEnabled,
-    instagramUrl: orUndefined(values.instagramUrl),
-    instagramEnabled: values.instagramEnabled,
-    youtubeUrl: orUndefined(values.youtubeUrl),
-    youtubeEnabled: values.youtubeEnabled,
-    tiktokUrl: orUndefined(values.tiktokUrl),
-    tiktokEnabled: values.tiktokEnabled,
-    whatsappUrl: orUndefined(values.whatsappUrl),
-    whatsappEnabled: values.whatsappEnabled,
-  };
-}
-
-/** Inverso de pastorFormValuesToInput: precarga el formulario al editar un pastor existente. */
-export function pastorToFormValues(pastor: AdminPastor): PastorFormValues {
-  return {
-    name: pastor.name,
-    slug: pastor.slug,
-    role: pastor.role,
-    bio: pastor.bio,
-    imageSrc: pastor.imageSrc ?? "",
-    tier: String(pastor.tier),
-    status: pastor.status,
-    showPublicly: pastor.showPublicly,
-    facebookUrl: pastor.facebookUrl ?? "",
-    facebookEnabled: pastor.facebookEnabled,
-    instagramUrl: pastor.instagramUrl ?? "",
-    instagramEnabled: pastor.instagramEnabled,
-    youtubeUrl: pastor.youtubeUrl ?? "",
-    youtubeEnabled: pastor.youtubeEnabled,
-    tiktokUrl: pastor.tiktokUrl ?? "",
-    tiktokEnabled: pastor.tiktokEnabled,
-    whatsappUrl: pastor.whatsappUrl ?? "",
-    whatsappEnabled: pastor.whatsappEnabled,
   };
 }

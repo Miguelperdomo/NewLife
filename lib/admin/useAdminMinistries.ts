@@ -1,8 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { loadMinistryStore, saveMinistryStore } from "@/lib/admin/ministries";
-import { slugify, uniqueSlug } from "@/lib/admin/slug";
+import {
+  createMinistry as createMinistryRequest,
+  duplicateMinistry as duplicateMinistryRequest,
+  loadMinistries,
+  setMinistryStatus,
+  updateMinistry as updateMinistryRequest,
+} from "@/lib/admin/ministries";
 import type { AdminMinistry } from "@/lib/admin/types";
 
 type NewMinistryInput = Omit<AdminMinistry, "id" | "createdAt" | "updatedAt">;
@@ -13,102 +18,80 @@ interface MinistryState {
 }
 
 /**
- * Único punto de acceso a los ministerios del admin — mismo patrón que
- * useAdminContent.ts/useAdminCampuses.ts (localStorage por debajo, nada más
- * lo toca directamente). No se elimina físicamente: solo archivar/activar,
- * igual que Eventos/Noticias.
+ * Único punto de acceso a los ministerios del admin — ahora respaldado por
+ * la tabla `ministries` de Supabase. Mismo patrón que useAdminCampuses.ts:
+ * cada mutación vuelve a pedir la lista completa.
  */
 export function useAdminMinistries() {
   const [{ ministries, isReady }, setState] = useState<MinistryState>({ ministries: [], isReady: false });
 
-  useEffect(() => {
-    const stored = loadMinistryStore();
-    // Excepción deliberada, igual que en los otros hooks del admin:
-    // localStorage no existe en el render de servidor, así que se lee una
-    // sola vez tras el montaje para no romper la hidratación.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setState({ ministries: stored, isReady: true });
+  const refresh = useCallback(async () => {
+    const loaded = await loadMinistries();
+    setState({ ministries: loaded, isReady: true });
+    return loaded;
   }, []);
 
-  const persist = useCallback((next: AdminMinistry[]) => {
-    setState({ ministries: next, isReady: true });
-    saveMinistryStore(next);
+  useEffect(() => {
+    let cancelled = false;
+    loadMinistries().then((loaded) => {
+      if (!cancelled) setState({ ministries: loaded, isReady: true });
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const createMinistry = useCallback(
-    (input: NewMinistryInput) => {
-      const now = new Date().toISOString();
-      const slug = uniqueSlug(
-        input.slug || slugify(input.name),
-        ministries.map((ministry) => ministry.slug),
-        "ministerio"
+    async (input: NewMinistryInput) => {
+      const created = await createMinistryRequest(
+        input,
+        ministries.map((ministry) => ministry.slug)
       );
-      const ministry: AdminMinistry = { ...input, id: crypto.randomUUID(), slug, createdAt: now, updatedAt: now };
-      persist([ministry, ...ministries]);
-      return ministry;
+      await refresh();
+      return created;
     },
-    [ministries, persist]
+    [ministries, refresh]
   );
 
   const updateMinistry = useCallback(
-    (id: string, input: Partial<AdminMinistry>) => {
-      const now = new Date().toISOString();
-      persist(
-        ministries.map((ministry) => {
-          if (ministry.id !== id) return ministry;
-          // Si el slug cambió a mano, sigue garantizando que quede único
-          // frente al resto — mismo mecanismo que al crear.
-          const nextSlug =
-            input.slug && input.slug !== ministry.slug
-              ? uniqueSlug(
-                  input.slug,
-                  ministries.filter((item) => item.id !== id).map((item) => item.slug),
-                  "ministerio"
-                )
-              : ministry.slug;
-          return { ...ministry, ...input, id: ministry.id, slug: nextSlug, updatedAt: now };
-        })
-      );
+    async (id: string, input: Partial<AdminMinistry>) => {
+      const current = ministries.find((ministry) => ministry.id === id);
+      const otherSlugs = ministries.filter((ministry) => ministry.id !== id).map((ministry) => ministry.slug);
+      const updated = await updateMinistryRequest(id, input, current?.slug ?? "", otherSlugs);
+      await refresh();
+      return updated;
     },
-    [ministries, persist]
+    [ministries, refresh]
   );
 
   const duplicateMinistry = useCallback(
-    (id: string) => {
+    async (id: string) => {
       const original = ministries.find((ministry) => ministry.id === id);
       if (!original) return undefined;
-      const now = new Date().toISOString();
-      const slug = uniqueSlug(
-        `${original.slug}-copia`,
-        ministries.map((ministry) => ministry.slug),
-        "ministerio"
+      const created = await duplicateMinistryRequest(
+        original,
+        ministries.map((ministry) => ministry.slug)
       );
-      const copy: AdminMinistry = {
-        ...original,
-        id: crypto.randomUUID(),
-        slug,
-        name: `${original.name} (copia)`,
-        // Sin estado "draft" en este módulo (solo active/archived) — una
-        // copia recién creada arranca archivada, análogo al "draft" que
-        // usan las copias de eventos/noticias.
-        status: "archived",
-        createdAt: now,
-        updatedAt: now,
-      };
-      persist([copy, ...ministries]);
-      return copy;
+      await refresh();
+      return created;
     },
-    [ministries, persist]
+    [ministries, refresh]
   );
 
   const archiveMinistry = useCallback(
-    (id: string) => updateMinistry(id, { status: "archived" }),
-    [updateMinistry]
+    async (id: string) => {
+      await setMinistryStatus(id, "archived");
+      await refresh();
+    },
+    [refresh]
   );
 
   const activateMinistry = useCallback(
-    (id: string) => updateMinistry(id, { status: "active" }),
-    [updateMinistry]
+    async (id: string) => {
+      await setMinistryStatus(id, "active");
+      await refresh();
+    },
+    [refresh]
   );
 
   return {

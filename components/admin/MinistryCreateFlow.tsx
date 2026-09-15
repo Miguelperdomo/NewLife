@@ -18,16 +18,27 @@ export function MinistryCreateFlow() {
   const router = useRouter();
   const { createMinistry } = useAdminMinistries();
   const [preview, setPreview] = useState<AdminMinistry | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(values: MinistryFormValues) {
+    setError(null);
+    try {
+      await createMinistry(ministryFormValuesToInput(values));
+      router.push("/admin/ministerios?created=1");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo crear el ministerio.");
+    }
+  }
 
   return (
     <div>
-      <MinistryForm
-        onPreview={(values) => setPreview(draftMinistryForPreview(values))}
-        onSubmit={(values) => {
-          createMinistry(ministryFormValuesToInput(values));
-          router.push("/admin/ministerios?created=1");
-        }}
-      />
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </div>
+      )}
+
+      <MinistryForm onPreview={(values) => setPreview(draftMinistryForPreview(values))} onSubmit={handleSubmit} />
 
       <Modal open={preview !== null} onClose={() => setPreview(null)} title="Vista previa" className="max-w-4xl">
         {preview && <MinistryPreview ministry={preview} />}

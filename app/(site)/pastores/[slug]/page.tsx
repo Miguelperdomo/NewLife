@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { PastorTemplate } from "@/components/pastors/PastorTemplate";
 import { siteConfig } from "@/data/site";
 import { getPastorBySlug, getPastors } from "@/lib/content";
+import { buildOpenGraphMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getPastors().map((pastor) => ({ slug: pastor.slug }));
@@ -21,6 +22,11 @@ export async function generateMetadata(
   return {
     title: `${pastor.name} — ${siteConfig.name}`,
     description: pastor.bio,
+    ...buildOpenGraphMetadata({
+      title: pastor.name,
+      description: pastor.bio,
+      imageSrc: pastor.imageSrc,
+    }),
   };
 }
 

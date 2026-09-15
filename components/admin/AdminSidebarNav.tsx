@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Contact,
   LayoutDashboard,
   LayoutGrid,
   MapPin,
@@ -17,7 +16,6 @@ const navItems = [
   { label: "Contenido", href: "/admin/contenido", icon: LayoutDashboard, active: true, exact: false },
   { label: "Ministerios", href: "/admin/ministerios", icon: Users, active: true, exact: false },
   { label: "Sedes", href: "/admin/sedes", icon: MapPin, active: true, exact: false },
-  { label: "Pastores", href: "/admin/pastores", icon: Contact, active: true, exact: false },
   { label: "Configuración", href: "/admin/configuracion", icon: Settings, active: true, exact: false },
 ];
 

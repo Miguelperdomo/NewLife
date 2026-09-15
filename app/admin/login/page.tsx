@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { LoginForm } from "@/components/admin/LoginForm";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { verses } from "@/data/verses";
@@ -21,6 +23,14 @@ export default function AdminLoginPage() {
       </div>
 
       <div className="relative flex w-full max-w-md flex-col items-center">
+        <Link
+          href="/"
+          className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-white/50 transition-colors hover:text-white"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          Volver al sitio público
+        </Link>
+
         <div className="w-full rounded-3xl bg-white p-8 shadow-2xl shadow-black/40 sm:p-10">
           <div className="flex flex-col items-center text-center">
             <span className="relative flex h-14 w-14 items-center justify-center">
