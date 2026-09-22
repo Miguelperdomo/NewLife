@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   ...buildOpenGraphMetadata({ title: `Pastores — ${siteConfig.name}`, description }),
 };
 
-export default function PastoresPage() {
-  const pastors = getPastors();
+export default async function PastoresPage() {
+  const pastors = await getPastors();
 
   return (
     <>

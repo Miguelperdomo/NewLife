@@ -3,9 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
-import { getPastors } from "@/lib/content";
+import { getPastors } from "@/lib/pastors";
 import { campusFormSchema, type CampusFormValues } from "@/lib/admin/schemas";
+import { useUnsavedChangesWarning } from "@/lib/admin/useUnsavedChangesWarning";
 import { FormField, FormSection, inputClass } from "./form/FormField";
+import { ImageUploadField } from "./form/ImageUploadField";
+import { MapLocationField } from "./form/MapLocationField";
+import { ScheduleListField } from "./form/ScheduleListField";
 
 export const campusFormDefaults: CampusFormValues = {
   name: "",
@@ -16,6 +20,7 @@ export const campusFormDefaults: CampusFormValues = {
   isMain: false,
   leadPastorSlug: "",
   whatsappNumber: "",
+  schedules: [],
 };
 
 export function CampusForm({
@@ -35,11 +40,14 @@ export function CampusForm({
     register,
     handleSubmit,
     getValues,
-    formState: { errors, isSubmitting },
+    control,
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<CampusFormValues>({
     resolver: zodResolver(campusFormSchema),
     defaultValues: { ...campusFormDefaults, ...defaultValues },
   });
+
+  useUnsavedChangesWarning(isDirty && !isSubmitting);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -67,14 +75,9 @@ export function CampusForm({
         <FormField
           label="Imagen"
           htmlFor="imageSrc"
-          hint="Opcional. Ruta o URL de la foto — sin subida de archivos todavía. Si se deja vacío, se usa una portada de New Life."
+          hint="Opcional. Si no subes ninguna, se usa una portada de New Life."
         >
-          <input
-            id="imageSrc"
-            className={inputClass}
-            placeholder="/sedes/mi-sede.jpg"
-            {...register("imageSrc")}
-          />
+          <ImageUploadField control={control} name="imageSrc" folder="sedes" />
         </FormField>
 
         <FormField label="Sede principal" htmlFor="isMain">
@@ -97,13 +100,13 @@ export function CampusForm({
         </FormField>
 
         <FormField
-          label="Texto de búsqueda en Google Maps"
+          label="Ubicación en Google Maps"
           htmlFor="mapQuery"
           required
           error={errors.mapQuery?.message}
-          hint="Dirección o plus code — cuanto más preciso, mejor ubica el punto en el mapa."
+          hint="Pega el link para compartir de Google Maps (el de la app o el navegador) — abajo puedes confirmar en el mapa antes de guardar. También puedes escribir la dirección o un plus code."
         >
-          <input id="mapQuery" className={inputClass} {...register("mapQuery")} />
+          <MapLocationField control={control} />
         </FormField>
       </FormSection>
 
@@ -126,6 +129,13 @@ export function CampusForm({
         >
           <input id="whatsappNumber" className={inputClass} {...register("whatsappNumber")} />
         </FormField>
+      </FormSection>
+
+      <FormSection
+        title="Horarios de servicio"
+        description="Se muestran en la página de esta sede y en la Agenda del Home. Agrega cuantos necesites."
+      >
+        <ScheduleListField control={control} errors={errors.schedules} />
       </FormSection>
 
       <div className="flex flex-wrap items-center justify-end gap-3">

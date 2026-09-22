@@ -33,9 +33,30 @@ export function ContentCreateFlow() {
   const [preview, setPreview] = useState<
     { type: "event"; data: AdminEvent } | { type: "news"; data: AdminNews } | null
   >(null);
+  const [error, setError] = useState<string | null>(null);
 
   if (!type) {
     return <ContentTypePicker onSelect={setType} />;
+  }
+
+  async function handleEventSubmit(values: EventFormValues) {
+    setError(null);
+    try {
+      await createEvent(eventFormValuesToInput(values));
+      router.push("/admin/contenido");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo crear el evento.");
+    }
+  }
+
+  async function handleNewsSubmit(values: NewsFormValues) {
+    setError(null);
+    try {
+      await createNews(newsFormValuesToInput(values));
+      router.push("/admin/contenido");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo crear la noticia.");
+    }
   }
 
   return (
@@ -49,21 +70,21 @@ export function ContentCreateFlow() {
         Cambiar tipo de contenido
       </button>
 
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </div>
+      )}
+
       {type === "event" ? (
         <EventForm
           onPreview={(values) => setPreview({ type: "event", data: draftEventForPreview(values) })}
-          onSubmit={(values) => {
-            createEvent(eventFormValuesToInput(values));
-            router.push("/admin/contenido");
-          }}
+          onSubmit={handleEventSubmit}
         />
       ) : (
         <NewsForm
           onPreview={(values) => setPreview({ type: "news", data: draftNewsForPreview(values) })}
-          onSubmit={(values) => {
-            createNews(newsFormValuesToInput(values));
-            router.push("/admin/contenido");
-          }}
+          onSubmit={handleNewsSubmit}
         />
       )}
 

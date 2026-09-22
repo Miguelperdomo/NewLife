@@ -6,6 +6,9 @@ import { siteSettingsFormValuesToInput, siteSettingsToFormValues } from "@/lib/a
 import { useAdminSiteSettings } from "@/lib/admin/useAdminSiteSettings";
 import type { SiteSettingsFormValues } from "@/lib/admin/schemas";
 import { CreditsPanel } from "./CreditsPanel";
+import { FirstTimeCardsPanel } from "./FirstTimeCardsPanel";
+import { HelpOptionsPanel } from "./HelpOptionsPanel";
+import { PastorProfileForm } from "./PastorProfileForm";
 import { SiteSettingsForm } from "./SiteSettingsForm";
 import { SystemPanel } from "./SystemPanel";
 
@@ -60,6 +63,12 @@ export function ConfiguracionDashboard() {
               fuera del propio formulario (ej. "Restablecer contenido demo"
               o "Importar configuración" en SystemPanel). */}
           <SiteSettingsForm key={settings.updatedAt} defaultValues={siteSettingsToFormValues(settings)} onSubmit={handleSubmit} />
+
+          <FirstTimeCardsPanel />
+
+          <HelpOptionsPanel />
+
+          <PastorProfileForm />
 
           <SystemPanel settings={settings} onResetDemo={resetToDemo} onImport={replaceSettings} />
 

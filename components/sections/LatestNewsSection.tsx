@@ -4,8 +4,8 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getNews } from "@/lib/content";
 
-export function LatestNewsSection() {
-  const articles = getNews(3);
+export async function LatestNewsSection() {
+  const articles = await getNews(3);
 
   if (articles.length === 0) {
     return null;

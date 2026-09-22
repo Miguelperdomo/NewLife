@@ -19,7 +19,10 @@ interface AdminContentBase {
 }
 
 export interface AdminEvent extends AdminContentBase {
+  shortDescription: string;
   description: string;
+  /** Etiqueta libre: "Reunión", "Retiro", "Servicio especial"... */
+  category?: string;
   /** "YYYY-MM-DD". */
   startDate: string;
   endDate?: string;
@@ -43,6 +46,16 @@ export interface AdminNews extends AdminContentBase {
   category?: string;
 }
 
+/** Un horario recurrente de servicio (ej. "Domingo 9:00 a.m. — Culto principal"). */
+export interface AdminServiceSchedule {
+  /** 0 = domingo, igual que Date.getDay(). */
+  dayOfWeek: number;
+  /** "HH:MM" en 24 horas (lo que da <input type="time">). */
+  time: string;
+  title: string;
+  description?: string;
+}
+
 export interface AdminCampus {
   id: string;
   slug: string;
@@ -57,6 +70,7 @@ export interface AdminCampus {
   leadPastorSlug?: string;
   /** Si se define, se usa en vez del WhatsApp general de New Life para esta sede. */
   whatsappNumber?: string;
+  schedules: AdminServiceSchedule[];
   createdAt: string;
   updatedAt: string;
 }
@@ -111,13 +125,16 @@ export interface AdminSiteSettings {
   city?: string;
   generalSchedule?: string;
 
-  // Apariencia — hex "#rrggbb". No cambian el sitio público todavía (ver
-  // lib/admin/siteSettings.ts), solo se guardan preparados para cuando sí.
+  // Portada (Hero) del Home — el título grande. El texto debajo reutiliza
+  // "description" de arriba, para no duplicar el mismo dato dos veces.
+  heroTagline?: string;
+
+  // Apariencia — hex "#rrggbb". Sí cambian el sitio público: ver
+  // lib/color.ts + app/layout.tsx, que generan las variables CSS a partir
+  // de estos dos colores.
   primaryColor: string;
-  secondaryColor: string;
   accentColor: string;
   coverImageUrl?: string;
-  footerText?: string;
 
   // Redes sociales — URL + interruptor independiente por red.
   facebookUrl?: string;
@@ -147,6 +164,44 @@ export interface AdminSiteSettings {
   supportPhone?: string;
   contactEmail?: string;
 
+  // SEO / vista previa al compartir — título, descripción e imagen que
+  // aparecen cuando alguien comparte el link del sitio en WhatsApp/redes.
+  // Si quedan vacíos, el sitio usa el nombre/descripción/logo de siempre.
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImageUrl?: string;
+
+  // Página "Conócenos" — reemplaza el texto de ejemplo de app/(site)/nosotros.
+  aboutImageUrl?: string;
+  aboutQuienesSomos?: string;
+  aboutMision?: string;
+  aboutVision?: string;
+  aboutValores?: string;
+
+  // Widget flotante de Ayuda y donaciones — las 6 opciones (con íconos) viven
+  // en su propia tabla (ver lib/admin/helpOptions.ts), esto es solo el texto
+  // fijo de encabezado del widget.
+  helpTitle?: string;
+  helpDescription?: string;
+  helpCtaLabel?: string;
+  helpOptionsTitle?: string;
+
+  // Donaciones — se muestran en el widget de Ayuda cuando alguien elige
+  // "Donación económica". `donationsEnabled` controla si se muestran ahí (por
+  // defecto no, hasta que la iglesia confirme datos reales de cuenta).
+  donationsEnabled: boolean;
+  bankName?: string;
+  bankAccountType?: string;
+  bankAccountNumber?: string;
+  bankAccountHolder?: string;
+  nequiNumber?: string;
+  daviplataNumber?: string;
+
+  // Si está activo, el sitio público muestra un aviso de mantenimiento en
+  // vez del contenido normal — el panel admin sigue funcionando siempre,
+  // para poder volver a apagarlo.
+  maintenanceMode: boolean;
+
   updatedAt: string;
 }
 
@@ -163,4 +218,39 @@ export interface ContentRow {
   updatedAt: string;
   ministryLabel?: string;
   featured?: boolean;
+}
+
+/** Una tarjeta de la sección "¿Es tu primera vez?" del Home — lista libre, se reemplaza completa al guardar. */
+export interface AdminFirstTimeCard {
+  /** Clave de lib/firstTimeIcons.ts. */
+  icon: string;
+  title: string;
+  description: string;
+}
+
+/** Una opción del widget de Ayuda y donaciones — lista libre, se reemplaza completa al guardar. */
+export interface AdminHelpOption {
+  /** Clave de lib/helpOptionIcons.ts. */
+  icon: string;
+  title: string;
+  description: string;
+}
+
+/**
+ * Perfil del pastor principal — singleton (una sola fila), como
+ * AdminSiteSettings. New Life solo tiene un pastor a propósito (ver
+ * data/pastors.ts original), así que no es una lista con crear/editar/
+ * archivar como Ministerios/Sedes, solo un formulario que se guarda encima.
+ */
+export interface AdminPastorProfile {
+  name: string;
+  role?: string;
+  bio?: string;
+  imageSrc?: string;
+  whatsappNumber?: string;
+  facebookUrl?: string;
+  facebookEnabled: boolean;
+  instagramUrl?: string;
+  instagramEnabled: boolean;
+  updatedAt: string;
 }

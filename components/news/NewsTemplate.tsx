@@ -16,8 +16,8 @@ import { FeaturedBadge } from "./FeaturedBadge";
  * EventTemplate/MinistryTemplate (sin sidebar ni botón de WhatsApp) — una
  * noticia es un artículo de lectura, no una ficha con logística.
  */
-export function NewsTemplate({ article }: { article: NewsArticle }) {
-  const related = getRelatedNews(article, 3);
+export async function NewsTemplate({ article }: { article: NewsArticle }) {
+  const related = await getRelatedNews(article, 3);
   const paragraphs = article.content.split("\n\n");
 
   return (

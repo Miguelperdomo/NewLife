@@ -33,6 +33,7 @@ export function ContentEditFlow() {
   const [preview, setPreview] = useState<
     { type: "event"; data: AdminEvent } | { type: "news"; data: AdminNews } | null
   >(null);
+  const [error, setError] = useState<string | null>(null);
 
   if (!isReady) {
     return <p className="text-sm text-slate-500">Cargando…</p>;
@@ -49,17 +50,42 @@ export function ContentEditFlow() {
     );
   }
 
+  async function handleEventSubmit(values: EventFormValues) {
+    if (!event) return;
+    setError(null);
+    try {
+      await updateEvent(event.id, eventFormValuesToInput(values));
+      router.push("/admin/contenido");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo guardar los cambios.");
+    }
+  }
+
+  async function handleNewsSubmit(values: NewsFormValues) {
+    if (!article) return;
+    setError(null);
+    try {
+      await updateNews(article.id, newsFormValuesToInput(values));
+      router.push("/admin/contenido");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo guardar los cambios.");
+    }
+  }
+
   return (
     <div>
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </div>
+      )}
+
       {type === "event" && event && (
         <EventForm
           submitLabel="Guardar cambios"
           defaultValues={eventToFormValues(event)}
           onPreview={(values) => setPreview({ type: "event", data: draftEventForPreview(values) })}
-          onSubmit={(values) => {
-            updateEvent(event.id, eventFormValuesToInput(values));
-            router.push("/admin/contenido");
-          }}
+          onSubmit={handleEventSubmit}
         />
       )}
       {type === "news" && article && (
@@ -67,10 +93,7 @@ export function ContentEditFlow() {
           submitLabel="Guardar cambios"
           defaultValues={newsToFormValues(article)}
           onPreview={(values) => setPreview({ type: "news", data: draftNewsForPreview(values) })}
-          onSubmit={(values) => {
-            updateNews(article.id, newsFormValuesToInput(values));
-            router.push("/admin/contenido");
-          }}
+          onSubmit={handleNewsSubmit}
         />
       )}
 

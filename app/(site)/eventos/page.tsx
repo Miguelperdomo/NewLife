@@ -4,7 +4,7 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { siteConfig } from "@/data/site";
-import { getEvents } from "@/lib/content";
+import { getCampuses, getEvents, getMinistries } from "@/lib/content";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 
 const description = "Hay un lugar para ti. Descubre lo que estamos viviendo juntos en New Life.";
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   ...buildOpenGraphMetadata({ title: `Próximos eventos — ${siteConfig.name}`, description }),
 };
 
-export default function EventosPage() {
-  const events = getEvents();
+export default async function EventosPage() {
+  const [events, ministries, campuses] = await Promise.all([getEvents(), getMinistries(), getCampuses()]);
 
   return (
     <>
@@ -45,7 +45,7 @@ export default function EventosPage() {
 
       <section className="py-16 sm:py-24">
         <Container>
-          <EventsView events={events} />
+          <EventsView events={events} ministries={ministries} campuses={campuses} />
         </Container>
       </section>
     </>

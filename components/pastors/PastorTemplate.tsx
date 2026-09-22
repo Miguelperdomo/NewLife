@@ -1,21 +1,30 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageCircle } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { Button } from "@/components/ui/Button";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { Container } from "@/components/ui/Container";
+import { siteConfig } from "@/data/site";
 import { getPastors } from "@/lib/content";
+import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import type { Pastor } from "@/lib/types";
+import { buildWhatsAppLink, pastorInquiryMessage } from "@/lib/whatsapp";
 import { PastorCard } from "./PastorCard";
 
 /**
  * Plantilla única reutilizada por todas las páginas /pastores/[slug].
  * Análoga a MinistryTemplate/EventTemplate: solo cambian los datos.
  */
-export function PastorTemplate({ pastor }: { pastor: Pastor }) {
+export async function PastorTemplate({ pastor }: { pastor: Pastor }) {
   const paragraphs = pastor.bio.split("\n\n").filter(Boolean);
-  const others = getPastors().filter((item) => item.slug !== pastor.slug);
+  const [allPastors, settings] = await Promise.all([getPastors(), getPublicSiteSettings()]);
+  const others = allPastors.filter((item) => item.slug !== pastor.slug);
+  const whatsappHref = buildWhatsAppLink(
+    pastor.whatsappNumber || settings?.whatsappNumber || siteConfig.whatsappNumber,
+    pastorInquiryMessage(pastor.name)
+  );
 
   return (
     <>
@@ -64,6 +73,11 @@ export function PastorTemplate({ pastor }: { pastor: Pastor }) {
               ))}
             </div>
           )}
+
+          <Button href={whatsappHref} target="_blank" rel="noopener noreferrer" variant="primary" className="mt-4">
+            <MessageCircle className="h-4 w-4" aria-hidden="true" />
+            Contactar por WhatsApp
+          </Button>
         </Container>
       </section>
 

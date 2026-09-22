@@ -1,18 +1,30 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { loadStore, saveStore } from "@/lib/admin/storage";
-import { slugify, uniqueSlug } from "@/lib/admin/slug";
+import {
+  createEvent as createEventRequest,
+  duplicateEvent as duplicateEventRequest,
+  loadEvents,
+  setEventStatus,
+  updateEvent as updateEventRequest,
+} from "@/lib/admin/events";
+import {
+  createNews as createNewsRequest,
+  duplicateNews as duplicateNewsRequest,
+  loadNews,
+  setNewsStatus,
+  updateNews as updateNewsRequest,
+} from "@/lib/admin/news";
 import type { AdminEvent, AdminNews } from "@/lib/admin/types";
 
 type NewEventInput = Omit<AdminEvent, "id" | "slug" | "createdAt" | "updatedAt"> & { slug?: string };
 type NewNewsInput = Omit<AdminNews, "id" | "slug" | "createdAt" | "updatedAt"> & { slug?: string };
 
 /**
- * Único punto de acceso al contenido del admin (eventos + noticias). Por
- * debajo usa localStorage (lib/admin/storage.ts) — ningún componente toca
- * el storage directamente, así que el día que esto hable con una API real,
- * solo cambia este hook.
+ * Único punto de acceso al contenido del admin (eventos + noticias) — ambos
+ * ya viven en Supabase (lib/admin/events.ts, lib/admin/news.ts). Mismo
+ * patrón que los demás módulos: cada mutación vuelve a pedir su lista
+ * completa.
  */
 interface ContentState {
   events: AdminEvent[];
@@ -21,137 +33,121 @@ interface ContentState {
 }
 
 export function useAdminContent() {
-  // Se carga en un efecto (no en el estado inicial) a propósito: localStorage
-  // no existe durante el render en servidor, así que leerlo antes de montar
-  // causaría un mismatch de hidratación. Un solo setState agrupa los 3 valores.
   const [{ events, news, isReady }, setState] = useState<ContentState>({
     events: [],
     news: [],
     isReady: false,
   });
 
-  useEffect(() => {
-    const store = loadStore();
-    // Excepción deliberada: leer localStorage antes del montaje rompería la
-    // hidratación (no existe en el render de servidor). Cargarlo aquí, una
-    // sola vez, es el patrón correcto para este caso — no un "you might not
-    // need an effect".
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setState({ events: store.events, news: store.news, isReady: true });
+  const refreshEvents = useCallback(async () => {
+    const loaded = await loadEvents();
+    setState((prev) => ({ ...prev, events: loaded, isReady: true }));
+    return loaded;
   }, []);
 
-  const persist = useCallback((nextEvents: AdminEvent[], nextNews: AdminNews[]) => {
-    setState({ events: nextEvents, news: nextNews, isReady: true });
-    saveStore({ events: nextEvents, news: nextNews });
+  const refreshNews = useCallback(async () => {
+    const loaded = await loadNews();
+    setState((prev) => ({ ...prev, news: loaded, isReady: true }));
+    return loaded;
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    Promise.all([loadEvents(), loadNews()]).then(([loadedEvents, loadedNews]) => {
+      if (!cancelled) setState({ events: loadedEvents, news: loadedNews, isReady: true });
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const createEvent = useCallback(
-    (input: NewEventInput) => {
-      const now = new Date().toISOString();
-      const slug = uniqueSlug(
-        input.slug || slugify(input.title),
-        events.map((event) => event.slug),
-        "contenido"
+    async (input: NewEventInput) => {
+      const created = await createEventRequest(
+        input,
+        events.map((event) => event.slug)
       );
-      const event: AdminEvent = { ...input, id: crypto.randomUUID(), slug, createdAt: now, updatedAt: now };
-      persist([event, ...events], news);
-      return event;
+      await refreshEvents();
+      return created;
     },
-    [events, news, persist]
+    [events, refreshEvents]
   );
 
   const updateEvent = useCallback(
-    (id: string, input: Partial<AdminEvent>) => {
-      const now = new Date().toISOString();
-      persist(
-        events.map((event) => (event.id === id ? { ...event, ...input, id: event.id, updatedAt: now } : event)),
-        news
-      );
+    async (id: string, input: Partial<AdminEvent>) => {
+      const updated = await updateEventRequest(id, input);
+      await refreshEvents();
+      return updated;
     },
-    [events, news, persist]
+    [refreshEvents]
   );
 
   const duplicateEvent = useCallback(
-    (id: string) => {
+    async (id: string) => {
       const original = events.find((event) => event.id === id);
       if (!original) return undefined;
-      const now = new Date().toISOString();
-      const slug = uniqueSlug(
-        `${original.slug}-copia`,
-        events.map((event) => event.slug),
-        "contenido"
+      const created = await duplicateEventRequest(
+        original,
+        events.map((event) => event.slug)
       );
-      const copy: AdminEvent = {
-        ...original,
-        id: crypto.randomUUID(),
-        slug,
-        title: `${original.title} (copia)`,
-        status: "draft",
-        createdAt: now,
-        updatedAt: now,
-      };
-      persist([copy, ...events], news);
-      return copy;
+      await refreshEvents();
+      return created;
     },
-    [events, news, persist]
+    [events, refreshEvents]
   );
 
-  const archiveEvent = useCallback((id: string) => updateEvent(id, { status: "archived" }), [updateEvent]);
+  const archiveEvent = useCallback(
+    async (id: string) => {
+      await setEventStatus(id, "archived");
+      await refreshEvents();
+    },
+    [refreshEvents]
+  );
 
   const createNews = useCallback(
-    (input: NewNewsInput) => {
-      const now = new Date().toISOString();
-      const slug = uniqueSlug(
-        input.slug || slugify(input.title),
-        news.map((article) => article.slug),
-        "contenido"
+    async (input: NewNewsInput) => {
+      const created = await createNewsRequest(
+        input,
+        news.map((article) => article.slug)
       );
-      const article: AdminNews = { ...input, id: crypto.randomUUID(), slug, createdAt: now, updatedAt: now };
-      persist(events, [article, ...news]);
-      return article;
+      await refreshNews();
+      return created;
     },
-    [events, news, persist]
+    [news, refreshNews]
   );
 
   const updateNews = useCallback(
-    (id: string, input: Partial<AdminNews>) => {
-      const now = new Date().toISOString();
-      persist(
-        events,
-        news.map((article) =>
-          article.id === id ? { ...article, ...input, id: article.id, updatedAt: now } : article
-        )
-      );
+    async (id: string, input: Partial<AdminNews>) => {
+      const updated = await updateNewsRequest(id, input);
+      await refreshNews();
+      return updated;
     },
-    [events, news, persist]
+    [refreshNews]
   );
 
   const duplicateNews = useCallback(
-    (id: string) => {
+    async (id: string) => {
       const original = news.find((article) => article.id === id);
       if (!original) return undefined;
-      const now = new Date().toISOString();
-      const slug = uniqueSlug(
-        `${original.slug}-copia`,
-        news.map((article) => article.slug),
-        "contenido"
+      const created = await duplicateNewsRequest(
+        original,
+        news.map((article) => article.slug)
       );
-      const copy: AdminNews = {
-        ...original,
-        id: crypto.randomUUID(),
-        slug,
-        title: `${original.title} (copia)`,
-        status: "draft",
-        createdAt: now,
-        updatedAt: now,
-      };
-      persist(events, [copy, ...news]);
-      return copy;
+      await refreshNews();
+      return created;
     },
-    [events, news, persist]
+    [news, refreshNews]
   );
 
-  const archiveNews = useCallback((id: string) => updateNews(id, { status: "archived" }), [updateNews]);
+  const archiveNews = useCallback(
+    async (id: string) => {
+      await setNewsStatus(id, "archived");
+      await refreshNews();
+    },
+    [refreshNews]
+  );
 
   return {
     events,

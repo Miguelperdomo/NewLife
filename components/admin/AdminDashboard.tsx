@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { toContentRows } from "@/lib/admin/contentRows";
+import { useAdminCampuses } from "@/lib/admin/useAdminCampuses";
 import { useAdminContent } from "@/lib/admin/useAdminContent";
 import { useAdminMinistries } from "@/lib/admin/useAdminMinistries";
-import { getMinistries } from "@/lib/content";
 import { getEventStatus } from "@/lib/events";
 import { DashboardStats } from "./DashboardStats";
 import { QuickActions } from "./QuickActions";
@@ -30,7 +30,7 @@ function useGreeting() {
 export function AdminDashboard() {
   const { events, news, isReady } = useAdminContent();
   const { ministries: adminMinistries, isReady: ministriesReady } = useAdminMinistries();
-  const ministries = useMemo(() => getMinistries(), []);
+  const { campuses, isReady: campusesReady } = useAdminCampuses();
   const greeting = useGreeting();
 
   const totalDrafts =
@@ -42,10 +42,10 @@ export function AdminDashboard() {
 
   const recentRows = useMemo(
     () =>
-      toContentRows(events, news, ministries)
+      toContentRows(events, news, adminMinistries)
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
         .slice(0, 5),
-    [events, news, ministries]
+    [events, news, adminMinistries]
   );
 
   const upcomingEvents = useMemo(
@@ -83,13 +83,14 @@ export function AdminDashboard() {
         totalDrafts={totalDrafts}
         totalScheduled={totalScheduled}
         totalMinistries={ministriesReady ? adminMinistries.length : undefined}
+        totalCampuses={campusesReady ? campuses.length : undefined}
       />
 
       <QuickActions />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <RecentContent rows={recentRows} />
-        <UpcomingEvents events={upcomingEvents} ministries={ministries} />
+        <UpcomingEvents events={upcomingEvents} ministries={adminMinistries} />
       </div>
 
       <SystemStatusCard />

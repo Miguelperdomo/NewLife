@@ -9,7 +9,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Modal } from "@/components/ui/Modal";
 import { toContentRows } from "@/lib/admin/contentRows";
 import { useAdminContent } from "@/lib/admin/useAdminContent";
-import { getMinistries } from "@/lib/content";
+import { useAdminMinistries } from "@/lib/admin/useAdminMinistries";
 import type { AdminEvent, AdminNews } from "@/lib/admin/types";
 import { ContentFilters, type ContentFiltersValue } from "./ContentFilters";
 import { ContentPreview } from "./ContentPreview";
@@ -24,7 +24,7 @@ export function ContentDashboard() {
   const searchParams = useSearchParams();
   const { events, news, isReady, duplicateEvent, duplicateNews, archiveEvent, archiveNews } =
     useAdminContent();
-  const ministries = useMemo(() => getMinistries(), []);
+  const { ministries } = useAdminMinistries();
   const [filters, setFilters] = useState<ContentFiltersValue>(() => ({
     query: "",
     type: initialTypeFilter(searchParams.get("type")),
@@ -34,6 +34,7 @@ export function ContentDashboard() {
     { type: "event"; data: AdminEvent } | { type: "news"; data: AdminNews } | null
   >(null);
   const [archiveTarget, setArchiveTarget] = useState<ContentRow | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const rows = useMemo(() => {
     return toContentRows(events, news, ministries)
@@ -57,19 +58,28 @@ export function ContentDashboard() {
     router.push(`/admin/contenido/${row.id}/editar?type=${row.type}`);
   }
 
-  function handleDuplicate(row: ContentRow) {
-    if (row.type === "event") duplicateEvent(row.id);
-    else duplicateNews(row.id);
+  async function handleDuplicate(row: ContentRow) {
+    setActionError(null);
+    try {
+      if (row.type === "event") await duplicateEvent(row.id);
+      else await duplicateNews(row.id);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "No se pudo duplicar.");
+    }
   }
 
   function handleArchive(row: ContentRow) {
     setArchiveTarget(row);
   }
 
-  function confirmArchive() {
+  async function confirmArchive() {
     if (!archiveTarget) return;
-    if (archiveTarget.type === "event") archiveEvent(archiveTarget.id);
-    else archiveNews(archiveTarget.id);
+    try {
+      if (archiveTarget.type === "event") await archiveEvent(archiveTarget.id);
+      else await archiveNews(archiveTarget.id);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "No se pudo archivar.");
+    }
     setArchiveTarget(null);
   }
 
@@ -87,6 +97,12 @@ export function ContentDashboard() {
           Crear contenido
         </Button>
       </div>
+
+      {actionError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {actionError}
+        </div>
+      )}
 
       <ContentFilters value={filters} onChange={setFilters} />
 

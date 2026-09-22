@@ -5,15 +5,16 @@ import { siteConfig } from "@/data/site";
 import { getEventBySlug, getEvents } from "@/lib/content";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 
-export function generateStaticParams() {
-  return getEvents().map((event) => ({ slug: event.slug }));
+export async function generateStaticParams() {
+  const events = await getEvents();
+  return events.map((event) => ({ slug: event.slug }));
 }
 
 export async function generateMetadata(
   props: PageProps<"/eventos/[slug]">
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const event = getEventBySlug(slug);
+  const event = await getEventBySlug(slug);
 
   if (!event) {
     return { title: `Evento no encontrado — ${siteConfig.name}` };
@@ -32,7 +33,7 @@ export async function generateMetadata(
 
 export default async function EventPage(props: PageProps<"/eventos/[slug]">) {
   const { slug } = await props.params;
-  const event = getEventBySlug(slug);
+  const event = await getEventBySlug(slug);
 
   if (!event) {
     notFound();

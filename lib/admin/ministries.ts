@@ -101,21 +101,26 @@ export async function updateMinistry(
 ): Promise<AdminMinistry> {
   const supabase = createClient();
 
-  const patch: Record<string, unknown> = {};
-  if (input.name !== undefined) patch.name = input.name;
-  if (input.shortDescription !== undefined) patch.short_description = input.shortDescription;
-  if (input.description !== undefined) patch.description = input.description;
-  if (input.imageSrc !== undefined) patch.image_url = input.imageSrc || null;
-  if (input.leader !== undefined) patch.leader = input.leader || null;
-  if (input.whatsapp !== undefined) patch.whatsapp = input.whatsapp || null;
-  if (input.meetingSchedule !== undefined) patch.meeting_schedule = input.meetingSchedule || null;
-  if (input.meetingLocation !== undefined) patch.meeting_location = input.meetingLocation || null;
-  if (input.status !== undefined) patch.status = input.status;
-  if (input.displayOrder !== undefined) patch.display_order = input.displayOrder;
-  if (input.showPublicly !== undefined) patch.show_publicly = input.showPublicly;
-  // Si el slug cambió a mano, sigue garantizando que quede único frente al
-  // resto — mismo mecanismo que al crear. Si no cambió, no se toca (evita
-  // pisarlo con un sufijo "-2" innecesario).
+  // Sin condicionales "si viene definido" para los campos de texto opcionales:
+  // en la práctica este método siempre se llama con el formulario completo
+  // (ver MinistryEditFlow), y un campo que el usuario deja vacío se convierte
+  // en `undefined` en lib/admin/mappers.ts (orUndefined) — con un filtro
+  // `!== undefined` eso nunca se borraba en la base de datos aunque en
+  // pantalla se viera vacío. El slug es la única excepción real: si no
+  // cambió, no se toca (evita pisarlo con un sufijo "-2" innecesario).
+  const patch: Record<string, unknown> = {
+    name: input.name,
+    short_description: input.shortDescription,
+    description: input.description,
+    image_url: input.imageSrc || null,
+    leader: input.leader || null,
+    whatsapp: input.whatsapp || null,
+    meeting_schedule: input.meetingSchedule || null,
+    meeting_location: input.meetingLocation || null,
+    status: input.status,
+    display_order: input.displayOrder,
+    show_publicly: input.showPublicly,
+  };
   if (input.slug !== undefined && input.slug !== currentSlug) {
     patch.slug = uniqueSlug(input.slug, otherSlugs, "ministerio");
   }

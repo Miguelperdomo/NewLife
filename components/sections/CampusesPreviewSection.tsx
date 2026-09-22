@@ -4,8 +4,8 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getCampuses } from "@/lib/content";
 
-export function CampusesPreviewSection() {
-  const campuses = getCampuses();
+export async function CampusesPreviewSection() {
+  const campuses = await getCampuses();
 
   if (campuses.length === 0) {
     return null;

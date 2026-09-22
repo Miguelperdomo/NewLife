@@ -5,15 +5,16 @@ import { siteConfig } from "@/data/site";
 import { getNews, getNewsBySlug } from "@/lib/content";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 
-export function generateStaticParams() {
-  return getNews().map((article) => ({ slug: article.slug }));
+export async function generateStaticParams() {
+  const articles = await getNews();
+  return articles.map((article) => ({ slug: article.slug }));
 }
 
 export async function generateMetadata(
   props: PageProps<"/noticias/[slug]">
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const article = getNewsBySlug(slug);
+  const article = await getNewsBySlug(slug);
 
   if (!article) {
     return { title: `Noticia no encontrada — ${siteConfig.name}` };
@@ -33,7 +34,7 @@ export async function generateMetadata(
 
 export default async function NewsPage(props: PageProps<"/noticias/[slug]">) {
   const { slug } = await props.params;
-  const article = getNewsBySlug(slug);
+  const article = await getNewsBySlug(slug);
 
   if (!article) {
     notFound();

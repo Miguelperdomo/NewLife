@@ -5,15 +5,16 @@ import { siteConfig } from "@/data/site";
 import { getPastorBySlug, getPastors } from "@/lib/content";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 
-export function generateStaticParams() {
-  return getPastors().map((pastor) => ({ slug: pastor.slug }));
+export async function generateStaticParams() {
+  const pastors = await getPastors();
+  return pastors.map((pastor) => ({ slug: pastor.slug }));
 }
 
 export async function generateMetadata(
   props: PageProps<"/pastores/[slug]">
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const pastor = getPastorBySlug(slug);
+  const pastor = await getPastorBySlug(slug);
 
   if (!pastor) {
     return { title: `Pastor no encontrado — ${siteConfig.name}` };
@@ -32,7 +33,7 @@ export async function generateMetadata(
 
 export default async function PastorPage(props: PageProps<"/pastores/[slug]">) {
   const { slug } = await props.params;
-  const pastor = getPastorBySlug(slug);
+  const pastor = await getPastorBySlug(slug);
 
   if (!pastor) {
     notFound();

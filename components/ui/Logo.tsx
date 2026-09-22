@@ -5,9 +5,14 @@ import { LogoMark } from "./LogoMark";
 export function Logo({
   variant = "dark",
   className,
+  logoSrc,
+  name,
 }: {
   variant?: "dark" | "light";
   className?: string;
+  /** Logo/nombre guardados en Configuración; si no se pasan, usa los fijos de siempre. */
+  logoSrc?: string;
+  name?: string;
 }) {
   return (
     <span
@@ -17,8 +22,8 @@ export function Logo({
         className
       )}
     >
-      <LogoMark className="h-9 w-9 rounded-full" />
-      {siteConfig.name}
+      <LogoMark className="h-9 w-9 rounded-full" src={logoSrc} alt={`Logo de ${name || siteConfig.name}`} />
+      {name || siteConfig.name}
     </span>
   );
 }

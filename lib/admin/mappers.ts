@@ -31,7 +31,9 @@ function orUndefined(value?: string) {
 export function eventFormValuesToInput(values: EventFormValues): NewEventInput {
   return {
     title: values.title,
+    shortDescription: values.shortDescription,
     description: values.description,
+    category: orUndefined(values.category),
     imageSrc: orUndefined(values.imageSrc),
     status: values.status,
     publishAt: orUndefined(values.publishAt),
@@ -53,7 +55,9 @@ export function eventFormValuesToInput(values: EventFormValues): NewEventInput {
 export function eventToFormValues(event: AdminEvent): EventFormValues {
   return {
     title: event.title,
+    shortDescription: event.shortDescription,
     description: event.description,
+    category: event.category ?? "",
     imageSrc: event.imageSrc ?? "",
     status: event.status,
     publishAt: event.publishAt ?? "",
@@ -111,6 +115,12 @@ export function campusFormValuesToInput(values: CampusFormValues): NewCampusInpu
     isMain: values.isMain,
     leadPastorSlug: orUndefined(values.leadPastorSlug),
     whatsappNumber: orUndefined(values.whatsappNumber),
+    schedules: values.schedules.map((schedule) => ({
+      dayOfWeek: Number(schedule.dayOfWeek),
+      time: schedule.time,
+      title: schedule.title,
+      description: orUndefined(schedule.description),
+    })),
   };
 }
 
@@ -125,6 +135,12 @@ export function campusToFormValues(campus: AdminCampus): CampusFormValues {
     isMain: campus.isMain,
     leadPastorSlug: campus.leadPastorSlug ?? "",
     whatsappNumber: campus.whatsappNumber ?? "",
+    schedules: campus.schedules.map((schedule) => ({
+      dayOfWeek: String(schedule.dayOfWeek),
+      time: schedule.time,
+      title: schedule.title,
+      description: schedule.description ?? "",
+    })),
   };
 }
 
@@ -176,11 +192,11 @@ export function siteSettingsFormValuesToInput(values: SiteSettingsFormValues): S
     city: orUndefined(values.city),
     generalSchedule: orUndefined(values.generalSchedule),
 
+    heroTagline: orUndefined(values.heroTagline),
+
     primaryColor: values.primaryColor,
-    secondaryColor: values.secondaryColor,
     accentColor: values.accentColor,
     coverImageUrl: orUndefined(values.coverImageUrl),
-    footerText: orUndefined(values.footerText),
 
     facebookUrl: orUndefined(values.facebookUrl),
     facebookEnabled: values.facebookEnabled,
@@ -204,6 +220,31 @@ export function siteSettingsFormValuesToInput(values: SiteSettingsFormValues): S
     whatsappDefaultMessage: values.whatsappDefaultMessage,
     supportPhone: orUndefined(values.supportPhone),
     contactEmail: orUndefined(values.contactEmail),
+
+    seoTitle: orUndefined(values.seoTitle),
+    seoDescription: orUndefined(values.seoDescription),
+    seoImageUrl: orUndefined(values.seoImageUrl),
+
+    aboutImageUrl: orUndefined(values.aboutImageUrl),
+    aboutQuienesSomos: orUndefined(values.aboutQuienesSomos),
+    aboutMision: orUndefined(values.aboutMision),
+    aboutVision: orUndefined(values.aboutVision),
+    aboutValores: orUndefined(values.aboutValores),
+
+    helpTitle: orUndefined(values.helpTitle),
+    helpDescription: orUndefined(values.helpDescription),
+    helpCtaLabel: orUndefined(values.helpCtaLabel),
+    helpOptionsTitle: orUndefined(values.helpOptionsTitle),
+
+    donationsEnabled: values.donationsEnabled,
+    bankName: orUndefined(values.bankName),
+    bankAccountType: orUndefined(values.bankAccountType),
+    bankAccountNumber: orUndefined(values.bankAccountNumber),
+    bankAccountHolder: orUndefined(values.bankAccountHolder),
+    nequiNumber: orUndefined(values.nequiNumber),
+    daviplataNumber: orUndefined(values.daviplataNumber),
+
+    maintenanceMode: values.maintenanceMode,
   };
 }
 
@@ -221,11 +262,11 @@ export function siteSettingsToFormValues(settings: AdminSiteSettings): SiteSetti
     city: settings.city ?? "",
     generalSchedule: settings.generalSchedule ?? "",
 
+    heroTagline: settings.heroTagline ?? "",
+
     primaryColor: settings.primaryColor,
-    secondaryColor: settings.secondaryColor,
     accentColor: settings.accentColor,
     coverImageUrl: settings.coverImageUrl ?? "",
-    footerText: settings.footerText ?? "",
 
     facebookUrl: settings.facebookUrl ?? "",
     facebookEnabled: settings.facebookEnabled,
@@ -249,5 +290,30 @@ export function siteSettingsToFormValues(settings: AdminSiteSettings): SiteSetti
     whatsappDefaultMessage: settings.whatsappDefaultMessage,
     supportPhone: settings.supportPhone ?? "",
     contactEmail: settings.contactEmail ?? "",
+
+    seoTitle: settings.seoTitle ?? "",
+    seoDescription: settings.seoDescription ?? "",
+    seoImageUrl: settings.seoImageUrl ?? "",
+
+    aboutImageUrl: settings.aboutImageUrl ?? "",
+    aboutQuienesSomos: settings.aboutQuienesSomos ?? "",
+    aboutMision: settings.aboutMision ?? "",
+    aboutVision: settings.aboutVision ?? "",
+    aboutValores: settings.aboutValores ?? "",
+
+    helpTitle: settings.helpTitle ?? "",
+    helpDescription: settings.helpDescription ?? "",
+    helpCtaLabel: settings.helpCtaLabel ?? "",
+    helpOptionsTitle: settings.helpOptionsTitle ?? "",
+
+    donationsEnabled: settings.donationsEnabled,
+    bankName: settings.bankName ?? "",
+    bankAccountType: settings.bankAccountType ?? "",
+    bankAccountNumber: settings.bankAccountNumber ?? "",
+    bankAccountHolder: settings.bankAccountHolder ?? "",
+    nequiNumber: settings.nequiNumber ?? "",
+    daviplataNumber: settings.daviplataNumber ?? "",
+
+    maintenanceMode: settings.maintenanceMode,
   };
 }

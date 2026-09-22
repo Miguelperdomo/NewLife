@@ -4,8 +4,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MinistryCard } from "@/components/ministries/MinistryCard";
 import { getMinistries } from "@/lib/content";
 
-export function MinistriesSection() {
-  const ministries = getMinistries();
+export async function MinistriesSection() {
+  const ministries = await getMinistries();
 
   return (
     <section className="bg-slate-50 py-20 sm:py-28">

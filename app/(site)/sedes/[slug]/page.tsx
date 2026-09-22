@@ -5,15 +5,16 @@ import { siteConfig } from "@/data/site";
 import { getCampusBySlug, getCampuses } from "@/lib/content";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 
-export function generateStaticParams() {
-  return getCampuses().map((campus) => ({ slug: campus.slug }));
+export async function generateStaticParams() {
+  const campuses = await getCampuses();
+  return campuses.map((campus) => ({ slug: campus.slug }));
 }
 
 export async function generateMetadata(
   props: PageProps<"/sedes/[slug]">
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const campus = getCampusBySlug(slug);
+  const campus = await getCampusBySlug(slug);
 
   if (!campus) {
     return { title: `Sede no encontrada — ${siteConfig.name}` };
@@ -32,7 +33,7 @@ export async function generateMetadata(
 
 export default async function CampusPage(props: PageProps<"/sedes/[slug]">) {
   const { slug } = await props.params;
-  const campus = getCampusBySlug(slug);
+  const campus = await getCampusBySlug(slug);
 
   if (!campus) {
     notFound();

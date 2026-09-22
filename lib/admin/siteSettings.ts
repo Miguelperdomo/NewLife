@@ -22,11 +22,10 @@ interface SiteSettingsRow {
   address: string | null;
   city: string | null;
   general_schedule: string | null;
+  hero_tagline: string | null;
   primary_color: string;
-  secondary_color: string;
   accent_color: string;
   cover_image_url: string | null;
-  footer_text: string | null;
   facebook_url: string | null;
   facebook_enabled: boolean;
   instagram_url: string | null;
@@ -47,6 +46,26 @@ interface SiteSettingsRow {
   whatsapp_default_message: string;
   support_phone: string | null;
   contact_email: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  seo_image_url: string | null;
+  about_image_url: string | null;
+  about_quienes_somos: string | null;
+  about_mision: string | null;
+  about_vision: string | null;
+  about_valores: string | null;
+  help_title: string | null;
+  help_description: string | null;
+  help_cta_label: string | null;
+  help_options_title: string | null;
+  donations_enabled: boolean;
+  bank_name: string | null;
+  bank_account_type: string | null;
+  bank_account_number: string | null;
+  bank_account_holder: string | null;
+  nequi_number: string | null;
+  daviplata_number: string | null;
+  maintenance_mode: boolean;
   updated_at: string;
 }
 
@@ -62,11 +81,10 @@ function rowToSettings(row: SiteSettingsRow): AdminSiteSettings {
     address: row.address ?? undefined,
     city: row.city ?? undefined,
     generalSchedule: row.general_schedule ?? undefined,
+    heroTagline: row.hero_tagline ?? undefined,
     primaryColor: row.primary_color,
-    secondaryColor: row.secondary_color,
     accentColor: row.accent_color,
     coverImageUrl: row.cover_image_url ?? undefined,
-    footerText: row.footer_text ?? undefined,
     facebookUrl: row.facebook_url ?? undefined,
     facebookEnabled: row.facebook_enabled,
     instagramUrl: row.instagram_url ?? undefined,
@@ -87,6 +105,26 @@ function rowToSettings(row: SiteSettingsRow): AdminSiteSettings {
     whatsappDefaultMessage: row.whatsapp_default_message,
     supportPhone: row.support_phone ?? undefined,
     contactEmail: row.contact_email ?? undefined,
+    seoTitle: row.seo_title ?? undefined,
+    seoDescription: row.seo_description ?? undefined,
+    seoImageUrl: row.seo_image_url ?? undefined,
+    aboutImageUrl: row.about_image_url ?? undefined,
+    aboutQuienesSomos: row.about_quienes_somos ?? undefined,
+    aboutMision: row.about_mision ?? undefined,
+    aboutVision: row.about_vision ?? undefined,
+    aboutValores: row.about_valores ?? undefined,
+    helpTitle: row.help_title ?? undefined,
+    helpDescription: row.help_description ?? undefined,
+    helpCtaLabel: row.help_cta_label ?? undefined,
+    helpOptionsTitle: row.help_options_title ?? undefined,
+    donationsEnabled: row.donations_enabled,
+    bankName: row.bank_name ?? undefined,
+    bankAccountType: row.bank_account_type ?? undefined,
+    bankAccountNumber: row.bank_account_number ?? undefined,
+    bankAccountHolder: row.bank_account_holder ?? undefined,
+    nequiNumber: row.nequi_number ?? undefined,
+    daviplataNumber: row.daviplata_number ?? undefined,
+    maintenanceMode: row.maintenance_mode,
     updatedAt: row.updated_at,
   };
 }
@@ -104,11 +142,10 @@ function settingsToRow(settings: AdminSiteSettings) {
     address: settings.address ?? null,
     city: settings.city ?? null,
     general_schedule: settings.generalSchedule ?? null,
+    hero_tagline: settings.heroTagline ?? null,
     primary_color: settings.primaryColor,
-    secondary_color: settings.secondaryColor,
     accent_color: settings.accentColor,
     cover_image_url: settings.coverImageUrl ?? null,
-    footer_text: settings.footerText ?? null,
     facebook_url: settings.facebookUrl ?? null,
     facebook_enabled: settings.facebookEnabled,
     instagram_url: settings.instagramUrl ?? null,
@@ -129,6 +166,26 @@ function settingsToRow(settings: AdminSiteSettings) {
     whatsapp_default_message: settings.whatsappDefaultMessage,
     support_phone: settings.supportPhone ?? null,
     contact_email: settings.contactEmail ?? null,
+    seo_title: settings.seoTitle ?? null,
+    seo_description: settings.seoDescription ?? null,
+    seo_image_url: settings.seoImageUrl ?? null,
+    about_image_url: settings.aboutImageUrl ?? null,
+    about_quienes_somos: settings.aboutQuienesSomos ?? null,
+    about_mision: settings.aboutMision ?? null,
+    about_vision: settings.aboutVision ?? null,
+    about_valores: settings.aboutValores ?? null,
+    help_title: settings.helpTitle ?? null,
+    help_description: settings.helpDescription ?? null,
+    help_cta_label: settings.helpCtaLabel ?? null,
+    help_options_title: settings.helpOptionsTitle ?? null,
+    donations_enabled: settings.donationsEnabled,
+    bank_name: settings.bankName ?? null,
+    bank_account_type: settings.bankAccountType ?? null,
+    bank_account_number: settings.bankAccountNumber ?? null,
+    bank_account_holder: settings.bankAccountHolder ?? null,
+    nequi_number: settings.nequiNumber ?? null,
+    daviplata_number: settings.daviplataNumber ?? null,
+    maintenance_mode: settings.maintenanceMode,
   };
 }
 
@@ -154,11 +211,11 @@ function defaultSiteSettings(): AdminSiteSettings {
     city: undefined,
     generalSchedule: undefined,
 
+    heroTagline: undefined,
+
     primaryColor: "#7c3aed",
-    secondaryColor: "#f59e0b",
     accentColor: "#f59e0b",
     coverImageUrl: undefined,
-    footerText: "Diseñado y desarrollado por Providentia Tech · Ibagué, Colombia",
 
     facebookUrl: findSocialUrl("facebook"),
     facebookEnabled: Boolean(findSocialUrl("facebook")),
@@ -182,6 +239,31 @@ function defaultSiteSettings(): AdminSiteSettings {
     whatsappDefaultMessage: "Hola New Life, quisiera más información.",
     supportPhone: undefined,
     contactEmail: undefined,
+
+    seoTitle: undefined,
+    seoDescription: undefined,
+    seoImageUrl: undefined,
+
+    aboutImageUrl: undefined,
+    aboutQuienesSomos: undefined,
+    aboutMision: undefined,
+    aboutVision: undefined,
+    aboutValores: undefined,
+
+    helpTitle: undefined,
+    helpDescription: undefined,
+    helpCtaLabel: undefined,
+    helpOptionsTitle: undefined,
+
+    donationsEnabled: false,
+    bankName: undefined,
+    bankAccountType: undefined,
+    bankAccountNumber: undefined,
+    bankAccountHolder: undefined,
+    nequiNumber: undefined,
+    daviplataNumber: undefined,
+
+    maintenanceMode: false,
 
     updatedAt: new Date().toISOString(),
   };

@@ -1,4 +1,4 @@
-export type FirstTimeInfoSlug = "expect" | "dress" | "kids" | "parking";
+export type FirstTimeInfoSlug = "expect" | "kids" | "parking";
 
 export interface FirstTimeInfo {
   slug: FirstTimeInfoSlug;
@@ -24,12 +24,6 @@ export const firstTimeInfo: FirstTimeInfo[] = [
     title: "Qué esperar",
     description:
       "Un tiempo de alabanza, una palabra práctica y una comunidad que te va a recibir con alegría. Nada de lo que necesitas saber es complicado — solo ven.",
-  },
-  {
-    slug: "dress",
-    title: "Cómo vestir",
-    description:
-      "Como te sientas cómodo. En New Life no hay un código de vestimenta — vienes tal como eres, sin presión de encajar en nada.",
   },
   {
     slug: "kids",

@@ -11,8 +11,9 @@ import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ShareButtons } from "@/components/ui/ShareButtons";
 import { siteConfig } from "@/data/site";
-import { getCampusBySlug, getMinistryBySlug, getRelatedEvents } from "@/lib/content";
+import { getCampuses, getCampusBySlug, getMinistries, getMinistryBySlug, getRelatedEvents } from "@/lib/content";
 import { formatEventDate, getEventStatus } from "@/lib/events";
+import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import type { ChurchEvent } from "@/lib/types";
 import { buildWhatsAppLink, eventInscriptionMessage } from "@/lib/whatsapp";
 
@@ -20,17 +21,22 @@ import { buildWhatsAppLink, eventInscriptionMessage } from "@/lib/whatsapp";
  * Plantilla única reutilizada por todas las páginas /eventos/[slug].
  * Análoga a MinistryTemplate: solo cambian los datos, no la estructura.
  */
-export function EventTemplate({ event }: { event: ChurchEvent }) {
+export async function EventTemplate({ event }: { event: ChurchEvent }) {
   const status = getEventStatus(event.date, event.endDate);
-  const campus = event.campus ? getCampusBySlug(event.campus) : undefined;
-  const ministry = event.ministry ? getMinistryBySlug(event.ministry) : undefined;
+  const [campus, ministry, ministries, campuses, settings] = await Promise.all([
+    event.campus ? getCampusBySlug(event.campus) : Promise.resolve(undefined),
+    event.ministry ? getMinistryBySlug(event.ministry) : Promise.resolve(undefined),
+    getMinistries(),
+    getCampuses(),
+    getPublicSiteSettings(),
+  ]);
   const ministryLabel = ministry?.name ?? "General";
   const place = [campus?.name, event.location].filter(Boolean).join(" — ");
 
-  const related = getRelatedEvents(event, 3);
+  const related = await getRelatedEvents(event, 3);
   const canRegister = status !== "finalizado" && event.registrationByWhatsApp !== false;
   const whatsappHref = buildWhatsAppLink(
-    siteConfig.whatsappNumber,
+    settings?.whatsappNumber ?? siteConfig.whatsappNumber,
     eventInscriptionMessage(event.name, ministry?.name)
   );
 
@@ -149,7 +155,13 @@ export function EventTemplate({ event }: { event: ChurchEvent }) {
             <SectionHeading eyebrow="Eventos" title="Eventos relacionados" align="left" />
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item, index) => (
-                <EventCard key={item.slug} event={item} index={index} />
+                <EventCard
+                  key={item.slug}
+                  event={item}
+                  ministries={ministries}
+                  campuses={campuses}
+                  index={index}
+                />
               ))}
             </div>
           </Container>

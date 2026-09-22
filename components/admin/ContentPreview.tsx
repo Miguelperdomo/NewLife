@@ -9,8 +9,9 @@ function toPreviewEvent(event: AdminEvent): ChurchEvent {
   return {
     slug: event.slug || "vista-previa",
     name: event.title || "Sin título",
-    shortDescription: event.description.slice(0, 140),
+    shortDescription: event.shortDescription || event.description.slice(0, 140),
     description: event.description,
+    category: event.category,
     imageLabel: event.title || "Evento",
     imageSrc: event.imageSrc,
     date: event.startDate || new Date().toISOString().slice(0, 10),

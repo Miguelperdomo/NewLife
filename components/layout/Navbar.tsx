@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, Play, X } from "lucide-react";
+import { AccessibilityMenu } from "@/components/layout/AccessibilityMenu";
+import { InstallAppButton } from "@/components/layout/InstallAppButton";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
@@ -41,14 +43,14 @@ function LiveNavBadge({ className }: { className?: string }) {
   );
 }
 
-export function Navbar() {
+export function Navbar({ logoUrl, churchName }: { logoUrl?: string; churchName?: string }) {
   const [open, setOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/90 backdrop-blur">
       <Container className="flex h-16 items-center justify-between sm:h-20">
         <Link href="/" onClick={() => setOpen(false)} aria-label="Ir al inicio">
-          <Logo variant="dark" />
+          <Logo variant="dark" logoSrc={logoUrl} name={churchName} />
         </Link>
 
         <nav className="hidden items-center gap-4 md:flex lg:gap-8">
@@ -63,22 +65,27 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
-          <LiveNavBadge className="hidden lg:inline-flex" />
-          <Button href="/ministerios" variant="primary" className="px-5 py-2.5 text-xs">
-            Quiero ser parte
-          </Button>
-        </div>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <InstallAppButton />
+          <AccessibilityMenu />
 
-        <button
-          type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full text-slate-700 md:hidden"
-          aria-label={open ? "Cerrar menú" : "Abrir menú"}
-          aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
-        >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+          <div className="hidden items-center gap-3 md:flex">
+            <LiveNavBadge className="hidden lg:inline-flex" />
+            <Button href="/ministerios" variant="primary" className="px-5 py-2.5 text-xs">
+              Quiero ser parte
+            </Button>
+          </div>
+
+          <button
+            type="button"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-slate-700 md:hidden"
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={open}
+            onClick={() => setOpen((value) => !value)}
+          >
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </Container>
 
       <div className={cn("md:hidden", open ? "block" : "hidden")}>

@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { sundayServices } from "@/data/agenda";
 import { siteConfig } from "@/data/site";
 import { getPastorBySlug } from "@/lib/content";
+import { formatEventTime } from "@/lib/events";
 import { googleMapsDirectionsUrl, googleMapsEmbedUrl, googleMapsSearchUrl } from "@/lib/maps";
+import { dayOfWeekLabel } from "@/lib/schedule";
+import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import type { Campus } from "@/lib/types";
 import { buildWhatsAppLink, campusInquiryMessage } from "@/lib/whatsapp";
 
@@ -16,11 +18,12 @@ import { buildWhatsAppLink, campusInquiryMessage } from "@/lib/whatsapp";
  * Plantilla única reutilizada por todas las páginas /sedes/[slug]. Análoga a
  * EventTemplate/MinistryTemplate: solo cambian los datos, no la estructura.
  */
-export function CampusTemplate({ campus }: { campus: Campus }) {
-  const services = sundayServices.filter((service) => service.campusSlug === campus.slug);
-  const pastor = campus.leadPastorSlug ? getPastorBySlug(campus.leadPastorSlug) : undefined;
+export async function CampusTemplate({ campus }: { campus: Campus }) {
+  const services = campus.schedules ?? [];
+  const pastor = campus.leadPastorSlug ? await getPastorBySlug(campus.leadPastorSlug) : undefined;
+  const settings = await getPublicSiteSettings();
   const whatsappHref = buildWhatsAppLink(
-    campus.whatsappNumber ?? siteConfig.whatsappNumber,
+    campus.whatsappNumber ?? settings?.whatsappNumber ?? siteConfig.whatsappNumber,
     campusInquiryMessage(campus.fullName)
   );
 
@@ -68,17 +71,17 @@ export function CampusTemplate({ campus }: { campus: Campus }) {
               <h2 className="font-heading text-2xl font-bold text-slate-900">Horarios de servicio</h2>
               {services.length > 0 ? (
                 <div className="mt-4 space-y-2.5">
-                  {services.map((service) => (
+                  {services.map((service, index) => (
                     <div
-                      key={service.slug}
+                      key={`${service.dayOfWeek}-${service.time}-${index}`}
                       className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4"
                     >
                       <Clock className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
                       <div>
                         <p className="text-sm font-semibold text-slate-900">
-                          {service.time} — {service.title}
+                          {dayOfWeekLabel(service.dayOfWeek)} · {formatEventTime(service.time)} — {service.title}
                         </p>
-                        <p className="text-sm text-slate-500">{service.description}</p>
+                        {service.description && <p className="text-sm text-slate-500">{service.description}</p>}
                       </div>
                     </div>
                   ))}

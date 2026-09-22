@@ -7,20 +7,35 @@ import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { siteConfig } from "@/data/site";
-import { getUpcomingEventsByMinistry } from "@/lib/content";
-import type { Ministry } from "@/lib/types";
+import type { Campus, ChurchEvent, Ministry } from "@/lib/types";
 import { buildWhatsAppLink, ministryInscriptionMessage } from "@/lib/whatsapp";
 
 /**
- * Plantilla única reutilizada por todas las páginas /ministerios/[slug].
- * Solo cambian los datos que recibe, no la estructura.
+ * Plantilla única reutilizada por todas las páginas /ministerios/[slug] —
+ * también la reutiliza la vista previa del panel admin (dentro de un
+ * componente "use client"), así que no puede ser async ni importar nada de
+ * lib/content.ts/lib/eventsContent.ts (Supabase): ministries/campuses/
+ * upcomingEvents le llegan ya resueltos, opcionales (la vista previa
+ * simplemente no los pasa).
  */
-export function MinistryTemplate({ ministry }: { ministry: Ministry }) {
+export function MinistryTemplate({
+  ministry,
+  ministries = [],
+  campuses = [],
+  upcomingEvents = [],
+  whatsappNumber,
+}: {
+  ministry: Ministry;
+  ministries?: Ministry[];
+  campuses?: Campus[];
+  upcomingEvents?: ChurchEvent[];
+  /** Configuración > WhatsApp principal; el llamador la resuelve (ver comentario de arriba). */
+  whatsappNumber?: string;
+}) {
   const whatsappHref = buildWhatsAppLink(
-    siteConfig.whatsappNumber,
+    whatsappNumber || siteConfig.whatsappNumber,
     ministryInscriptionMessage(ministry.name)
   );
-  const upcomingEvents = getUpcomingEventsByMinistry(ministry.slug, 3);
 
   return (
     <>
@@ -64,7 +79,13 @@ export function MinistryTemplate({ ministry }: { ministry: Ministry }) {
                 </h2>
                 <div className="mt-4 grid gap-6 sm:grid-cols-2">
                   {upcomingEvents.map((event, index) => (
-                    <EventCard key={event.slug} event={event} index={index} />
+                    <EventCard
+                      key={event.slug}
+                      event={event}
+                      ministries={ministries}
+                      campuses={campuses}
+                      index={index}
+                    />
                   ))}
                 </div>
               </div>

@@ -17,8 +17,8 @@ export const metadata: Metadata = {
 
 const tones = ["dark", "brand"] as const;
 
-export default function SedesPage() {
-  const campuses = getCampuses();
+export default async function SedesPage() {
+  const campuses = await getCampuses();
 
   return (
     <>

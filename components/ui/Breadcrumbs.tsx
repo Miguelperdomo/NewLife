@@ -54,7 +54,13 @@ export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
           })}
         </ol>
       </Container>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {/* JSON.stringify no escapa "<", así que un título con "</script>" podría
+          cerrar esta etiqueta antes de tiempo — se reemplaza por su escape
+          unicode, inofensivo dentro de JSON válido. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
     </nav>
   );
 }

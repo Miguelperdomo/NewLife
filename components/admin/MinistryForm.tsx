@@ -6,7 +6,9 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { slugify } from "@/lib/admin/slug";
 import { ministryFormSchema, type MinistryFormValues } from "@/lib/admin/schemas";
+import { useUnsavedChangesWarning } from "@/lib/admin/useUnsavedChangesWarning";
 import { FormField, FormSection, inputClass, textareaClass } from "./form/FormField";
+import { ImageUploadField } from "./form/ImageUploadField";
 
 export const ministryFormDefaults: MinistryFormValues = {
   name: "",
@@ -43,11 +45,14 @@ export function MinistryForm({
     handleSubmit,
     getValues,
     setValue,
-    formState: { errors, isSubmitting },
+    control,
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<MinistryFormValues>({
     resolver: zodResolver(ministryFormSchema),
     defaultValues: { ...ministryFormDefaults, ...defaultValues },
   });
+
+  useUnsavedChangesWarning(isDirty && !isSubmitting);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -100,17 +105,9 @@ export function MinistryForm({
         </FormField>
       </FormSection>
 
-      <FormSection
-        title="Imagen"
-        description="Opcional. Ruta o URL de la imagen — sin subida de archivos todavía. Si se deja vacío, se usa un color de marca. Preparado para conectarse a un servicio de medios más adelante."
-      >
+      <FormSection title="Imagen" description="Opcional. Si no subes ninguna, se usa un color de marca.">
         <FormField label="Imagen del ministerio" htmlFor="imageSrc">
-          <input
-            id="imageSrc"
-            className={inputClass}
-            placeholder="/img/mi-ministerio.jpg"
-            {...register("imageSrc")}
-          />
+          <ImageUploadField control={control} name="imageSrc" folder="ministries" />
         </FormField>
       </FormSection>
 

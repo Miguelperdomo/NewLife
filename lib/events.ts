@@ -31,6 +31,19 @@ function formatSingleDate(date: string) {
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
+function formatTimeLabel(time: string) {
+  const [hours, minutes] = time.split(":").map(Number);
+  const parsed = new Date(2000, 0, 1, hours, minutes);
+  return new Intl.DateTimeFormat("es-CO", { hour: "numeric", minute: "2-digit", hour12: true }).format(parsed);
+}
+
+/** Convierte "19:00"/"21:00" (input type="time" del admin) a "7:00 p. m." o "7:00 p. m. – 9:00 p. m.". */
+export function formatEventTime(startTime?: string, endTime?: string): string | undefined {
+  if (!startTime) return undefined;
+  const start = formatTimeLabel(startTime);
+  return endTime ? `${start} – ${formatTimeLabel(endTime)}` : start;
+}
+
 export function formatEventDate(date: string, endDate?: string) {
   if (!endDate || endDate === date) return formatSingleDate(date);
 

@@ -1,14 +1,14 @@
-import { sundayServices } from "@/data/agenda";
-import { getCampusBySlug, getEvents, getFeaturedNews, getMinistryBySlug } from "@/lib/content";
-import { formatEventDate } from "@/lib/events";
-import type { ChurchEvent, NewsArticle } from "@/lib/types";
+import { formatEventDate, formatEventTime } from "@/lib/events";
+import type { Campus, ChurchEvent, Ministry, NewsArticle } from "@/lib/types";
 
 /**
- * Capa de agenda: combina los cultos recurrentes (data/agenda.ts) con los
- * eventos y noticias que ya existen (lib/content.ts) en una sola línea de
- * tiempo por día. No introduce almacenamiento propio — solo lee y agrupa lo
- * que ya existe, para que el día que haya backend/MySQL baste con cambiar
- * lib/content.ts; esta capa y los componentes que la consumen no cambiarían.
+ * Capa de agenda: combina los cultos recurrentes (horarios de cada sede,
+ * ver campus.schedules) con eventos y noticias en una sola línea de tiempo
+ * por día. Funciones puras a propósito, sin pedir datos ellas mismas:
+ * eventos/noticias/sedes vienen de Supabase (async), y este archivo lo usan
+ * componentes "use client" (EventCalendarView, AgendaSection) que no pueden
+ * pedirlos en medio del render — su ancestro de servidor los resuelve una
+ * vez y los pasa como parámetro.
  */
 export type AgendaItemType = "culto" | "evento" | "ministerio" | "noticia";
 
@@ -57,8 +57,8 @@ export function formatAgendaMonthLabel(year: number, monthIndex: number): string
   return `${monthName.toUpperCase()} ${year}`;
 }
 
-function isSunday(date: string): boolean {
-  return new Date(`${date}T00:00:00`).getDay() === 0;
+function getDayOfWeek(date: string): number {
+  return new Date(`${date}T00:00:00`).getDay();
 }
 
 function hhmmToMinutes(hhmm: string): number {
@@ -77,33 +77,35 @@ function spanishTimeToMinutes(time?: string): number {
   return (isPM ? hours + 12 : hours) * 60 + minutes;
 }
 
-function sundayServiceItems(date: string): AgendaItem[] {
-  if (!isSunday(date)) return [];
-  return sundayServices.map((service) => {
-    const campus = getCampusBySlug(service.campusSlug);
-    return {
-      id: `culto-${date}-${service.slug}`,
-      type: "culto",
-      title: service.title,
-      subtitle: service.description,
-      time: service.time,
-      sortMinutes: hhmmToMinutes(service.sortTime),
-      location: campus?.name,
-    };
-  });
+/** Horarios recurrentes de cualquier sede que caigan en `date` (según su día de la semana). */
+function recurringServiceItems(date: string, campuses: Campus[]): AgendaItem[] {
+  const dayOfWeek = getDayOfWeek(date);
+  return campuses.flatMap((campus) =>
+    (campus.schedules ?? [])
+      .filter((schedule) => schedule.dayOfWeek === dayOfWeek)
+      .map((schedule) => ({
+        id: `culto-${date}-${campus.slug}-${schedule.time}-${schedule.title}`,
+        type: "culto" as const,
+        title: schedule.title,
+        subtitle: schedule.description,
+        time: formatEventTime(schedule.time),
+        sortMinutes: hhmmToMinutes(schedule.time),
+        location: campus.name,
+      }))
+  );
 }
 
 /** Eventos vigentes en `date`, incluyendo los de varios días (date..endDate). */
-function getEventsForDate(date: string): ChurchEvent[] {
-  return getEvents().filter((event) => {
+function getEventsForDate(date: string, events: ChurchEvent[]): ChurchEvent[] {
+  return events.filter((event) => {
     const end = event.endDate ?? event.date;
     return date >= event.date && date <= end;
   });
 }
 
-function eventToAgendaItem(event: ChurchEvent): AgendaItem {
-  const campus = event.campus ? getCampusBySlug(event.campus) : undefined;
-  const ministry = event.ministry ? getMinistryBySlug(event.ministry) : undefined;
+function eventToAgendaItem(event: ChurchEvent, ministries: Ministry[], campuses: Campus[]): AgendaItem {
+  const campus = event.campus ? campuses.find((item) => item.slug === event.campus) : undefined;
+  const ministry = event.ministry ? ministries.find((item) => item.slug === event.ministry) : undefined;
   const isMultiDay = Boolean(event.endDate && event.endDate !== event.date);
   return {
     id: `evento-${event.slug}`,
@@ -123,8 +125,8 @@ function eventToAgendaItem(event: ChurchEvent): AgendaItem {
 }
 
 /** Solo noticias destacadas, para no saturar la agenda con todo el listado. */
-function getFeaturedNewsForDate(date: string): NewsArticle[] {
-  return getFeaturedNews().filter((article) => article.publishedAt === date);
+function getFeaturedNewsForDate(date: string, news: NewsArticle[]): NewsArticle[] {
+  return news.filter((article) => article.featured && article.publishedAt === date);
 }
 
 function newsToAgendaItem(article: NewsArticle): AgendaItem {
@@ -141,11 +143,17 @@ function newsToAgendaItem(article: NewsArticle): AgendaItem {
 }
 
 /** Todo el contenido de una fecha (cultos + eventos + noticias destacadas), ordenado por hora. */
-export function getAgendaItemsForDate(date: string): AgendaItem[] {
+export function getAgendaItemsForDate(
+  date: string,
+  ministries: Ministry[],
+  campuses: Campus[],
+  events: ChurchEvent[],
+  news: NewsArticle[]
+): AgendaItem[] {
   const items = [
-    ...sundayServiceItems(date),
-    ...getEventsForDate(date).map(eventToAgendaItem),
-    ...getFeaturedNewsForDate(date).map(newsToAgendaItem),
+    ...recurringServiceItems(date, campuses),
+    ...getEventsForDate(date, events).map((event) => eventToAgendaItem(event, ministries, campuses)),
+    ...getFeaturedNewsForDate(date, news).map(newsToAgendaItem),
   ];
   return items.sort((a, b) => a.sortMinutes - b.sortMinutes);
 }
@@ -153,7 +161,10 @@ export function getAgendaItemsForDate(date: string): AgendaItem[] {
 /** Qué tipos de contenido tiene cada día de un mes — para pintar los indicadores del calendario. */
 export function getAgendaTypesForMonth(
   year: number,
-  monthIndex: number
+  monthIndex: number,
+  campuses: Campus[],
+  events: ChurchEvent[],
+  news: NewsArticle[]
 ): Record<string, AgendaItemType[]> {
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
   const result: Record<string, AgendaItemType[]> = {};
@@ -161,9 +172,9 @@ export function getAgendaTypesForMonth(
   for (let day = 1; day <= daysInMonth; day++) {
     const date = toISODate(new Date(year, monthIndex, day));
     const types = new Set<AgendaItemType>();
-    if (isSunday(date)) types.add("culto");
-    getEventsForDate(date).forEach((event) => types.add(event.ministry ? "ministerio" : "evento"));
-    if (getFeaturedNewsForDate(date).length > 0) types.add("noticia");
+    if (recurringServiceItems(date, campuses).length > 0) types.add("culto");
+    getEventsForDate(date, events).forEach((event) => types.add(event.ministry ? "ministerio" : "evento"));
+    if (getFeaturedNewsForDate(date, news).length > 0) types.add("noticia");
     if (types.size > 0) result[date] = Array.from(types);
   }
 

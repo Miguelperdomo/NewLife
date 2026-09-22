@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   ...buildOpenGraphMetadata({ title: `Noticias — ${siteConfig.name}`, description }),
 };
 
-export default function NoticiasPage() {
-  const articles = getNews();
+export default async function NoticiasPage() {
+  const articles = await getNews();
 
   return (
     <>

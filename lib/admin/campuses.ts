@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 import { slugify, uniqueSlug } from "@/lib/admin/slug";
-import type { AdminCampus } from "@/lib/admin/types";
+import type { AdminCampus, AdminServiceSchedule } from "@/lib/admin/types";
 
 /**
  * Capa de datos de Sedes contra Supabase (tabla `campuses`). `leadPastorSlug`
@@ -12,6 +12,14 @@ import type { AdminCampus } from "@/lib/admin/types";
  * encuentra ningún pastor y el campo queda vacío — no rompe nada, empieza a
  * funcionar solo en cuanto Pastores tenga sus propias filas.
  */
+interface ScheduleRow {
+  day_of_week: number;
+  service_time: string;
+  title: string;
+  description: string | null;
+  display_order: number;
+}
+
 interface CampusRow {
   id: string;
   slug: string;
@@ -26,7 +34,11 @@ interface CampusRow {
   created_at: string;
   updated_at: string;
   pastor: { slug: string } | null;
+  campus_service_schedules: ScheduleRow[];
 }
+
+const SELECT_COLUMNS =
+  "*, pastor:pastors(slug), campus_service_schedules(day_of_week, service_time, title, description, display_order)";
 
 function rowToCampus(row: CampusRow): AdminCampus {
   return {
@@ -40,9 +52,38 @@ function rowToCampus(row: CampusRow): AdminCampus {
     isMain: row.is_main,
     leadPastorSlug: row.pastor?.slug ?? undefined,
     whatsappNumber: row.whatsapp_number ?? undefined,
+    schedules: (row.campus_service_schedules ?? [])
+      .slice()
+      .sort((a, b) => a.display_order - b.display_order)
+      .map((schedule) => ({
+        // service_time viene de Postgres como "HH:MM:SS" — se recorta a "HH:MM" para que calce con <input type="time">.
+        dayOfWeek: schedule.day_of_week,
+        time: schedule.service_time.slice(0, 5),
+        title: schedule.title,
+        description: schedule.description ?? undefined,
+      })),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
+}
+
+/** Reemplaza por completo los horarios de una sede — mismo patrón que syncEventMinistries. */
+async function syncCampusSchedules(campusId: string, schedules: AdminServiceSchedule[]) {
+  const supabase = createClient();
+  await supabase.from("campus_service_schedules").delete().eq("campus_id", campusId);
+
+  if (schedules.length > 0) {
+    await supabase.from("campus_service_schedules").insert(
+      schedules.map((schedule, index) => ({
+        campus_id: campusId,
+        day_of_week: schedule.dayOfWeek,
+        service_time: schedule.time,
+        title: schedule.title,
+        description: schedule.description ?? null,
+        display_order: index,
+      }))
+    );
+  }
 }
 
 async function resolvePastorId(slug: string | undefined) {
@@ -52,11 +93,18 @@ async function resolvePastorId(slug: string | undefined) {
   return (data as { id: string } | null)?.id ?? null;
 }
 
+async function fetchCampusById(id: string): Promise<AdminCampus> {
+  const supabase = createClient();
+  const { data, error } = await supabase.from("campuses").select(SELECT_COLUMNS).eq("id", id).single();
+  if (error || !data) throw new Error(error?.message ?? "No se pudo leer la sede.");
+  return rowToCampus(data as unknown as CampusRow);
+}
+
 export async function loadCampuses(): Promise<AdminCampus[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("campuses")
-    .select("*, pastor:pastors(slug)")
+    .select(SELECT_COLUMNS)
     .order("created_at", { ascending: false });
 
   if (error || !data) return [];
@@ -90,11 +138,12 @@ export async function createCampus(input: NewCampusInput, existingSlugs: string[
       lead_pastor_id: leadPastorId,
       whatsapp_number: input.whatsappNumber || null,
     })
-    .select("*, pastor:pastors(slug)")
+    .select("id")
     .single();
 
   if (error || !data) throw new Error(error?.message ?? "No se pudo crear la sede.");
-  return rowToCampus(data as unknown as CampusRow);
+  await syncCampusSchedules(data.id, input.schedules);
+  return fetchCampusById(data.id);
 }
 
 export async function updateCampus(id: string, input: Partial<AdminCampus>): Promise<AdminCampus> {
@@ -104,27 +153,29 @@ export async function updateCampus(id: string, input: Partial<AdminCampus>): Pro
     await supabase.from("campuses").update({ is_main: false }).eq("is_main", true).neq("id", id);
   }
 
-  const patch: Record<string, unknown> = {};
-  if (input.name !== undefined) patch.name = input.name;
-  if (input.fullName !== undefined) patch.full_name = input.fullName;
-  if (input.address !== undefined) patch.address = input.address;
-  if (input.mapQuery !== undefined) patch.map_query = input.mapQuery;
-  if (input.imageSrc !== undefined) patch.image_url = input.imageSrc || null;
-  if (input.isMain !== undefined) patch.is_main = input.isMain;
-  if (input.whatsappNumber !== undefined) patch.whatsapp_number = input.whatsappNumber || null;
-  if (input.leadPastorSlug !== undefined) {
-    patch.lead_pastor_id = await resolvePastorId(input.leadPastorSlug);
-  }
+  // Sin condicionales "si viene definido": en la práctica este método
+  // siempre se llama con el formulario completo (ver CampusEditFlow), así
+  // que usar `!== undefined` como filtro tenía un bug real — un campo
+  // opcional que el usuario deja vacío se convierte en `undefined` en
+  // lib/admin/mappers.ts (orUndefined), y con el filtro antiguo eso hacía
+  // que ese campo NUNCA se borrara en la base de datos, aunque en pantalla
+  // se viera vacío. Escribir siempre todos los campos es lo correcto aquí.
+  const patch: Record<string, unknown> = {
+    name: input.name,
+    full_name: input.fullName,
+    address: input.address,
+    map_query: input.mapQuery,
+    image_url: input.imageSrc || null,
+    is_main: input.isMain ?? false,
+    whatsapp_number: input.whatsappNumber || null,
+    lead_pastor_id: await resolvePastorId(input.leadPastorSlug),
+  };
 
-  const { data, error } = await supabase
-    .from("campuses")
-    .update(patch)
-    .eq("id", id)
-    .select("*, pastor:pastors(slug)")
-    .single();
+  const { error } = await supabase.from("campuses").update(patch).eq("id", id);
+  if (error) throw new Error(error.message);
 
-  if (error || !data) throw new Error(error?.message ?? "No se pudo actualizar la sede.");
-  return rowToCampus(data as unknown as CampusRow);
+  await syncCampusSchedules(id, input.schedules ?? []);
+  return fetchCampusById(id);
 }
 
 export async function removeCampus(id: string): Promise<void> {

@@ -5,10 +5,9 @@ import { useMemo, useState } from "react";
 import { ArrowRight, MapPin } from "lucide-react";
 import { Calendar } from "@/components/ui/Calendar";
 import { formatAgendaDayLabel, toISODate } from "@/lib/agenda";
-import { getCampusBySlug, getMinistryBySlug } from "@/lib/content";
 import { formatEventDate } from "@/lib/events";
 import type { AgendaItemType } from "@/lib/agenda";
-import type { ChurchEvent } from "@/lib/types";
+import type { Campus, ChurchEvent, Ministry } from "@/lib/types";
 
 const EVENT_LEGEND_TYPES: AgendaItemType[] = ["evento", "ministerio"];
 
@@ -28,7 +27,15 @@ function coversDate(event: ChurchEvent, date: string) {
  * de la Agenda del Home, pero solo con indicadores de evento/ministerio (sin
  * cultos ni noticias, que no aplican aquí).
  */
-export function EventCalendarView({ events }: { events: ChurchEvent[] }) {
+export function EventCalendarView({
+  events,
+  ministries,
+  campuses,
+}: {
+  events: ChurchEvent[];
+  ministries: Ministry[];
+  campuses: Campus[];
+}) {
   const todayISO = useMemo(() => toISODate(new Date()), []);
   const todayParts = useMemo(() => parseISODate(todayISO), [todayISO]);
 
@@ -99,8 +106,10 @@ export function EventCalendarView({ events }: { events: ChurchEvent[] }) {
         {dayEvents.length > 0 ? (
           <div className="mt-4 space-y-2.5">
             {dayEvents.map((event) => {
-              const campus = event.campus ? getCampusBySlug(event.campus) : undefined;
-              const ministry = event.ministry ? getMinistryBySlug(event.ministry) : undefined;
+              const campus = event.campus ? campuses.find((item) => item.slug === event.campus) : undefined;
+              const ministry = event.ministry
+                ? ministries.find((item) => item.slug === event.ministry)
+                : undefined;
               return (
                 <Link
                   key={event.slug}

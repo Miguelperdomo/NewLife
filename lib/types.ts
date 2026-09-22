@@ -38,6 +38,16 @@ export interface CampusGalleryImage {
   src?: string;
 }
 
+/** Un horario recurrente de servicio (ej. "Domingo 9:00 a.m. — Culto principal"). */
+export interface ServiceSchedule {
+  /** 0 = domingo, igual que Date.getDay(). */
+  dayOfWeek: number;
+  /** "HH:MM" en 24 horas. */
+  time: string;
+  title: string;
+  description?: string;
+}
+
 export interface Campus {
   slug: string;
   name: string;
@@ -55,11 +65,28 @@ export interface Campus {
   gallery?: CampusGalleryImage[];
   /** Si se define, se usa en vez del WhatsApp general de New Life para esta sede. */
   whatsappNumber?: string;
+  schedules?: ServiceSchedule[];
 }
 
 export interface LiveLinks {
   youtube: string;
   facebook: string;
+}
+
+/** Una tarjeta de la sección "¿Es tu primera vez?" del Home. */
+export interface FirstTimeCard {
+  /** Clave de lib/firstTimeIcons.ts. */
+  icon: string;
+  title: string;
+  description: string;
+}
+
+/** Una opción del widget flotante de Ayuda y donaciones. */
+export interface HelpOption {
+  /** Clave de lib/helpOptionIcons.ts. */
+  icon: string;
+  title: string;
+  description: string;
 }
 
 export interface Pastor {
@@ -73,6 +100,8 @@ export interface Pastor {
   /** Nivel dentro de la pirámide de liderazgo: 1 = cabeza/fundador, 2 = siguiente nivel, así sucesivamente. */
   tier: number;
   social?: SocialLink[];
+  /** Si se define, se usa en vez del WhatsApp general de New Life para contactar al pastor. */
+  whatsappNumber?: string;
 }
 
 /**

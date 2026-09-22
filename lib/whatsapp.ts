@@ -22,3 +22,7 @@ export function campusInquiryMessage(campusName: string) {
 export function helpInquiryMessage(optionTitle: string) {
   return `Hola New Life, quiero ayudar con: "${optionTitle}".`;
 }
+
+export function pastorInquiryMessage(pastorName: string) {
+  return `Hola, quisiera comunicarme con ${pastorName}.`;
+}

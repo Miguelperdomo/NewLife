@@ -11,6 +11,28 @@ import { createClient } from "@/lib/supabase/client";
 import { FormField, inputClass } from "./form/FormField";
 
 /**
+ * Le pide al navegador que ofrezca guardar la contraseña justo después de un
+ * login exitoso (API estándar de gestión de credenciales — la usan Chrome y
+ * Edge; en navegadores sin soporte simplemente no hace nada, sin romper
+ * nada). No hay ningún botón de "guardar": es el propio navegador el que
+ * muestra su cuadro nativo, como en cualquier otro sitio.
+ */
+async function offerToSaveCredential(email: string, password: string) {
+  if (typeof window === "undefined" || !("PasswordCredential" in window)) return;
+  try {
+    const PasswordCredentialCtor = window.PasswordCredential as unknown as new (data: {
+      id: string;
+      password: string;
+      name?: string;
+    }) => Credential;
+    const credential = new PasswordCredentialCtor({ id: email, password, name: email });
+    await navigator.credentials.store?.(credential);
+  } catch {
+    // Silencioso: si el navegador no lo soporta o la persona lo rechaza, no pasa nada grave.
+  }
+}
+
+/**
  * Login real contra Supabase Auth. El mensaje de error es siempre el mismo
  * genérico ("Correo o contraseña incorrectos") sin importar si falló por
  * correo inexistente, contraseña incorrecta, o el usuario no está en
@@ -27,7 +49,7 @@ export function LoginForm() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
-    defaultValues: { email: "", password: "", remember: false },
+    defaultValues: { email: "", password: "" },
   });
 
   async function onSubmit(values: LoginFormValues) {
@@ -44,7 +66,7 @@ export function LoginForm() {
       return;
     }
 
-    // ¿La cuenta que inició sesión es realmente la administradora? (tabla
+    // ¿La cuenta que inició sesión es realmente administradora? (tabla
     // `admins`, vía la función is_admin() — ver lib/admin/auth.ts). Si no lo
     // es, se cierra la sesión de inmediato: no debe quedar "medio adentro".
     const { data: isAdmin } = await supabase.rpc("is_admin");
@@ -53,6 +75,8 @@ export function LoginForm() {
       setAuthError("Correo o contraseña incorrectos.");
       return;
     }
+
+    await offerToSaveCredential(values.email, values.password);
 
     router.push("/admin");
     router.refresh();
@@ -69,7 +93,7 @@ export function LoginForm() {
           <input
             id="email"
             type="email"
-            autoComplete="email"
+            autoComplete="username"
             placeholder="tucorreo@newlife.church"
             className={`${inputClass} mt-0 pl-10`}
             {...register("email")}
@@ -105,11 +129,6 @@ export function LoginForm() {
           </button>
         </div>
       </FormField>
-
-      <label className="flex items-center gap-2 text-sm text-slate-600">
-        <input type="checkbox" className="h-4 w-4 rounded" {...register("remember")} />
-        Recordarme
-      </label>
 
       <Button type="submit" variant="primary" className="w-full justify-center" disabled={isSubmitting}>
         <LogIn className="h-4 w-4" aria-hidden="true" />

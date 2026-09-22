@@ -1,7 +1,9 @@
 import type { MinistryAudience } from "@/lib/admin/types";
-import type { Ministry } from "@/lib/types";
 
-export function describeAudience(audience: MinistryAudience, ministries: Ministry[]): string {
+/** Solo lo necesario para describir la audiencia — sirve tanto para Ministry (público) como AdminMinistry. */
+type MinistryLike = { slug: string; name: string };
+
+export function describeAudience(audience: MinistryAudience, ministries: MinistryLike[]): string {
   if (audience.mode === "all") return "Todos los ministerios";
   if (audience.mode === "general") return "General (sin ministerio)";
 

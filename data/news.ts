@@ -45,7 +45,7 @@ export const news: NewsArticle[] = [
       "[CONTENIDO TEMPORAL — NOTICIA DE EJEMPLO] Comenzar de nuevo no siempre es fácil, pero es una invitación que se repite todos los días. Esta semana queremos recordarte que, sin importar en qué punto estés, siempre hay una nueva oportunidad para caminar en fe.\n\nTe invitamos a acompañarnos y ser parte de esta comunidad.",
     publishedAt: "2026-08-10",
     category: "Reflexión",
-    author: "Pastor Giovany",
+    author: "Apóstol Giovany",
     imageLabel: "[FOTOGRAFÍA REFLEXIÓN]",
   },
   {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CalendarDays, List } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ChurchEvent } from "@/lib/types";
+import type { Campus, ChurchEvent, Ministry } from "@/lib/types";
 import { EventCalendarView } from "./EventCalendarView";
 import { EventList } from "./EventList";
 
@@ -18,7 +18,15 @@ const modes: { mode: ViewMode; label: string; icon: typeof List }[] = [
  * Envuelve EventList (sin tocarlo) y agrega una vista de calendario
  * alternativa — el toggle decide cuál de las dos se muestra.
  */
-export function EventsView({ events }: { events: ChurchEvent[] }) {
+export function EventsView({
+  events,
+  ministries,
+  campuses,
+}: {
+  events: ChurchEvent[];
+  ministries: Ministry[];
+  campuses: Campus[];
+}) {
   const [mode, setMode] = useState<ViewMode>("list");
 
   return (
@@ -48,10 +56,10 @@ export function EventsView({ events }: { events: ChurchEvent[] }) {
 
       {mode === "list" ? (
         <div className="mt-6">
-          <EventList events={events} />
+          <EventList events={events} ministries={ministries} campuses={campuses} />
         </div>
       ) : (
-        <EventCalendarView events={events} />
+        <EventCalendarView events={events} ministries={ministries} campuses={campuses} />
       )}
     </div>
   );

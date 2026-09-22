@@ -7,9 +7,9 @@ import type { Pastor } from "@/lib/types";
 export const pastors: Pastor[] = [
   {
     slug: "giovany",
-    name: "Pastor Giovany",
+    name: "Apóstol Giovany",
     role: "Apóstol · Fundador y Pastor Principal",
-    bio: "[CONTENIDO TEMPORAL] Biografía oficial del Pastor Giovany, fundador y cabeza de New Life Church.",
+    bio: "[CONTENIDO TEMPORAL] Biografía oficial del Apóstol Giovany, fundador y cabeza de New Life Church.",
     imageLabel: "[FOTOGRAFÍA PASTOR GIOVANY]",
     tier: 1,
     // [LINKS PLACEHOLDER] Reemplazar con las redes oficiales del pastor.

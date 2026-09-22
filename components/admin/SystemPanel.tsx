@@ -1,20 +1,20 @@
 "use client";
 
 import { useRef, useState, type ChangeEvent } from "react";
-import { AlertTriangle, Database, Download, RefreshCcw, Server, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, Database, Download, RefreshCcw, Server, Upload } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { clearAllAdminData } from "@/lib/admin/reset";
+import { adminSiteSettingsSchema } from "@/lib/admin/schemas";
 import type { AdminSiteSettings } from "@/lib/admin/types";
 
 const APP_VERSION = "0.1.0";
 
-type PendingAction = "reset" | "clear" | { type: "import"; data: AdminSiteSettings } | null;
+type PendingAction = "reset" | { type: "import"; data: AdminSiteSettings } | null;
 
 /**
  * Información técnica de solo lectura + acciones de "Zona peligrosa" sobre
- * el mock del admin. Ninguna de estas acciones toca el sitio público —
- * operan sobre el localStorage del propio navegador del admin.
+ * Configuración. El resto de módulos (Sedes, Ministerios, Contenido) ya
+ * viven en Supabase — no queda nada en localStorage del admin que limpiar.
  */
 export function SystemPanel({
   settings,
@@ -47,11 +47,14 @@ export function SystemPanel({
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const parsed = JSON.parse(String(reader.result)) as AdminSiteSettings;
+        const rawParsed: unknown = JSON.parse(String(reader.result));
+        // Valida la forma real antes de dejarla llegar a Supabase — un JSON
+        // dañado o manipulado a mano ya no se guarda tal cual.
+        const parsed = adminSiteSettingsSchema.parse(rawParsed) as AdminSiteSettings;
         setImportError(null);
         setPending({ type: "import", data: parsed });
       } catch {
-        setImportError("El archivo no es un JSON válido.");
+        setImportError("El archivo no tiene el formato correcto de una configuración de New Life.");
       }
     };
     reader.readAsText(file);
@@ -60,9 +63,6 @@ export function SystemPanel({
   async function handleConfirm() {
     if (pending === "reset") {
       await onResetDemo();
-    } else if (pending === "clear") {
-      clearAllAdminData();
-      window.location.reload();
     } else if (pending && typeof pending === "object") {
       await onImport(pending.data);
     }
@@ -77,20 +77,13 @@ export function SystemPanel({
           description:
             "¿Restablecer la configuración a los valores demo? Se perderán los cambios que hayas guardado aquí.",
         }
-      : pending === "clear"
+      : pending
         ? {
-            title: "Limpiar datos locales",
-            confirmLabel: "Limpiar todo",
-            description:
-              "¿Borrar el contenido de Contenido guardado en este navegador? Configuración, Sedes y Ministerios no se ven afectados (ya viven en Supabase). Se volverá a sembrar desde los datos públicos la próxima vez que se cargue. Esta acción no se puede deshacer.",
+            title: "Importar configuración",
+            confirmLabel: "Importar",
+            description: "¿Reemplazar la configuración actual con el contenido de este archivo?",
           }
-        : pending
-          ? {
-              title: "Importar configuración",
-              confirmLabel: "Importar",
-              description: "¿Reemplazar la configuración actual con el contenido de este archivo?",
-            }
-          : null;
+        : null;
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6">
@@ -108,10 +101,9 @@ export function SystemPanel({
         />
         <InfoRow
           icon={Database}
-          label="Configuración, Sedes y Ministerios"
-          value="Guardados en Supabase (base de datos real)"
+          label="Almacenamiento"
+          value="Supabase (base de datos real) — todos los módulos"
         />
-        <InfoRow icon={Server} label="Resto del contenido" value="Contenido: localStorage (pendiente de migrar)" />
       </dl>
 
       <div className="mt-6 rounded-2xl border border-red-100 bg-red-50/50 p-5">
@@ -119,9 +111,7 @@ export function SystemPanel({
           <AlertTriangle className="h-4 w-4" aria-hidden="true" />
           Zona peligrosa
         </h4>
-        <p className="mt-1 text-xs text-red-600">
-          Estas acciones afectan datos guardados en este navegador. Úsalas con cuidado.
-        </p>
+        <p className="mt-1 text-xs text-red-600">Estas acciones afectan la configuración guardada. Úsalas con cuidado.</p>
 
         <div className="mt-4 flex flex-wrap gap-3">
           <Button
@@ -132,15 +122,6 @@ export function SystemPanel({
           >
             <RefreshCcw className="h-4 w-4" aria-hidden="true" />
             Restablecer contenido demo
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            className="border border-red-200 text-red-700 hover:bg-red-100"
-            onClick={() => setPending("clear")}
-          >
-            <Trash2 className="h-4 w-4" aria-hidden="true" />
-            Limpiar datos locales
           </Button>
           <Button type="button" variant="ghost" className="border border-slate-200" onClick={handleExport}>
             <Download className="h-4 w-4" aria-hidden="true" />

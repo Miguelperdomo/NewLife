@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { newsFormSchema, type NewsFormValues } from "@/lib/admin/schemas";
+import { useUnsavedChangesWarning } from "@/lib/admin/useUnsavedChangesWarning";
 import { FormField, FormSection, inputClass, textareaClass } from "./form/FormField";
+import { ImageUploadField } from "./form/ImageUploadField";
 
 export const newsFormDefaults: NewsFormValues = {
   title: "",
@@ -27,7 +29,7 @@ export function NewsForm({
 }: {
   defaultValues?: Partial<NewsFormValues>;
   submitLabel?: string;
-  onSubmit: (values: NewsFormValues) => void;
+  onSubmit: (values: NewsFormValues) => void | Promise<void>;
   onPreview: (values: NewsFormValues) => void;
 }) {
   const {
@@ -35,11 +37,14 @@ export function NewsForm({
     handleSubmit,
     watch,
     getValues,
-    formState: { errors, isSubmitting },
+    control,
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<NewsFormValues>({
     resolver: zodResolver(newsFormSchema),
     defaultValues: { ...newsFormDefaults, ...defaultValues },
   });
+
+  useUnsavedChangesWarning(isDirty && !isSubmitting);
 
   const status = watch("status");
 
@@ -58,12 +63,8 @@ export function NewsForm({
           <textarea id="content" rows={6} className={textareaClass} {...register("content")} />
         </FormField>
 
-        <FormField
-          label="Imagen"
-          htmlFor="imageSrc"
-          hint="Opcional. Ruta o URL de la imagen — sin subida de archivos todavía. Si se deja vacío, se usa una portada de New Life."
-        >
-          <input id="imageSrc" className={inputClass} placeholder="/img/mi-noticia.jpg" {...register("imageSrc")} />
+        <FormField label="Imagen" htmlFor="imageSrc" hint="Opcional. Si no subes ninguna, se usa una portada de New Life.">
+          <ImageUploadField control={control} name="imageSrc" folder="news" />
         </FormField>
 
         <div className="grid gap-4 sm:grid-cols-2">

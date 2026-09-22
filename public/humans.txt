@@ -1,0 +1,10 @@
+/* TEAM */
+Desarrollador: Providentia Tech
+Ubicación: Ibagué, Colombia
+Contacto: https://wa.me/573133854821
+
+/* SITE */
+Nombre: New Life Church
+Última actualización: 2026/09/18
+Construido con: Next.js, Supabase, Tailwind CSS
+Estándares: HTML5, CSS3, ES2022

@@ -11,9 +11,15 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-heading-sora);
+}
 
-  /* Paleta de marca — editar estos valores cuando se defina la identidad
-     visual oficial de New Life; todos los componentes la consumen desde aquí. */
+/* Paleta de marca — SIN "inline": con "inline", Tailwind graba el color
+   literal dentro de cada clase (.bg-brand-600{background-color:#7c3aed}),
+   así que cambiar la variable en tiempo real no serviría de nada. Sin
+   "inline", las clases quedan como .bg-brand-600{background-color:var(--color-brand-600)},
+   así que un <style> posterior (ver app/layout.tsx, generado desde el color
+   guardado en Configuración) sí puede recolorear todo el sitio de verdad. */
+@theme {
   --color-brand-50: #f5f3ff;
   --color-brand-100: #ede9fe;
   --color-brand-200: #ddd6fe;
@@ -40,4 +46,31 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Accesibilidad — ver components/layout/AccessibilityMenu.tsx. El tamaño de
+   texto escala el tamaño raíz: casi todo el texto de Tailwind usa rem, así
+   que sube junto con él, sin tener que tocar cada componente. El alto
+   contraste refuerza los grises más claros (texto secundario, bordes) que
+   se usan en todo el sitio — no es una auditoría WCAG completa, es una
+   mejora real y de bajo riesgo para quien tiene dificultad para leer letra
+   pequeña o de bajo contraste. */
+html[data-text-scale="2"] {
+  font-size: 112.5%;
+}
+html[data-text-scale="3"] {
+  font-size: 125%;
+}
+
+html[data-a11y-contrast="true"] .text-slate-400,
+html[data-a11y-contrast="true"] .text-slate-500 {
+  color: #1e293b !important;
+}
+html[data-a11y-contrast="true"] .text-white\/70,
+html[data-a11y-contrast="true"] .text-white\/80 {
+  color: #ffffff !important;
+}
+html[data-a11y-contrast="true"] .border-slate-100,
+html[data-a11y-contrast="true"] .border-slate-200 {
+  border-color: #64748b !important;
 }

@@ -3,16 +3,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
-import { getCampuses, getMinistries } from "@/lib/content";
+import { useAdminCampuses } from "@/lib/admin/useAdminCampuses";
+import { useAdminMinistries } from "@/lib/admin/useAdminMinistries";
 import { eventFormSchema, type EventFormValues } from "@/lib/admin/schemas";
 import type { MinistryAudience } from "@/lib/admin/types";
+import { useUnsavedChangesWarning } from "@/lib/admin/useUnsavedChangesWarning";
 import { FormField, FormSection, inputClass, textareaClass } from "./form/FormField";
+import { ImageUploadField } from "./form/ImageUploadField";
 
 const defaultAudience: MinistryAudience = { mode: "general" };
 
 export const eventFormDefaults: EventFormValues = {
   title: "",
+  shortDescription: "",
   description: "",
+  category: "",
   imageSrc: "",
   status: "draft",
   publishAt: "",
@@ -37,11 +42,12 @@ export function EventForm({
 }: {
   defaultValues?: Partial<EventFormValues>;
   submitLabel?: string;
-  onSubmit: (values: EventFormValues) => void;
+  onSubmit: (values: EventFormValues) => void | Promise<void>;
   onPreview: (values: EventFormValues) => void;
 }) {
-  const ministries = getMinistries();
-  const campuses = getCampuses();
+  const { ministries: allMinistries } = useAdminMinistries();
+  const { campuses } = useAdminCampuses();
+  const ministries = allMinistries.filter((ministry) => ministry.status === "active");
 
   const {
     register,
@@ -49,11 +55,13 @@ export function EventForm({
     control,
     watch,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: { ...eventFormDefaults, ...defaultValues },
   });
+
+  useUnsavedChangesWarning(isDirty && !isSubmitting);
 
   const status = watch("status");
 
@@ -65,6 +73,21 @@ export function EventForm({
         </FormField>
 
         <FormField
+          label="Descripción corta"
+          htmlFor="shortDescription"
+          required
+          error={errors.shortDescription?.message}
+          hint="Se muestra en las tarjetas de /eventos. Máximo 160 caracteres."
+        >
+          <textarea
+            id="shortDescription"
+            rows={2}
+            className={textareaClass}
+            {...register("shortDescription")}
+          />
+        </FormField>
+
+        <FormField
           label="Descripción"
           htmlFor="description"
           required
@@ -73,12 +96,12 @@ export function EventForm({
           <textarea id="description" rows={4} className={textareaClass} {...register("description")} />
         </FormField>
 
-        <FormField
-          label="Imagen"
-          htmlFor="imageSrc"
-          hint="Opcional. Ruta o URL de la imagen — sin subida de archivos todavía. Si se deja vacío, se usa una portada de New Life."
-        >
-          <input id="imageSrc" className={inputClass} placeholder="/img/mi-evento.jpg" {...register("imageSrc")} />
+        <FormField label="Categoría" htmlFor="category" hint='Opcional. Ej. "Reunión", "Retiro", "Servicio especial".'>
+          <input id="category" className={inputClass} {...register("category")} />
+        </FormField>
+
+        <FormField label="Imagen" htmlFor="imageSrc" hint="Opcional. Si no subes ninguna, se usa una portada de New Life.">
+          <ImageUploadField control={control} name="imageSrc" folder="events" />
         </FormField>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -149,14 +172,32 @@ export function EventForm({
       <FormSection title="Ubicación" description="Ambos campos son opcionales.">
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField label="Sede" htmlFor="campus">
-            <select id="campus" className={inputClass} {...register("campus")}>
-              <option value="">Sin especificar</option>
-              {campuses.map((campus) => (
-                <option key={campus.slug} value={campus.slug}>
-                  {campus.name}
-                </option>
-              ))}
-            </select>
+            {/* Controlado (Controller), no registrado directo: las sedes se
+                cargan de forma asíncrona desde Supabase — si este <select>
+                fuera un input sin controlar (registrado con `register`), el
+                valor guardado no se vería seleccionado al editar (la opción
+                todavía no existiría en el DOM en el primer render) y, peor,
+                se podía guardar vacío por accidente sin haber tocado el
+                campo. Igual patrón que "Audiencia" más abajo. */}
+            <Controller
+              control={control}
+              name="campus"
+              render={({ field }) => (
+                <select
+                  id="campus"
+                  className={inputClass}
+                  value={field.value ?? ""}
+                  onChange={(event) => field.onChange(event.target.value)}
+                >
+                  <option value="">Sin especificar</option>
+                  {campuses.map((campus) => (
+                    <option key={campus.slug} value={campus.slug}>
+                      {campus.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            />
           </FormField>
           <FormField label="Lugar / dirección" htmlFor="location">
             <input id="location" className={inputClass} placeholder="Salón juvenil" {...register("location")} />

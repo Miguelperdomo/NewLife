@@ -1,12 +1,17 @@
 import Link from "next/link";
 import { ArrowRight, Clock } from "lucide-react";
 import { describeAudience } from "@/lib/admin/audience";
-import type { AdminEvent } from "@/lib/admin/types";
+import type { AdminEvent, AdminMinistry } from "@/lib/admin/types";
 import { formatEventDate } from "@/lib/events";
-import type { Ministry } from "@/lib/types";
 import { StatusBadge } from "./StatusBadge";
 
-export function UpcomingEvents({ events, ministries }: { events: AdminEvent[]; ministries: Ministry[] }) {
+export function UpcomingEvents({
+  events,
+  ministries,
+}: {
+  events: AdminEvent[];
+  ministries: AdminMinistry[];
+}) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
       <div className="flex items-center justify-between">
