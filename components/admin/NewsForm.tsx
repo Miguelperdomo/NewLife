@@ -59,7 +59,13 @@ export function NewsForm({
           <textarea id="summary" rows={2} className={textareaClass} {...register("summary")} />
         </FormField>
 
-        <FormField label="Contenido" htmlFor="content" required error={errors.content?.message}>
+        <FormField
+          label="Contenido"
+          htmlFor="content"
+          required
+          error={errors.content?.message}
+          hint="El texto completo de la noticia — se muestra en su página individual."
+        >
           <textarea id="content" rows={6} className={textareaClass} {...register("content")} />
         </FormField>
 
@@ -68,7 +74,11 @@ export function NewsForm({
         </FormField>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField label="Estado" htmlFor="status">
+          <FormField
+            label="Estado"
+            htmlFor="status"
+            hint='"Borrador" no se muestra al público. "Publicado" aparece de inmediato. "Programado" se publica solo cuando llegue la fecha/hora que elijas.'
+          >
             <select id="status" className={inputClass} {...register("status")}>
               <option value="draft">Borrador</option>
               <option value="published">Publicado</option>
@@ -102,13 +112,14 @@ export function NewsForm({
             htmlFor="publishedAt"
             required
             error={errors.publishedAt?.message}
+            hint="La fecha que se muestra en la noticia — puede ser distinta a hoy."
           >
             <input id="publishedAt" type="date" className={inputClass} {...register("publishedAt")} />
           </FormField>
           <FormField label="Categoría" htmlFor="category">
             <input id="category" className={inputClass} placeholder="Anuncio" {...register("category")} />
           </FormField>
-          <FormField label="Autor" htmlFor="author">
+          <FormField label="Autor" htmlFor="author" hint='Opcional. Ej. «Pastor Giovany» o «Equipo de comunicaciones».'>
             <input id="author" className={inputClass} {...register("author")} />
           </FormField>
           <FormField label="Noticia destacada" htmlFor="featured">

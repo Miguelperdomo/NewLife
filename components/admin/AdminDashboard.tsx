@@ -7,6 +7,7 @@ import { useAdminContent } from "@/lib/admin/useAdminContent";
 import { useAdminMinistries } from "@/lib/admin/useAdminMinistries";
 import { getEventStatus } from "@/lib/events";
 import { DashboardStats } from "./DashboardStats";
+import { PageViewsCard } from "./PageViewsCard";
 import { QuickActions } from "./QuickActions";
 import { RecentContent } from "./RecentContent";
 import { SystemStatusCard } from "./SystemStatusCard";
@@ -92,6 +93,8 @@ export function AdminDashboard() {
         <RecentContent rows={recentRows} />
         <UpcomingEvents events={upcomingEvents} ministries={adminMinistries} />
       </div>
+
+      <PageViewsCard />
 
       <SystemStatusCard />
     </div>

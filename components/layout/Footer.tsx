@@ -58,15 +58,17 @@ export async function Footer() {
       ? buildWhatsAppLink(settings.whatsappNumber, settings.whatsappDefaultMessage)
       : undefined);
 
-  const resolvedSocialLinks: SocialLink[] = settings
-    ? [
-        settings.instagramUrl && { platform: "instagram" as const, label: "Instagram", url: settings.instagramUrl },
-        settings.facebookUrl && { platform: "facebook" as const, label: "Facebook", url: settings.facebookUrl },
-        settings.youtubeUrl && { platform: "youtube" as const, label: "YouTube", url: settings.youtubeUrl },
-        settings.tiktokUrl && { platform: "tiktok" as const, label: "TikTok", url: settings.tiktokUrl },
-        whatsappSocialUrl && { platform: "whatsapp" as const, label: "WhatsApp", url: whatsappSocialUrl },
-      ].filter((link): link is SocialLink => Boolean(link))
-    : socialLinks;
+  const resolvedSocialLinks: SocialLink[] = (
+    settings
+      ? [
+          settings.instagramUrl && { platform: "instagram" as const, label: "Instagram", url: settings.instagramUrl },
+          settings.facebookUrl && { platform: "facebook" as const, label: "Facebook", url: settings.facebookUrl },
+          settings.youtubeUrl && { platform: "youtube" as const, label: "YouTube", url: settings.youtubeUrl },
+          settings.tiktokUrl && { platform: "tiktok" as const, label: "TikTok", url: settings.tiktokUrl },
+          whatsappSocialUrl && { platform: "whatsapp" as const, label: "WhatsApp", url: whatsappSocialUrl },
+        ].filter((link): link is SocialLink => Boolean(link))
+      : socialLinks
+  ).filter((link) => link.url && link.url !== "#");
 
   return (
     <footer className="border-t border-slate-100 bg-slate-950 text-slate-300">
@@ -126,7 +128,14 @@ export async function Footer() {
             © {new Date().getFullYear()} {churchName}. Todos los derechos
             reservados.
           </p>
-          <p>Sitio en desarrollo — contenido temporal sujeto a cambios.</p>
+          <p className="flex items-center gap-3">
+            <Link href="/privacidad" className="underline-offset-2 hover:text-white hover:underline">
+              Privacidad
+            </Link>
+            <Link href="/terminos" className="underline-offset-2 hover:text-white hover:underline">
+              Términos
+            </Link>
+          </p>
         </Container>
         <Container className="mt-3 text-center text-xs text-slate-600">
           <p>

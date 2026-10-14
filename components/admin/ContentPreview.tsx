@@ -2,6 +2,9 @@ import { EventCard } from "@/components/events/EventCard";
 import { NewsCard } from "@/components/news/NewsCard";
 import type { AdminEvent, AdminNews } from "@/lib/admin/types";
 import type { ChurchEvent, NewsArticle } from "@/lib/types";
+import { QRCodeCard } from "./QRCodeCard";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 function toPreviewEvent(event: AdminEvent): ChurchEvent {
   const ministry = event.audience.mode === "specific" ? event.audience.ministrySlugs[0] : undefined;
@@ -59,6 +62,9 @@ export function ContentPreview({ item }: { item: PreviewItem }) {
           <NewsCard article={toPreviewNews(item.data)} />
         )}
       </div>
+      {item.type === "event" && item.data.slug && (
+        <QRCodeCard url={`${siteUrl}/eventos/${item.data.slug}`} label={item.data.title || "este evento"} />
+      )}
     </div>
   );
 }

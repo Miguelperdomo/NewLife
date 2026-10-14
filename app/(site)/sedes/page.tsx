@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/data/site";
 import { getCampuses } from "@/lib/content";
+import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 
 const description = "Encuentra la sede de New Life más cercana a ti.";
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 const tones = ["dark", "brand"] as const;
 
 export default async function SedesPage() {
-  const campuses = await getCampuses();
+  const [campuses, settings] = await Promise.all([getCampuses(), getPublicSiteSettings()]);
 
   return (
     <>
@@ -27,9 +28,12 @@ export default async function SedesPage() {
       <section className="py-20 sm:py-28">
         <Container>
           <SectionHeading
-            eyebrow="Sedes"
-            title="Visítanos en cualquiera de nuestras sedes"
-            description="Toca “Cómo llegar” para abrir la ruta en Google Maps, o revisa la ficha del lugar para ver reseñas."
+            eyebrow={settings?.campusesEyebrow || "Sedes"}
+            title={settings?.campusesTitle || "Visítanos en cualquiera de nuestras sedes"}
+            description={
+              settings?.campusesDescription ||
+              "Toca “Cómo llegar” para abrir la ruta en Google Maps, o revisa la ficha del lugar para ver reseñas."
+            }
           />
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2">

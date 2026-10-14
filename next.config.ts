@@ -2,14 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // Fotos subidas desde el panel admin (Supabase Storage, bucket "media").
-    // El comodín cubre cualquier proyecto de Supabase, no solo el actual.
     remotePatterns: [
+      // Fotos subidas desde el panel admin (Supabase Storage, bucket "media").
+      // El comodín cubre cualquier proyecto de Supabase, no solo el actual.
       {
         protocol: "https",
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      // Imágenes pegadas como link externo (ver ImageUploadField "o pega un
+      // enlace") — cualquier dominio https, a propósito: no hay forma de
+      // adivinar de antemano dónde va a estar alojada una foto que alguien
+      // encuentra en Google. Sin optimización automática para esas (no son
+      // de Supabase), pero sí se muestran sin romper el sitio.
+      { protocol: "https", hostname: "**" },
     ],
   },
 

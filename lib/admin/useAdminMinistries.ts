@@ -5,6 +5,7 @@ import {
   createMinistry as createMinistryRequest,
   duplicateMinistry as duplicateMinistryRequest,
   loadMinistries,
+  removeMinistry as removeMinistryRequest,
   setMinistryStatus,
   updateMinistry as updateMinistryRequest,
 } from "@/lib/admin/ministries";
@@ -94,6 +95,14 @@ export function useAdminMinistries() {
     [refresh]
   );
 
+  const removeMinistry = useCallback(
+    async (id: string) => {
+      await removeMinistryRequest(id);
+      await refresh();
+    },
+    [refresh]
+  );
+
   return {
     ministries,
     isReady,
@@ -102,5 +111,6 @@ export function useAdminMinistries() {
     duplicateMinistry,
     archiveMinistry,
     activateMinistry,
+    removeMinistry,
   };
 }

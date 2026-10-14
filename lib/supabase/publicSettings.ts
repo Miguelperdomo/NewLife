@@ -21,6 +21,7 @@ export interface PublicSiteSettings {
   city?: string;
   generalSchedule?: string;
   heroTagline?: string;
+  foundingYear?: number;
   logoUrl?: string;
   faviconUrl?: string;
   primaryColor: string;
@@ -50,8 +51,34 @@ export interface PublicSiteSettings {
   helpDescription?: string;
   helpCtaLabel?: string;
   helpOptionsTitle?: string;
+  firstTimeEyebrow?: string;
+  firstTimeTitle?: string;
+  firstTimeDescription?: string;
+  firstTimeCtaLabel?: string;
+  ministriesEyebrow?: string;
+  ministriesTitle?: string;
+  ministriesDescription?: string;
+  campusesEyebrow?: string;
+  campusesTitle?: string;
+  campusesDescription?: string;
+  eventsEyebrow?: string;
+  eventsTitle?: string;
+  eventsDescription?: string;
+  newsEyebrow?: string;
+  newsTitle?: string;
+  newsDescription?: string;
+  pastorsEyebrow?: string;
+  pastorsTitle?: string;
+  pastorsDescription?: string;
+  liveThumbnailUrl?: string;
+  liveThumbnailAlt?: string;
+  privacyPolicy?: string;
+  termsOfService?: string;
   maintenanceMode: boolean;
   donationsEnabled: boolean;
+  donationTitle?: string;
+  donationTeaser?: string;
+  donationDescription?: string;
   bankName?: string;
   bankAccountType?: string;
   bankAccountNumber?: string;
@@ -71,6 +98,7 @@ interface SettingsRow {
   city: string | null;
   general_schedule: string | null;
   hero_tagline: string | null;
+  founding_year: number | null;
   logo_url: string | null;
   favicon_url: string | null;
   primary_color: string;
@@ -104,8 +132,34 @@ interface SettingsRow {
   help_description: string | null;
   help_cta_label: string | null;
   help_options_title: string | null;
+  first_time_eyebrow: string | null;
+  first_time_title: string | null;
+  first_time_description: string | null;
+  first_time_cta_label: string | null;
+  ministries_eyebrow: string | null;
+  ministries_title: string | null;
+  ministries_description: string | null;
+  campuses_eyebrow: string | null;
+  campuses_title: string | null;
+  campuses_description: string | null;
+  events_eyebrow: string | null;
+  events_title: string | null;
+  events_description: string | null;
+  news_eyebrow: string | null;
+  news_title: string | null;
+  news_description: string | null;
+  pastors_eyebrow: string | null;
+  pastors_title: string | null;
+  pastors_description: string | null;
+  live_thumbnail_url: string | null;
+  live_thumbnail_alt: string | null;
+  privacy_policy: string | null;
+  terms_of_service: string | null;
   maintenance_mode: boolean;
   donations_enabled: boolean;
+  donation_title: string | null;
+  donation_teaser: string | null;
+  donation_description: string | null;
   bank_name: string | null;
   bank_account_type: string | null;
   bank_account_number: string | null;
@@ -115,7 +169,7 @@ interface SettingsRow {
 }
 
 const SETTINGS_COLUMNS =
-  "church_name, description, phone, whatsapp_number, whatsapp_default_message, email, address, city, general_schedule, hero_tagline, logo_url, favicon_url, primary_color, accent_color, facebook_url, facebook_enabled, instagram_url, instagram_enabled, youtube_url, youtube_enabled, tiktok_url, tiktok_enabled, whatsapp_social_url, whatsapp_social_enabled, show_ministries, show_live, show_events, show_news, show_agenda, show_campuses, show_help, seo_title, seo_description, seo_image_url, about_image_url, about_quienes_somos, about_mision, about_vision, about_valores, help_title, help_description, help_cta_label, help_options_title, maintenance_mode, donations_enabled, bank_name, bank_account_type, bank_account_number, bank_account_holder, nequi_number, daviplata_number";
+  "church_name, description, phone, whatsapp_number, whatsapp_default_message, email, address, city, general_schedule, hero_tagline, founding_year, logo_url, favicon_url, primary_color, accent_color, facebook_url, facebook_enabled, instagram_url, instagram_enabled, youtube_url, youtube_enabled, tiktok_url, tiktok_enabled, whatsapp_social_url, whatsapp_social_enabled, show_ministries, show_live, show_events, show_news, show_agenda, show_campuses, show_help, seo_title, seo_description, seo_image_url, about_image_url, about_quienes_somos, about_mision, about_vision, about_valores, help_title, help_description, help_cta_label, help_options_title, first_time_eyebrow, first_time_title, first_time_description, first_time_cta_label, ministries_eyebrow, ministries_title, ministries_description, campuses_eyebrow, campuses_title, campuses_description, events_eyebrow, events_title, events_description, news_eyebrow, news_title, news_description, pastors_eyebrow, pastors_title, pastors_description, live_thumbnail_url, live_thumbnail_alt, privacy_policy, terms_of_service, maintenance_mode, donations_enabled, donation_title, donation_teaser, donation_description, bank_name, bank_account_type, bank_account_number, bank_account_holder, nequi_number, daviplata_number";
 
 export const getPublicSiteSettings = cache(async (): Promise<PublicSiteSettings | null> => {
   const supabase = await createClient();
@@ -139,6 +193,7 @@ export const getPublicSiteSettings = cache(async (): Promise<PublicSiteSettings 
     city: row.city ?? undefined,
     generalSchedule: row.general_schedule ?? undefined,
     heroTagline: row.hero_tagline ?? undefined,
+    foundingYear: row.founding_year ?? undefined,
     logoUrl: row.logo_url ?? undefined,
     faviconUrl: row.favicon_url ?? undefined,
     primaryColor: row.primary_color,
@@ -168,8 +223,34 @@ export const getPublicSiteSettings = cache(async (): Promise<PublicSiteSettings 
     helpDescription: row.help_description ?? undefined,
     helpCtaLabel: row.help_cta_label ?? undefined,
     helpOptionsTitle: row.help_options_title ?? undefined,
+    firstTimeEyebrow: row.first_time_eyebrow ?? undefined,
+    firstTimeTitle: row.first_time_title ?? undefined,
+    firstTimeDescription: row.first_time_description ?? undefined,
+    firstTimeCtaLabel: row.first_time_cta_label ?? undefined,
+    ministriesEyebrow: row.ministries_eyebrow ?? undefined,
+    ministriesTitle: row.ministries_title ?? undefined,
+    ministriesDescription: row.ministries_description ?? undefined,
+    campusesEyebrow: row.campuses_eyebrow ?? undefined,
+    campusesTitle: row.campuses_title ?? undefined,
+    campusesDescription: row.campuses_description ?? undefined,
+    eventsEyebrow: row.events_eyebrow ?? undefined,
+    eventsTitle: row.events_title ?? undefined,
+    eventsDescription: row.events_description ?? undefined,
+    newsEyebrow: row.news_eyebrow ?? undefined,
+    newsTitle: row.news_title ?? undefined,
+    newsDescription: row.news_description ?? undefined,
+    pastorsEyebrow: row.pastors_eyebrow ?? undefined,
+    pastorsTitle: row.pastors_title ?? undefined,
+    pastorsDescription: row.pastors_description ?? undefined,
+    liveThumbnailUrl: row.live_thumbnail_url ?? undefined,
+    liveThumbnailAlt: row.live_thumbnail_alt ?? undefined,
+    privacyPolicy: row.privacy_policy ?? undefined,
+    termsOfService: row.terms_of_service ?? undefined,
     maintenanceMode: row.maintenance_mode,
     donationsEnabled: row.donations_enabled,
+    donationTitle: row.donation_title ?? undefined,
+    donationTeaser: row.donation_teaser ?? undefined,
+    donationDescription: row.donation_description ?? undefined,
     bankName: row.bank_name ?? undefined,
     bankAccountType: row.bank_account_type ?? undefined,
     bankAccountNumber: row.bank_account_number ?? undefined,

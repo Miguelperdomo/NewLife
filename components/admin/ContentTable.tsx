@@ -1,4 +1,4 @@
-import { Archive, Copy, Eye, Pencil } from "lucide-react";
+import { Archive, Copy, Eye, Pencil, Trash2 } from "lucide-react";
 import { ContentCover } from "@/components/ui/ContentCover";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { formatEventDate } from "@/lib/events";
@@ -13,12 +13,14 @@ export function ContentTable({
   onEdit,
   onDuplicate,
   onArchive,
+  onDelete,
 }: {
   rows: ContentRow[];
   onView: (row: ContentRow) => void;
   onEdit: (row: ContentRow) => void;
   onDuplicate: (row: ContentRow) => void;
   onArchive: (row: ContentRow) => void;
+  onDelete: (row: ContentRow) => void;
 }) {
   if (rows.length === 0) {
     return (
@@ -77,6 +79,7 @@ export function ContentTable({
                   {row.status !== "archived" && (
                     <RowAction label="Archivar" onClick={() => onArchive(row)} icon={Archive} />
                   )}
+                  <RowAction label="Eliminar" onClick={() => onDelete(row)} icon={Trash2} />
                 </div>
               </td>
             </tr>

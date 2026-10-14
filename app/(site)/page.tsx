@@ -9,6 +9,7 @@ import { LatestNewsSection } from "@/components/sections/LatestNewsSection";
 import { LiveSection } from "@/components/sections/LiveSection";
 import { MinistriesSection } from "@/components/sections/MinistriesSection";
 import { UpcomingEventsSection } from "@/components/sections/UpcomingEventsSection";
+import { WaveDivider } from "@/components/ui/WaveDivider";
 import { getCampuses, getHelpOptions, getMinistries } from "@/lib/content";
 import { getEvents } from "@/lib/eventsContent";
 import { getNews } from "@/lib/newsContent";
@@ -43,11 +44,17 @@ export default async function Home() {
   return (
     <>
       <Hero />
+      <WaveDivider className="bg-slate-50" fillClassName="text-slate-950" />
       <FirstTimeSection />
       <AboutSection />
       <DailyVerseCard />
       {show.ministries && <MinistriesSection />}
-      {show.live && <LiveSection />}
+      {show.live && (
+        <>
+          <LiveSection />
+          <WaveDivider className="bg-white" fillClassName="text-slate-950" />
+        </>
+      )}
       {show.events && <UpcomingEventsSection />}
       {show.news && <LatestNewsSection />}
       {show.agenda && <AgendaSection ministries={ministries} campuses={campuses} events={events} news={news} />}
@@ -60,6 +67,9 @@ export default async function Home() {
           ctaLabel={settings?.helpCtaLabel}
           optionsTitle={settings?.helpOptionsTitle}
           options={helpOptions}
+          donationTitle={settings?.donationTitle}
+          donationTeaser={settings?.donationTeaser}
+          donationDescription={settings?.donationDescription}
           donationInfo={
             settings?.donationsEnabled
               ? {

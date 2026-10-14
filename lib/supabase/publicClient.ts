@@ -1,4 +1,5 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { getSupabaseEnv } from "@/lib/supabase/env";
 
 /**
  * Cliente de Supabase sin cookies ni sesión — para las lecturas públicas de
@@ -9,8 +10,6 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
  * corre sin ninguna petición HTTP de por medio).
  */
 export function createPublicClient() {
-  return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const { url, anonKey } = getSupabaseEnv();
+  return createSupabaseClient(url, anonKey);
 }

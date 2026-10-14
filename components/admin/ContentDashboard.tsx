@@ -22,8 +22,17 @@ function initialTypeFilter(value: string | null): ContentFiltersValue["type"] {
 export function ContentDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { events, news, isReady, duplicateEvent, duplicateNews, archiveEvent, archiveNews } =
-    useAdminContent();
+  const {
+    events,
+    news,
+    isReady,
+    duplicateEvent,
+    duplicateNews,
+    archiveEvent,
+    archiveNews,
+    removeEvent,
+    removeNews,
+  } = useAdminContent();
   const { ministries } = useAdminMinistries();
   const [filters, setFilters] = useState<ContentFiltersValue>(() => ({
     query: "",
@@ -34,6 +43,7 @@ export function ContentDashboard() {
     { type: "event"; data: AdminEvent } | { type: "news"; data: AdminNews } | null
   >(null);
   const [archiveTarget, setArchiveTarget] = useState<ContentRow | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ContentRow | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
   const rows = useMemo(() => {
@@ -83,6 +93,17 @@ export function ContentDashboard() {
     setArchiveTarget(null);
   }
 
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    try {
+      if (deleteTarget.type === "event") await removeEvent(deleteTarget.id);
+      else await removeNews(deleteTarget.id);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "No se pudo eliminar.");
+    }
+    setDeleteTarget(null);
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -113,6 +134,7 @@ export function ContentDashboard() {
           onEdit={handleEdit}
           onDuplicate={handleDuplicate}
           onArchive={handleArchive}
+          onDelete={setDeleteTarget}
         />
       ) : (
         <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
@@ -157,6 +179,21 @@ export function ContentDashboard() {
             ¿Archivar <strong className="font-semibold text-slate-900">“{archiveTarget?.title}”</strong>?
             Dejará de aparecer en el sitio público, pero podrás encontrarlo luego filtrando por estado
             «Archivado».
+          </>
+        }
+      />
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Eliminar contenido"
+        confirmLabel="Eliminar"
+        description={
+          <>
+            ¿Eliminar <strong className="font-semibold text-slate-900">“{deleteTarget?.title}”</strong>? Esta
+            acción no se puede deshacer — si solo quieres quitarlo del sitio público por ahora, usa
+            «Archivar» en vez de esto.
           </>
         }
       />

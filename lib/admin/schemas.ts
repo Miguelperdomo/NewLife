@@ -151,6 +151,16 @@ export const siteSettingsFormSchema = z.object({
   generalSchedule: z.string().trim().optional(),
 
   heroTagline: z.string().trim().max(120, "Máximo 120 caracteres.").optional(),
+  foundingYear: z
+    .string()
+    .trim()
+    .optional()
+    .refine((value) => !value || /^\d{4}$/.test(value), "Escribe un año de 4 dígitos, ej. 2010.")
+    .refine((value) => {
+      if (!value) return true;
+      const year = Number(value);
+      return year > 1900 && year <= new Date().getFullYear();
+    }, "Escribe un año real, entre 1900 y el año actual."),
 
   primaryColor: hexColor("Color principal"),
   accentColor: hexColor("Color de acento"),
@@ -194,7 +204,37 @@ export const siteSettingsFormSchema = z.object({
   helpCtaLabel: z.string().trim().optional(),
   helpOptionsTitle: z.string().trim().optional(),
 
+  firstTimeEyebrow: z.string().trim().optional(),
+  firstTimeTitle: z.string().trim().optional(),
+  firstTimeDescription: z.string().trim().optional(),
+  firstTimeCtaLabel: z.string().trim().optional(),
+
+  ministriesEyebrow: z.string().trim().optional(),
+  ministriesTitle: z.string().trim().optional(),
+  ministriesDescription: z.string().trim().optional(),
+  campusesEyebrow: z.string().trim().optional(),
+  campusesTitle: z.string().trim().optional(),
+  campusesDescription: z.string().trim().optional(),
+  eventsEyebrow: z.string().trim().optional(),
+  eventsTitle: z.string().trim().optional(),
+  eventsDescription: z.string().trim().optional(),
+  newsEyebrow: z.string().trim().optional(),
+  newsTitle: z.string().trim().optional(),
+  newsDescription: z.string().trim().optional(),
+  pastorsEyebrow: z.string().trim().optional(),
+  pastorsTitle: z.string().trim().optional(),
+  pastorsDescription: z.string().trim().optional(),
+
+  liveThumbnailUrl: z.string().trim().optional(),
+  liveThumbnailAlt: z.string().trim().optional(),
+
+  privacyPolicy: z.string().trim().optional(),
+  termsOfService: z.string().trim().optional(),
+
   donationsEnabled: z.boolean(),
+  donationTitle: z.string().trim().optional(),
+  donationTeaser: z.string().trim().optional(),
+  donationDescription: z.string().trim().optional(),
   bankName: z.string().trim().optional(),
   bankAccountType: z.string().trim().optional(),
   bankAccountNumber: z.string().trim().optional(),
@@ -228,6 +268,12 @@ export const adminSiteSettingsSchema = z.object({
   generalSchedule: z.string().optional(),
 
   heroTagline: z.string().optional(),
+  foundingYear: z
+    .number()
+    .optional()
+    .refine((value) => value === undefined || (value > 1900 && value <= new Date().getFullYear()), {
+      message: "Año de fundación inválido.",
+    }),
 
   primaryColor: hexColor("Color principal"),
   accentColor: hexColor("Color de acento"),
@@ -271,7 +317,37 @@ export const adminSiteSettingsSchema = z.object({
   helpCtaLabel: z.string().optional(),
   helpOptionsTitle: z.string().optional(),
 
+  firstTimeEyebrow: z.string().optional(),
+  firstTimeTitle: z.string().optional(),
+  firstTimeDescription: z.string().optional(),
+  firstTimeCtaLabel: z.string().optional(),
+
+  ministriesEyebrow: z.string().optional(),
+  ministriesTitle: z.string().optional(),
+  ministriesDescription: z.string().optional(),
+  campusesEyebrow: z.string().optional(),
+  campusesTitle: z.string().optional(),
+  campusesDescription: z.string().optional(),
+  eventsEyebrow: z.string().optional(),
+  eventsTitle: z.string().optional(),
+  eventsDescription: z.string().optional(),
+  newsEyebrow: z.string().optional(),
+  newsTitle: z.string().optional(),
+  newsDescription: z.string().optional(),
+  pastorsEyebrow: z.string().optional(),
+  pastorsTitle: z.string().optional(),
+  pastorsDescription: z.string().optional(),
+
+  liveThumbnailUrl: z.string().optional(),
+  liveThumbnailAlt: z.string().optional(),
+
+  privacyPolicy: z.string().optional(),
+  termsOfService: z.string().optional(),
+
   donationsEnabled: z.boolean(),
+  donationTitle: z.string().optional(),
+  donationTeaser: z.string().optional(),
+  donationDescription: z.string().optional(),
   bankName: z.string().optional(),
   bankAccountType: z.string().optional(),
   bankAccountNumber: z.string().optional(),
@@ -306,6 +382,17 @@ export const helpOptionsFormSchema = z.object({
 });
 
 export type HelpOptionsFormValues = z.infer<typeof helpOptionsFormSchema>;
+
+export const heroPhotoFormSchema = z.object({
+  imageUrl: z.string().trim().min(1, "Sube una foto."),
+  alt: z.string().trim().optional(),
+});
+
+export const heroPhotosFormSchema = z.object({
+  photos: z.array(heroPhotoFormSchema),
+});
+
+export type HeroPhotosFormValues = z.infer<typeof heroPhotosFormSchema>;
 
 export const pastorProfileFormSchema = z.object({
   name: z.string().trim().min(2, "El nombre es obligatorio."),

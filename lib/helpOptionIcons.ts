@@ -1,12 +1,14 @@
-import { Clock, Gift, HandCoins, HandHeart, Heart, Lightbulb, Shirt, UtensilsCrossed } from "lucide-react";
+import { Clock, Gift, HandHeart, Heart, Lightbulb, Shirt, UtensilsCrossed } from "lucide-react";
 import type { ComponentType } from "react";
 
 /**
- * Íconos disponibles para las opciones del widget de Ayuda y donaciones —
- * mismo patrón que lib/firstTimeIcons.ts (catálogo fijo, no cualquier ícono).
+ * Íconos disponibles para las opciones del widget de Ayuda — mismo patrón
+ * que lib/firstTimeIcons.ts (catálogo fijo, no cualquier ícono). La donación
+ * NO está aquí a propósito: tiene su propia sección (Configuración >
+ * Donaciones) que se conecta sola con los datos bancarios/Nequi/Daviplata —
+ * agregarla aquí crearía una "donación" falsa que solo manda un WhatsApp.
  */
 export const HELP_OPTION_ICON_OPTIONS = [
-  { value: "handCoins", label: "Donación económica", icon: HandCoins },
   { value: "shirt", label: "Ropa", icon: Shirt },
   { value: "food", label: "Alimentos", icon: UtensilsCrossed },
   { value: "gift", label: "Artículos/especie", icon: Gift },

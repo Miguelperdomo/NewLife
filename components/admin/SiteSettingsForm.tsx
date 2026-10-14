@@ -131,6 +131,15 @@ export function SiteSettingsForm({
           <input id="heroTagline" className={inputClass} {...register("heroTagline")} />
         </FormField>
 
+        <FormField
+          label="Año de fundación"
+          htmlFor="foundingYear"
+          error={errors.foundingYear?.message}
+          hint='Si lo llenas, la portada muestra «X años sirviendo» junto al número de sedes y ministerios. Déjalo vacío para no mostrarlo.'
+        >
+          <input id="foundingYear" inputMode="numeric" maxLength={4} className={inputClass} {...register("foundingYear")} />
+        </FormField>
+
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField label="Logo" htmlFor="logoUrl" hint="Reemplaza el logo en todo el sitio (encabezado y pie de página).">
             <ImageUploadField control={control} name="logoUrl" folder="settings" />
@@ -173,7 +182,7 @@ export function SiteSettingsForm({
         </FormField>
       </FormSection>
 
-      <FormSection title="Apariencia" description="Estos colores sí cambian el sitio público en cuanto guardas.">
+      <FormSection title="Apariencia" description="Estos colores sí cambian el sitio público en cuanto guardas." defaultOpen={false}>
         <div className="grid gap-4 sm:grid-cols-2">
           <ColorField control={control} name="primaryColor" label="Color principal" error={errors.primaryColor?.message} />
           <ColorField control={control} name="accentColor" label="Color de acento" error={errors.accentColor?.message} />
@@ -186,7 +195,7 @@ export function SiteSettingsForm({
         </FormField>
       </FormSection>
 
-      <FormSection title="Redes sociales" description="Activa o desactiva cada red y define su enlace.">
+      <FormSection title="Redes sociales" description="Activa o desactiva cada red y define su enlace." defaultOpen={false}>
         <SocialRowField control={control} urlName="facebookUrl" enabledName="facebookEnabled" label="Facebook" placeholder="https://facebook.com/..." />
         <SocialRowField control={control} urlName="instagramUrl" enabledName="instagramEnabled" label="Instagram" placeholder="https://instagram.com/..." />
         <SocialRowField control={control} urlName="youtubeUrl" enabledName="youtubeEnabled" label="YouTube" placeholder="https://youtube.com/..." />
@@ -200,7 +209,7 @@ export function SiteSettingsForm({
         />
       </FormSection>
 
-      <FormSection title="Página principal" description="Qué secciones se muestran en el Home.">
+      <FormSection title="Página principal" description="Qué secciones se muestran en el Home." defaultOpen={false}>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex items-center gap-2 text-sm text-slate-700">
             <input type="checkbox" className="h-4 w-4 rounded" {...register("showMinistries")} />
@@ -233,7 +242,7 @@ export function SiteSettingsForm({
         </div>
       </FormSection>
 
-      <FormSection title="Contacto y WhatsApp">
+      <FormSection title="Contacto y WhatsApp" defaultOpen={false}>
         <FormField
           label="Mensaje predeterminado de WhatsApp"
           htmlFor="whatsappDefaultMessage"
@@ -257,7 +266,7 @@ export function SiteSettingsForm({
       <FormSection
         title="SEO y compartir"
         description="Lo que se ve cuando alguien comparte el link del sitio en WhatsApp, Facebook, etc."
-      >
+       defaultOpen={false}>
         <FormField
           label="Título para compartir"
           htmlFor="seoTitle"
@@ -282,7 +291,7 @@ export function SiteSettingsForm({
       <FormSection
         title="Página Nosotros"
         description="El contenido de /nosotros — Quiénes somos, Misión, Visión y Valores se muestran con el mismo diseño, solo cambia el texto."
-      >
+       defaultOpen={false}>
         <FormField label="Foto de portada" htmlFor="aboutImageUrl" hint="Se muestra grande, arriba de la página. Opcional.">
           <ImageUploadField control={control} name="aboutImageUrl" folder="nosotros" />
         </FormField>
@@ -301,8 +310,161 @@ export function SiteSettingsForm({
       </FormSection>
 
       <FormSection
-        title="Widget de Ayuda — textos"
-        description="El título, descripción y botón del widget flotante. Las opciones (Donación, Ropa, etc.) se editan aparte, más abajo."
+        title="«¿Es tu primera vez?» — encabezado"
+        description="El texto de arriba de esta sección del Home. Las tarjetas se editan aparte, más abajo."
+       defaultOpen={false}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField label="Etiqueta" htmlFor="firstTimeEyebrow" hint='Ej. «Primera vez».'>
+            <input id="firstTimeEyebrow" className={inputClass} {...register("firstTimeEyebrow")} />
+          </FormField>
+          <FormField label="Texto del botón" htmlFor="firstTimeCtaLabel" hint='Ej. «Planifica tu visita».'>
+            <input id="firstTimeCtaLabel" className={inputClass} {...register("firstTimeCtaLabel")} />
+          </FormField>
+        </div>
+        <FormField label="Título" htmlFor="firstTimeTitle" hint='Ej. «¿Es tu primera vez en New Life?».'>
+          <input id="firstTimeTitle" className={inputClass} {...register("firstTimeTitle")} />
+        </FormField>
+        <FormField label="Descripción" htmlFor="firstTimeDescription">
+          <textarea id="firstTimeDescription" rows={2} className={textareaClass} {...register("firstTimeDescription")} />
+        </FormField>
+      </FormSection>
+
+      <FormSection
+        title="Encabezados de secciones"
+        description="La etiqueta, título y descripción de cada sección del Home y su página completa (Ministerios, Sedes, Eventos, Noticias, Pastores). Un mismo texto se usa en los dos lugares."
+       defaultOpen={false}>
+        <div className="rounded-2xl border border-slate-100 p-4">
+          <p className="text-sm font-semibold text-slate-800">Ministerios</p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <FormField label="Etiqueta" htmlFor="ministriesEyebrow">
+              <input id="ministriesEyebrow" className={inputClass} {...register("ministriesEyebrow")} />
+            </FormField>
+            <FormField label="Título" htmlFor="ministriesTitle">
+              <input id="ministriesTitle" className={inputClass} {...register("ministriesTitle")} />
+            </FormField>
+          </div>
+          <FormField label="Descripción" htmlFor="ministriesDescription">
+            <textarea id="ministriesDescription" rows={2} className={textareaClass} {...register("ministriesDescription")} />
+          </FormField>
+        </div>
+
+        <div className="rounded-2xl border border-slate-100 p-4">
+          <p className="text-sm font-semibold text-slate-800">Sedes</p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <FormField label="Etiqueta" htmlFor="campusesEyebrow">
+              <input id="campusesEyebrow" className={inputClass} {...register("campusesEyebrow")} />
+            </FormField>
+            <FormField label="Título" htmlFor="campusesTitle">
+              <input id="campusesTitle" className={inputClass} {...register("campusesTitle")} />
+            </FormField>
+          </div>
+          <FormField label="Descripción" htmlFor="campusesDescription">
+            <textarea id="campusesDescription" rows={2} className={textareaClass} {...register("campusesDescription")} />
+          </FormField>
+        </div>
+
+        <div className="rounded-2xl border border-slate-100 p-4">
+          <p className="text-sm font-semibold text-slate-800">Eventos</p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <FormField label="Etiqueta" htmlFor="eventsEyebrow">
+              <input id="eventsEyebrow" className={inputClass} {...register("eventsEyebrow")} />
+            </FormField>
+            <FormField label="Título" htmlFor="eventsTitle">
+              <input id="eventsTitle" className={inputClass} {...register("eventsTitle")} />
+            </FormField>
+          </div>
+          <FormField label="Descripción" htmlFor="eventsDescription">
+            <textarea id="eventsDescription" rows={2} className={textareaClass} {...register("eventsDescription")} />
+          </FormField>
+        </div>
+
+        <div className="rounded-2xl border border-slate-100 p-4">
+          <p className="text-sm font-semibold text-slate-800">Noticias</p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <FormField label="Etiqueta" htmlFor="newsEyebrow">
+              <input id="newsEyebrow" className={inputClass} {...register("newsEyebrow")} />
+            </FormField>
+            <FormField label="Título" htmlFor="newsTitle">
+              <input id="newsTitle" className={inputClass} {...register("newsTitle")} />
+            </FormField>
+          </div>
+          <FormField label="Descripción" htmlFor="newsDescription">
+            <textarea id="newsDescription" rows={2} className={textareaClass} {...register("newsDescription")} />
+          </FormField>
+        </div>
+
+        <div className="rounded-2xl border border-slate-100 p-4">
+          <p className="text-sm font-semibold text-slate-800">Pastores</p>
+          <p className="mt-0.5 text-xs text-slate-500">Solo aparece en /pastores, no tiene resumen en el Home.</p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <FormField label="Etiqueta" htmlFor="pastorsEyebrow">
+              <input id="pastorsEyebrow" className={inputClass} {...register("pastorsEyebrow")} />
+            </FormField>
+            <FormField label="Título" htmlFor="pastorsTitle">
+              <input id="pastorsTitle" className={inputClass} {...register("pastorsTitle")} />
+            </FormField>
+          </div>
+          <FormField label="Descripción" htmlFor="pastorsDescription">
+            <textarea id="pastorsDescription" rows={2} className={textareaClass} {...register("pastorsDescription")} />
+          </FormField>
+        </div>
+      </FormSection>
+
+      <FormSection
+        title="Bloque «En vivo» — miniatura"
+        description="La imagen que se muestra en el Home junto al botón para ver la transmisión."
+        defaultOpen={false}
+      >
+        <FormField label="Imagen" htmlFor="liveThumbnailUrl">
+          <ImageUploadField control={control} name="liveThumbnailUrl" folder="settings" />
+        </FormField>
+        <FormField label="Texto alternativo" htmlFor="liveThumbnailAlt" hint="Describe la imagen, para accesibilidad.">
+          <input id="liveThumbnailAlt" className={inputClass} {...register("liveThumbnailAlt")} />
+        </FormField>
+      </FormSection>
+
+      <FormSection
+        title="Legal"
+        description="Se publican en /privacidad y /terminos, con link automático en el pie de página."
+        defaultOpen={false}
+      >
+        <FormField
+          label="Política de privacidad"
+          htmlFor="privacyPolicy"
+          hint="Si lo dejas vacío, se usa un texto genérico básico."
+        >
+          <textarea id="privacyPolicy" rows={8} className={textareaClass} {...register("privacyPolicy")} />
+        </FormField>
+        <FormField
+          label="Términos y condiciones"
+          htmlFor="termsOfService"
+          hint="Si lo dejas vacío, se usa un texto genérico básico."
+        >
+          <textarea id="termsOfService" rows={8} className={textareaClass} {...register("termsOfService")} />
+        </FormField>
+      </FormSection>
+
+      <FormSection title="Sistema" defaultOpen={false}>
+        <label className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+          <input type="checkbox" className="mt-0.5 h-4 w-4 rounded" {...register("maintenanceMode")} />
+          <span>
+            <span className="flex items-center gap-1.5 text-sm font-semibold text-amber-800">
+              <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+              Modo mantenimiento
+            </span>
+            <span className="mt-1 block text-xs leading-relaxed text-amber-700">
+              Al activarlo, todo el sitio público muestra un aviso de &ldquo;volvemos pronto&rdquo; en vez del
+              contenido normal. El panel administrativo sigue funcionando para que puedas desactivarlo cuando
+              termines.
+            </span>
+          </span>
+        </label>
+      </FormSection>
+
+      <FormSection
+        title="Widget de Ayuda — encabezado"
+        description="El título, descripción y botón del widget flotante que aparece en todo el sitio. Justo después de guardar esto, más abajo en la página, está la lista de formas de ayudar (Ropa, Alimentos, Voluntariado...) — ahí se agregan tantas como quieras, cada una con su propio botón de guardar."
+        defaultOpen={false}
       >
         <FormField label="Título" htmlFor="helpTitle" hint='Ej. «Sé parte de algo más grande».'>
           <input id="helpTitle" className={inputClass} {...register("helpTitle")} />
@@ -322,12 +484,31 @@ export function SiteSettingsForm({
 
       <FormSection
         title="Donaciones"
-        description="Se muestran en el widget de Ayuda cuando alguien elige «Donación económica»."
+        description='Si la activas, "Donación económica" aparece SOLA como la primera opción del widget de Ayuda, ya conectada a estos datos — no hace falta (ni se debe) agregarla a mano en la lista de opciones de más abajo.'
+        defaultOpen={false}
       >
         <label className="flex items-center gap-2 text-sm text-slate-700">
           <input type="checkbox" className="h-4 w-4 rounded" {...register("donationsEnabled")} />
           Mostrar datos de donación en el sitio
         </label>
+
+        <FormField label="Título" htmlFor="donationTitle" hint='Ej. «Donación económica».'>
+          <input id="donationTitle" className={inputClass} {...register("donationTitle")} />
+        </FormField>
+        <FormField
+          label="Texto corto (en la lista de opciones)"
+          htmlFor="donationTeaser"
+          hint='Ej. «Apoya proyectos y necesidades de nuestra comunidad».'
+        >
+          <input id="donationTeaser" className={inputClass} {...register("donationTeaser")} />
+        </FormField>
+        <FormField
+          label="Texto de la pantalla de donación"
+          htmlFor="donationDescription"
+          hint='Ej. «Gracias por tu generosidad. Puedes hacer tu aporte con cualquiera de estos datos».'
+        >
+          <textarea id="donationDescription" rows={2} className={textareaClass} {...register("donationDescription")} />
+        </FormField>
 
         <div className="rounded-2xl border border-slate-100 p-4">
           <p className="text-sm font-semibold text-slate-800">Cuenta bancaria</p>
@@ -368,23 +549,6 @@ export function SiteSettingsForm({
             </FormField>
           </div>
         </div>
-      </FormSection>
-
-      <FormSection title="Sistema">
-        <label className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <input type="checkbox" className="mt-0.5 h-4 w-4 rounded" {...register("maintenanceMode")} />
-          <span>
-            <span className="flex items-center gap-1.5 text-sm font-semibold text-amber-800">
-              <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-              Modo mantenimiento
-            </span>
-            <span className="mt-1 block text-xs leading-relaxed text-amber-700">
-              Al activarlo, todo el sitio público muestra un aviso de &ldquo;volvemos pronto&rdquo; en vez del
-              contenido normal. El panel administrativo sigue funcionando para que puedas desactivarlo cuando
-              termines.
-            </span>
-          </span>
-        </label>
       </FormSection>
 
       <div className="flex justify-end">

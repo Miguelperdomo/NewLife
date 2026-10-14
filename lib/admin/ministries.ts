@@ -183,3 +183,13 @@ export async function setMinistryStatus(
   if (error || !data) throw new Error(error?.message ?? "No se pudo actualizar el estado.");
   return rowToMinistry(data as unknown as MinistryRow);
 }
+
+export async function removeMinistry(id: string): Promise<void> {
+  const supabase = createClient();
+  // event_ministries referencia ministerios — se limpia primero por la misma
+  // razón que al borrar un evento: sin esto, el borrado fallaría si el
+  // ministerio quedó enlazado a algún evento con audiencia "específica".
+  await supabase.from("event_ministries").delete().eq("ministry_id", id);
+  const { error } = await supabase.from("ministries").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}

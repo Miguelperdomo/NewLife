@@ -1,7 +1,7 @@
 import { verses } from "@/data/verses";
 import { getPastorBySlug as getStaticPastorBySlug, getPastors as getStaticPastors } from "@/lib/pastors";
 import { createPublicClient } from "@/lib/supabase/publicClient";
-import type { Campus, FirstTimeCard, HelpOption, Ministry, Pastor, SocialLink, Verse } from "@/lib/types";
+import type { Campus, FirstTimeCard, HelpOption, HeroPhoto, Ministry, Pastor, SocialLink, Verse } from "@/lib/types";
 
 /**
  * Capa de acceso a contenido. Ministerios y Sedes ya leen de Supabase (lo que
@@ -197,7 +197,13 @@ function mergePastorProfile(base: Pastor, profile: PastorProfileRow | null): Pas
     bio: profile.bio || base.bio,
     imageSrc: profile.image_url ?? base.imageSrc,
     whatsappNumber: profile.whatsapp_number ?? base.whatsappNumber,
-    social: resolvedSocial.length > 0 ? resolvedSocial : base.social,
+    // base.social puede traer enlaces de ejemplo ("#") de data/pastors.ts —
+    // se descartan para no mostrar redes muertas mientras Configuración no
+    // tenga ninguna activada todavía.
+    social:
+      resolvedSocial.length > 0
+        ? resolvedSocial
+        : (base.social ?? []).filter((link) => link.url && link.url !== "#"),
   };
 }
 
@@ -254,6 +260,26 @@ export async function getHelpOptions(): Promise<HelpOption[]> {
     icon: row.icon,
     title: row.title,
     description: row.description,
+  }));
+}
+
+interface HeroPhotoRow {
+  image_url: string;
+  alt_text: string | null;
+  display_order: number;
+}
+
+export async function getHeroPhotos(): Promise<HeroPhoto[]> {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase
+    .from("hero_photos")
+    .select("image_url, alt_text, display_order")
+    .order("display_order", { ascending: true });
+
+  if (error || !data) return [];
+  return (data as HeroPhotoRow[]).map((row) => ({
+    src: row.image_url,
+    alt: row.alt_text ?? undefined,
   }));
 }
 

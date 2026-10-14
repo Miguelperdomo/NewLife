@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { AdminMobileSidebar } from "@/components/admin/AdminMobileSidebar";
 import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
 import { AdminUserMenu } from "@/components/admin/AdminUserMenu";
 import { GlobalSearch } from "@/components/admin/GlobalSearch";
@@ -22,11 +23,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </aside>
 
         <div className="min-w-0 flex-1">
-          <header className="flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
+          <header className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-4 sm:gap-4 sm:px-6">
+            <AdminMobileSidebar />
             <div className="lg:hidden">
               <Logo variant="dark" />
             </div>
-            <GlobalSearch />
+            <div className="min-w-0 flex-1">
+              <GlobalSearch />
+            </div>
             <AdminUserMenu name={session.name} />
           </header>
 

@@ -258,3 +258,12 @@ export async function setEventStatus(
   if (error) throw new Error(error.message);
   return fetchEventById(id);
 }
+
+export async function removeEvent(id: string): Promise<void> {
+  const supabase = createClient();
+  // Primero las filas de event_ministries (FK a este evento) — mismo motivo
+  // que en syncEventMinistries: sin esto, borrar el evento fallaría.
+  await supabase.from("event_ministries").delete().eq("event_id", id);
+  const { error } = await supabase.from("events").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}

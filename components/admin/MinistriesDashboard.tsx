@@ -15,10 +15,12 @@ import { MinistryTable } from "./MinistryTable";
 export function MinistriesDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { ministries, isReady, duplicateMinistry, archiveMinistry, activateMinistry } = useAdminMinistries();
+  const { ministries, isReady, duplicateMinistry, archiveMinistry, activateMinistry, removeMinistry } =
+    useAdminMinistries();
   const [filters, setFilters] = useState<MinistryFiltersValue>({ query: "", status: "all" });
   const [previewMinistry, setPreviewMinistry] = useState<AdminMinistry | null>(null);
   const [archiveTarget, setArchiveTarget] = useState<AdminMinistry | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AdminMinistry | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
   const feedback =
@@ -77,6 +79,16 @@ export function MinistriesDashboard() {
     }
   }
 
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    try {
+      await removeMinistry(deleteTarget.id);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "No se pudo eliminar el ministerio.");
+    }
+    setDeleteTarget(null);
+  }
+
   return (
     <div className="space-y-6">
       {feedback && (
@@ -115,6 +127,7 @@ export function MinistriesDashboard() {
           onDuplicate={handleDuplicate}
           onArchive={setArchiveTarget}
           onActivate={handleActivate}
+          onDelete={setDeleteTarget}
         />
       ) : (
         <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
@@ -142,6 +155,21 @@ export function MinistriesDashboard() {
             ¿Quieres archivar <strong className="font-semibold text-slate-900">“{archiveTarget?.name}”</strong>?
             Dejará de aparecer en el sitio público, pero podrás encontrarlo luego filtrando por estado
             «Archivado» y volver a activarlo cuando quieras.
+          </>
+        }
+      />
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Eliminar ministerio"
+        confirmLabel="Eliminar"
+        description={
+          <>
+            ¿Eliminar <strong className="font-semibold text-slate-900">“{deleteTarget?.name}”</strong>? Esta
+            acción no se puede deshacer — si solo quieres quitarlo del sitio público por ahora, usa
+            «Archivar» en vez de esto.
           </>
         }
       />

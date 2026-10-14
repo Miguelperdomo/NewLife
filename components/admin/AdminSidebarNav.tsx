@@ -19,7 +19,7 @@ const navItems = [
   { label: "Configuración", href: "/admin/configuracion", icon: Settings, active: true, exact: false },
 ];
 
-export function AdminSidebarNav() {
+export function AdminSidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
@@ -48,6 +48,7 @@ export function AdminSidebarNav() {
           <Link
             key={item.label}
             href={item.href}
+            onClick={onNavigate}
             className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors",
               isCurrent ? "bg-white/10 text-white" : "text-white/60 hover:bg-white/5 hover:text-white"

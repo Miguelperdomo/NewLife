@@ -5,6 +5,7 @@ import {
   createEvent as createEventRequest,
   duplicateEvent as duplicateEventRequest,
   loadEvents,
+  removeEvent as removeEventRequest,
   setEventStatus,
   updateEvent as updateEventRequest,
 } from "@/lib/admin/events";
@@ -12,6 +13,7 @@ import {
   createNews as createNewsRequest,
   duplicateNews as duplicateNewsRequest,
   loadNews,
+  removeNews as removeNewsRequest,
   setNewsStatus,
   updateNews as updateNewsRequest,
 } from "@/lib/admin/news";
@@ -106,6 +108,14 @@ export function useAdminContent() {
     [refreshEvents]
   );
 
+  const removeEvent = useCallback(
+    async (id: string) => {
+      await removeEventRequest(id);
+      await refreshEvents();
+    },
+    [refreshEvents]
+  );
+
   const createNews = useCallback(
     async (input: NewNewsInput) => {
       const created = await createNewsRequest(
@@ -149,6 +159,14 @@ export function useAdminContent() {
     [refreshNews]
   );
 
+  const removeNews = useCallback(
+    async (id: string) => {
+      await removeNewsRequest(id);
+      await refreshNews();
+    },
+    [refreshNews]
+  );
+
   return {
     events,
     news,
@@ -157,9 +175,11 @@ export function useAdminContent() {
     updateEvent,
     duplicateEvent,
     archiveEvent,
+    removeEvent,
     createNews,
     updateNews,
     duplicateNews,
     archiveNews,
+    removeNews,
   };
 }

@@ -95,7 +95,13 @@ export function CampusForm({
         title="Ubicación"
         description="La dirección se muestra en el sitio; el texto de búsqueda es lo que se usa para abrir Google Maps."
       >
-        <FormField label="Dirección" htmlFor="address" required error={errors.address?.message}>
+        <FormField
+          label="Dirección"
+          htmlFor="address"
+          required
+          error={errors.address?.message}
+          hint="Ej. «Calle 42 #15-30, Ibagué» — la que se muestra en el sitio."
+        >
           <input id="address" className={inputClass} {...register("address")} />
         </FormField>
 

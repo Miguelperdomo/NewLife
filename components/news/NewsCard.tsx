@@ -13,7 +13,7 @@ export function NewsCard({ article, index = 0 }: { article: NewsArticle; index?:
   return (
     <Link
       href={`/noticias/${article.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm shadow-slate-100 transition-transform hover:-translate-y-1"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm shadow-slate-100 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/70"
     >
       <div className="relative">
         <PlaceholderImage

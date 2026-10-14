@@ -8,6 +8,7 @@ import type { SiteSettingsFormValues } from "@/lib/admin/schemas";
 import { CreditsPanel } from "./CreditsPanel";
 import { FirstTimeCardsPanel } from "./FirstTimeCardsPanel";
 import { HelpOptionsPanel } from "./HelpOptionsPanel";
+import { HeroPhotosPanel } from "./HeroPhotosPanel";
 import { PastorProfileForm } from "./PastorProfileForm";
 import { SiteSettingsForm } from "./SiteSettingsForm";
 import { SystemPanel } from "./SystemPanel";
@@ -64,9 +65,11 @@ export function ConfiguracionDashboard() {
               o "Importar configuración" en SystemPanel). */}
           <SiteSettingsForm key={settings.updatedAt} defaultValues={siteSettingsToFormValues(settings)} onSubmit={handleSubmit} />
 
-          <FirstTimeCardsPanel />
+          <HeroPhotosPanel />
 
           <HelpOptionsPanel />
+
+          <FirstTimeCardsPanel />
 
           <PastorProfileForm />
 

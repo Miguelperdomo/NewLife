@@ -23,6 +23,7 @@ interface SiteSettingsRow {
   city: string | null;
   general_schedule: string | null;
   hero_tagline: string | null;
+  founding_year: number | null;
   primary_color: string;
   accent_color: string;
   cover_image_url: string | null;
@@ -58,7 +59,33 @@ interface SiteSettingsRow {
   help_description: string | null;
   help_cta_label: string | null;
   help_options_title: string | null;
+  first_time_eyebrow: string | null;
+  first_time_title: string | null;
+  first_time_description: string | null;
+  first_time_cta_label: string | null;
+  ministries_eyebrow: string | null;
+  ministries_title: string | null;
+  ministries_description: string | null;
+  campuses_eyebrow: string | null;
+  campuses_title: string | null;
+  campuses_description: string | null;
+  events_eyebrow: string | null;
+  events_title: string | null;
+  events_description: string | null;
+  news_eyebrow: string | null;
+  news_title: string | null;
+  news_description: string | null;
+  pastors_eyebrow: string | null;
+  pastors_title: string | null;
+  pastors_description: string | null;
+  live_thumbnail_url: string | null;
+  live_thumbnail_alt: string | null;
+  privacy_policy: string | null;
+  terms_of_service: string | null;
   donations_enabled: boolean;
+  donation_title: string | null;
+  donation_teaser: string | null;
+  donation_description: string | null;
   bank_name: string | null;
   bank_account_type: string | null;
   bank_account_number: string | null;
@@ -82,6 +109,7 @@ function rowToSettings(row: SiteSettingsRow): AdminSiteSettings {
     city: row.city ?? undefined,
     generalSchedule: row.general_schedule ?? undefined,
     heroTagline: row.hero_tagline ?? undefined,
+    foundingYear: row.founding_year ?? undefined,
     primaryColor: row.primary_color,
     accentColor: row.accent_color,
     coverImageUrl: row.cover_image_url ?? undefined,
@@ -117,7 +145,33 @@ function rowToSettings(row: SiteSettingsRow): AdminSiteSettings {
     helpDescription: row.help_description ?? undefined,
     helpCtaLabel: row.help_cta_label ?? undefined,
     helpOptionsTitle: row.help_options_title ?? undefined,
+    firstTimeEyebrow: row.first_time_eyebrow ?? undefined,
+    firstTimeTitle: row.first_time_title ?? undefined,
+    firstTimeDescription: row.first_time_description ?? undefined,
+    firstTimeCtaLabel: row.first_time_cta_label ?? undefined,
+    ministriesEyebrow: row.ministries_eyebrow ?? undefined,
+    ministriesTitle: row.ministries_title ?? undefined,
+    ministriesDescription: row.ministries_description ?? undefined,
+    campusesEyebrow: row.campuses_eyebrow ?? undefined,
+    campusesTitle: row.campuses_title ?? undefined,
+    campusesDescription: row.campuses_description ?? undefined,
+    eventsEyebrow: row.events_eyebrow ?? undefined,
+    eventsTitle: row.events_title ?? undefined,
+    eventsDescription: row.events_description ?? undefined,
+    newsEyebrow: row.news_eyebrow ?? undefined,
+    newsTitle: row.news_title ?? undefined,
+    newsDescription: row.news_description ?? undefined,
+    pastorsEyebrow: row.pastors_eyebrow ?? undefined,
+    pastorsTitle: row.pastors_title ?? undefined,
+    pastorsDescription: row.pastors_description ?? undefined,
+    liveThumbnailUrl: row.live_thumbnail_url ?? undefined,
+    liveThumbnailAlt: row.live_thumbnail_alt ?? undefined,
+    privacyPolicy: row.privacy_policy ?? undefined,
+    termsOfService: row.terms_of_service ?? undefined,
     donationsEnabled: row.donations_enabled,
+    donationTitle: row.donation_title ?? undefined,
+    donationTeaser: row.donation_teaser ?? undefined,
+    donationDescription: row.donation_description ?? undefined,
     bankName: row.bank_name ?? undefined,
     bankAccountType: row.bank_account_type ?? undefined,
     bankAccountNumber: row.bank_account_number ?? undefined,
@@ -143,6 +197,7 @@ function settingsToRow(settings: AdminSiteSettings) {
     city: settings.city ?? null,
     general_schedule: settings.generalSchedule ?? null,
     hero_tagline: settings.heroTagline ?? null,
+    founding_year: settings.foundingYear ?? null,
     primary_color: settings.primaryColor,
     accent_color: settings.accentColor,
     cover_image_url: settings.coverImageUrl ?? null,
@@ -178,7 +233,33 @@ function settingsToRow(settings: AdminSiteSettings) {
     help_description: settings.helpDescription ?? null,
     help_cta_label: settings.helpCtaLabel ?? null,
     help_options_title: settings.helpOptionsTitle ?? null,
+    first_time_eyebrow: settings.firstTimeEyebrow ?? null,
+    first_time_title: settings.firstTimeTitle ?? null,
+    first_time_description: settings.firstTimeDescription ?? null,
+    first_time_cta_label: settings.firstTimeCtaLabel ?? null,
+    ministries_eyebrow: settings.ministriesEyebrow ?? null,
+    ministries_title: settings.ministriesTitle ?? null,
+    ministries_description: settings.ministriesDescription ?? null,
+    campuses_eyebrow: settings.campusesEyebrow ?? null,
+    campuses_title: settings.campusesTitle ?? null,
+    campuses_description: settings.campusesDescription ?? null,
+    events_eyebrow: settings.eventsEyebrow ?? null,
+    events_title: settings.eventsTitle ?? null,
+    events_description: settings.eventsDescription ?? null,
+    news_eyebrow: settings.newsEyebrow ?? null,
+    news_title: settings.newsTitle ?? null,
+    news_description: settings.newsDescription ?? null,
+    pastors_eyebrow: settings.pastorsEyebrow ?? null,
+    pastors_title: settings.pastorsTitle ?? null,
+    pastors_description: settings.pastorsDescription ?? null,
+    live_thumbnail_url: settings.liveThumbnailUrl ?? null,
+    live_thumbnail_alt: settings.liveThumbnailAlt ?? null,
+    privacy_policy: settings.privacyPolicy ?? null,
+    terms_of_service: settings.termsOfService ?? null,
     donations_enabled: settings.donationsEnabled,
+    donation_title: settings.donationTitle ?? null,
+    donation_teaser: settings.donationTeaser ?? null,
+    donation_description: settings.donationDescription ?? null,
     bank_name: settings.bankName ?? null,
     bank_account_type: settings.bankAccountType ?? null,
     bank_account_number: settings.bankAccountNumber ?? null,
@@ -212,6 +293,7 @@ function defaultSiteSettings(): AdminSiteSettings {
     generalSchedule: undefined,
 
     heroTagline: undefined,
+    foundingYear: undefined,
 
     primaryColor: "#7c3aed",
     accentColor: "#f59e0b",
@@ -255,7 +337,37 @@ function defaultSiteSettings(): AdminSiteSettings {
     helpCtaLabel: undefined,
     helpOptionsTitle: undefined,
 
+    firstTimeEyebrow: undefined,
+    firstTimeTitle: undefined,
+    firstTimeDescription: undefined,
+    firstTimeCtaLabel: undefined,
+
+    ministriesEyebrow: undefined,
+    ministriesTitle: undefined,
+    ministriesDescription: undefined,
+    campusesEyebrow: undefined,
+    campusesTitle: undefined,
+    campusesDescription: undefined,
+    eventsEyebrow: undefined,
+    eventsTitle: undefined,
+    eventsDescription: undefined,
+    newsEyebrow: undefined,
+    newsTitle: undefined,
+    newsDescription: undefined,
+    pastorsEyebrow: undefined,
+    pastorsTitle: undefined,
+    pastorsDescription: undefined,
+
+    liveThumbnailUrl: undefined,
+    liveThumbnailAlt: undefined,
+
+    privacyPolicy: undefined,
+    termsOfService: undefined,
+
     donationsEnabled: false,
+    donationTitle: undefined,
+    donationTeaser: undefined,
+    donationDescription: undefined,
     bankName: undefined,
     bankAccountType: undefined,
     bankAccountNumber: undefined,

@@ -89,6 +89,11 @@ export interface HelpOption {
   description: string;
 }
 
+export interface HeroPhoto {
+  src: string;
+  alt?: string;
+}
+
 export interface Pastor {
   slug: string;
   name: string;

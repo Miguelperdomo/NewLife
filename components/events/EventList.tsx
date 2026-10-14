@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CalendarX } from "lucide-react";
 import { EventCard } from "./EventCard";
 import { EventFilters, type EventFilterOption } from "./EventFilters";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { Campus, ChurchEvent, Ministry } from "@/lib/types";
 
 /**
@@ -47,9 +49,7 @@ export function EventList({
           ))}
         </div>
       ) : (
-        <p className="mt-10 rounded-2xl border border-dashed border-slate-200 p-10 text-center text-sm text-slate-500">
-          No hay eventos para este filtro por ahora.
-        </p>
+        <EmptyState icon={CalendarX} title="No hay eventos para este filtro por ahora." className="mt-10" />
       )}
     </div>
   );

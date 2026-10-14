@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, Play, X } from "lucide-react";
 import { AccessibilityMenu } from "@/components/layout/AccessibilityMenu";
 import { InstallAppButton } from "@/components/layout/InstallAppButton";
@@ -13,9 +14,9 @@ import { liveLinks } from "@/data/live";
 import { useLiveStatus } from "@/lib/useLiveStatus";
 import { cn } from "@/lib/utils";
 
-function LiveNavBadge({ className }: { className?: string }) {
+function LiveNavBadge({ className, youtubeUrl }: { className?: string; youtubeUrl?: string }) {
   const { isLive, videoId } = useLiveStatus();
-  const href = isLive && videoId ? `https://youtube.com/watch?v=${videoId}` : liveLinks.youtube;
+  const href = isLive && videoId ? `https://youtube.com/watch?v=${videoId}` : youtubeUrl || liveLinks.youtube;
 
   return (
     <Link
@@ -43,8 +44,21 @@ function LiveNavBadge({ className }: { className?: string }) {
   );
 }
 
-export function Navbar({ logoUrl, churchName }: { logoUrl?: string; churchName?: string }) {
+export function Navbar({
+  logoUrl,
+  churchName,
+  youtubeUrl,
+}: {
+  logoUrl?: string;
+  churchName?: string;
+  youtubeUrl?: string;
+}) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  function isActiveLink(href: string) {
+    return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/90 backdrop-blur">
@@ -54,15 +68,22 @@ export function Navbar({ logoUrl, churchName }: { logoUrl?: string; churchName?:
         </Link>
 
         <nav className="hidden items-center gap-4 md:flex lg:gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-brand-700"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isActiveLink(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "relative py-1 text-sm font-medium transition-colors after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:origin-left after:scale-x-0 after:bg-brand-600 after:transition-transform after:duration-200 after:content-[''] hover:text-brand-700 hover:after:scale-x-100",
+                  active ? "text-brand-700 after:scale-x-100" : "text-slate-600"
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-1 sm:gap-2">
@@ -70,7 +91,7 @@ export function Navbar({ logoUrl, churchName }: { logoUrl?: string; churchName?:
           <AccessibilityMenu />
 
           <div className="hidden items-center gap-3 md:flex">
-            <LiveNavBadge className="hidden lg:inline-flex" />
+            <LiveNavBadge className="hidden lg:inline-flex" youtubeUrl={youtubeUrl} />
             <Button href="/ministerios" variant="primary" className="px-5 py-2.5 text-xs">
               Quiero ser parte
             </Button>
@@ -90,17 +111,24 @@ export function Navbar({ logoUrl, churchName }: { logoUrl?: string; churchName?:
 
       <div className={cn("md:hidden", open ? "block" : "hidden")}>
         <Container className="flex flex-col gap-1 border-t border-slate-100 pb-4 pt-2">
-          <LiveNavBadge className="mb-2 w-fit" />
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-lg px-3 py-3 text-base font-medium text-slate-700 hover:bg-brand-50"
-              onClick={() => setOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <LiveNavBadge className="mb-2 w-fit" youtubeUrl={youtubeUrl} />
+          {navLinks.map((link) => {
+            const active = isActiveLink(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "rounded-lg px-3 py-3 text-base font-medium hover:bg-brand-50",
+                  active ? "bg-brand-50 text-brand-700" : "text-slate-700"
+                )}
+                onClick={() => setOpen(false)}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           <Button
             href="/ministerios"
             variant="primary"

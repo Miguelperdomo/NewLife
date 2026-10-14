@@ -100,6 +100,7 @@ export function MinistryForm({
           htmlFor="description"
           required
           error={errors.description?.message}
+          hint="El texto completo, se muestra en la página del ministerio (la descripción corta de arriba es solo para la tarjeta)."
         >
           <textarea id="description" rows={5} className={textareaClass} {...register("description")} />
         </FormField>
@@ -143,7 +144,11 @@ export function MinistryForm({
 
       <FormSection title="Configuración">
         <div className="grid gap-4 sm:grid-cols-3">
-          <FormField label="Estado" htmlFor="status">
+          <FormField
+            label="Estado"
+            htmlFor="status"
+            hint='"Archivado" lo oculta de /ministerios sin borrarlo — puedes volver a activarlo cuando quieras.'
+          >
             <select id="status" className={inputClass} {...register("status")}>
               <option value="active">Activo</option>
               <option value="archived">Archivado</option>

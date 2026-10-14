@@ -7,7 +7,7 @@ import type { Campus } from "@/lib/types";
 
 export function CampusCard({ campus, tone = "brand" }: { campus: Campus; tone?: "brand" | "accent" | "dark" }) {
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm shadow-slate-100">
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm shadow-slate-100 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/70">
       <PlaceholderImage
         label={campus.imageLabel}
         src={campus.imageSrc}
@@ -56,7 +56,7 @@ export function CampusCard({ campus, tone = "brand" }: { campus: Campus; tone?: 
           className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700"
         >
           Ver sede
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
         </Link>
       </div>
     </div>

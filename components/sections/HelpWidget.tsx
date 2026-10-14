@@ -152,6 +152,8 @@ function OptionsView({
   onDonate,
   whatsappNumber,
   donationInfo,
+  donationTitle,
+  donationTeaser,
 }: {
   optionsTitle: string;
   options: HelpOption[];
@@ -161,6 +163,8 @@ function OptionsView({
   onDonate: () => void;
   whatsappNumber: string;
   donationInfo?: DonationInfo;
+  donationTitle: string;
+  donationTeaser: string;
 }) {
   const showDonationRow = hasDonationInfo(donationInfo);
 
@@ -192,10 +196,8 @@ function OptionsView({
                 <HandCoins className="h-4 w-4" aria-hidden="true" />
               </span>
               <div>
-                <p className="text-sm font-semibold text-slate-900">Donación económica</p>
-                <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
-                  Apoya proyectos y necesidades de nuestra comunidad.
-                </p>
+                <p className="text-sm font-semibold text-slate-900">{donationTitle}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{donationTeaser}</p>
               </div>
             </button>
           </li>
@@ -303,11 +305,15 @@ function DonationView({
   onMinimize,
   onClose,
   donationInfo,
+  donationTitle,
+  donationDescription,
 }: {
   onBack: () => void;
   onMinimize: () => void;
   onClose: () => void;
   donationInfo?: DonationInfo;
+  donationTitle: string;
+  donationDescription: string;
 }) {
   // Agrupadas a propósito: cuenta bancaria y billeteras digitales son cosas
   // distintas para quien va a donar, así que se muestran en bloques
@@ -350,11 +356,9 @@ function DonationView({
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
           <HandCoins className="h-5 w-5" aria-hidden="true" />
         </span>
-        <h3 className="font-heading text-base font-bold text-slate-900">Donación económica</h3>
+        <h3 className="font-heading text-base font-bold text-slate-900">{donationTitle}</h3>
       </div>
-      <p className="mt-2 text-xs leading-relaxed text-slate-500">
-        Gracias por tu generosidad. Puedes hacer tu aporte con cualquiera de estos datos.
-      </p>
+      <p className="mt-2 text-xs leading-relaxed text-slate-500">{donationDescription}</p>
 
       <div className="mt-4 space-y-3">
         <DonationGroup
@@ -390,6 +394,9 @@ export function HelpWidget({
   ctaLabel,
   optionsTitle,
   options,
+  donationTitle,
+  donationTeaser,
+  donationDescription,
 }: {
   whatsappNumber?: string;
   donationInfo?: DonationInfo;
@@ -398,6 +405,9 @@ export function HelpWidget({
   ctaLabel?: string;
   optionsTitle?: string;
   options?: HelpOption[];
+  donationTitle?: string;
+  donationTeaser?: string;
+  donationDescription?: string;
 }) {
   const resolvedWhatsappNumber = whatsappNumber || siteConfig.whatsappNumber;
   const resolvedTitle = title || fallbackHelpContent.title;
@@ -405,6 +415,10 @@ export function HelpWidget({
   const resolvedCtaLabel = ctaLabel || fallbackHelpContent.ctaLabel;
   const resolvedOptionsTitle = optionsTitle || fallbackHelpContent.optionsTitle;
   const resolvedOptions = options && options.length > 0 ? options : FALLBACK_OPTIONS;
+  const resolvedDonationTitle = donationTitle || "Donación económica";
+  const resolvedDonationTeaser = donationTeaser || "Apoya proyectos y necesidades de nuestra comunidad.";
+  const resolvedDonationDescription =
+    donationDescription || "Gracias por tu generosidad. Puedes hacer tu aporte con cualquiera de estos datos.";
   const [ready, setReady] = useState(false);
   const [visibility, setVisibility] = useState<Visibility>("open");
   const [view, setView] = useState<WidgetView>("main");
@@ -537,6 +551,8 @@ export function HelpWidget({
                   onDonate={() => setView("donation")}
                   whatsappNumber={resolvedWhatsappNumber}
                   donationInfo={donationInfo}
+                  donationTitle={resolvedDonationTitle}
+                  donationTeaser={resolvedDonationTeaser}
                 />
               ) : (
                 <DonationView
@@ -544,6 +560,8 @@ export function HelpWidget({
                   onMinimize={() => setVisibilityFromUser("minimized")}
                   onClose={() => setVisibilityFromUser("compact")}
                   donationInfo={donationInfo}
+                  donationTitle={resolvedDonationTitle}
+                  donationDescription={resolvedDonationDescription}
                 />
               )}
             </div>

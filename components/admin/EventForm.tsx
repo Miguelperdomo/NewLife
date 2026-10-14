@@ -92,6 +92,7 @@ export function EventForm({
           htmlFor="description"
           required
           error={errors.description?.message}
+          hint="El texto completo, se muestra en la página del evento (la descripción corta de arriba es solo para la tarjeta)."
         >
           <textarea id="description" rows={4} className={textareaClass} {...register("description")} />
         </FormField>
@@ -105,7 +106,11 @@ export function EventForm({
         </FormField>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField label="Estado" htmlFor="status">
+          <FormField
+            label="Estado"
+            htmlFor="status"
+            hint='"Borrador" no se muestra al público. "Publicado" aparece de inmediato. "Programado" se publica solo cuando llegue la fecha/hora que elijas.'
+          >
             <select id="status" className={inputClass} {...register("status")}>
               <option value="draft">Borrador</option>
               <option value="published">Publicado</option>
@@ -169,9 +174,9 @@ export function EventForm({
         </div>
       </FormSection>
 
-      <FormSection title="Ubicación" description="Ambos campos son opcionales.">
+      <FormSection title="Ubicación" description="Ambos campos son opcionales." defaultOpen={false}>
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField label="Sede" htmlFor="campus">
+          <FormField label="Sede" htmlFor="campus" hint="Si lo dejas en «Sin especificar», el evento no muestra una sede fija.">
             {/* Controlado (Controller), no registrado directo: las sedes se
                 cargan de forma asíncrona desde Supabase — si este <select>
                 fuera un input sin controlar (registrado con `register`), el
@@ -263,9 +268,13 @@ export function EventForm({
         />
       </FormSection>
 
-      <FormSection title="Otros campos" description="Todos opcionales.">
+      <FormSection title="Otros campos" description="Todos opcionales." defaultOpen={false}>
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField label="Enlace de inscripción" htmlFor="registrationUrl">
+          <FormField
+            label="Enlace de inscripción"
+            htmlFor="registrationUrl"
+            hint="Link a un formulario externo (Google Forms, etc.) si necesitas que la gente se inscriba antes."
+          >
             <input id="registrationUrl" className={inputClass} {...register("registrationUrl")} />
           </FormField>
           <FormField
@@ -275,7 +284,7 @@ export function EventForm({
           >
             <input id="whatsappNumber" className={inputClass} {...register("whatsappNumber")} />
           </FormField>
-          <FormField label="Cupos / capacidad" htmlFor="capacity">
+          <FormField label="Cupos / capacidad" htmlFor="capacity" hint="Déjalo vacío si no hay límite de personas.">
             <input id="capacity" type="number" min={1} className={inputClass} {...register("capacity")} />
           </FormField>
         </div>

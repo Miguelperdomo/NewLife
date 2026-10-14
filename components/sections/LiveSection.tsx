@@ -7,17 +7,47 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { liveLinks, liveThumbnail } from "@/data/live";
 import { socialLinks } from "@/data/site";
-import type { SocialPlatform } from "@/lib/types";
+import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
+import type { SocialLink, SocialPlatform } from "@/lib/types";
 
 const liveSocialPlatforms: SocialPlatform[] = ["youtube", "facebook", "instagram", "tiktok"];
 
-export function LiveSection() {
-  const liveSocials = socialLinks.filter((social) =>
-    liveSocialPlatforms.includes(social.platform)
-  );
+/**
+ * Los links "Ver en YouTube/Facebook" salen de Configuración > Redes
+ * sociales cuando existen — antes usaban siempre el link fijo de
+ * data/live.ts, así que cambiarlos en Configuración no movía nada aquí.
+ */
+export async function LiveSection() {
+  const settings = await getPublicSiteSettings();
+  const youtubeUrl = settings?.youtubeUrl || liveLinks.youtube;
+  const facebookUrl = settings?.facebookUrl || liveLinks.facebook;
+  const thumbnailSrc = settings?.liveThumbnailUrl || liveThumbnail.src;
+  const thumbnailAlt = settings?.liveThumbnailAlt || liveThumbnail.alt;
+
+  const socialCandidates: (SocialLink | undefined)[] = settings
+    ? [
+        settings.instagramUrl ? { platform: "instagram", label: "Instagram", url: settings.instagramUrl } : undefined,
+        settings.facebookUrl ? { platform: "facebook", label: "Facebook", url: settings.facebookUrl } : undefined,
+        settings.youtubeUrl ? { platform: "youtube", label: "YouTube", url: settings.youtubeUrl } : undefined,
+        settings.tiktokUrl ? { platform: "tiktok", label: "TikTok", url: settings.tiktokUrl } : undefined,
+      ]
+    : socialLinks;
+  const resolvedSocialLinks = socialCandidates
+    .filter((link): link is SocialLink => Boolean(link))
+    .filter((link) => link.url && link.url !== "#");
+
+  const liveSocials = resolvedSocialLinks.filter((social) => liveSocialPlatforms.includes(social.platform));
 
   return (
     <section className="relative overflow-hidden bg-slate-950 py-20 sm:py-28">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: "radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
+      />
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-brand-600/20 blur-3xl" />
         <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-red-500/10 blur-3xl" />
@@ -40,7 +70,7 @@ export function LiveSection() {
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <Button
-                  href={liveLinks.youtube}
+                  href={youtubeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   variant="primary"
@@ -51,9 +81,9 @@ export function LiveSection() {
                   Ver transmisión en YouTube
                 </Button>
 
-                {liveLinks.facebook ? (
+                {facebookUrl ? (
                   <Button
-                    href={liveLinks.facebook}
+                    href={facebookUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     variant="outline"
@@ -100,7 +130,7 @@ export function LiveSection() {
             {/* Bloque de transmisión — primero en móvil, segundo en desktop */}
             <div className="order-1 lg:order-2">
               <a
-                href={liveLinks.youtube}
+                href={youtubeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Ver el canal de YouTube de New Life"
@@ -111,8 +141,8 @@ export function LiveSection() {
                 <div className="relative aspect-[1138/187] w-full overflow-hidden">
                   <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
                     <PlaceholderImage
-                      label={liveThumbnail.alt}
-                      src={liveThumbnail.src}
+                      label={thumbnailAlt}
+                      src={thumbnailSrc}
                       tone="dark"
                       className="h-full w-full"
                     />

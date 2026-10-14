@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, SearchX } from "lucide-react";
 import { NewsCard } from "./NewsCard";
 import { NewsFilters, type NewsFilterOption } from "./NewsFilters";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { NewsArticle } from "@/lib/types";
 
 /**
@@ -54,9 +55,7 @@ export function NewsList({ articles }: { articles: NewsArticle[] }) {
           ))}
         </div>
       ) : (
-        <p className="mt-8 rounded-2xl border border-dashed border-slate-200 p-10 text-center text-sm text-slate-500">
-          No hay noticias que coincidan con tu búsqueda.
-        </p>
+        <EmptyState icon={SearchX} title="No hay noticias que coincidan con tu búsqueda." className="mt-8" />
       )}
     </div>
   );

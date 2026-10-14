@@ -1,32 +1,39 @@
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MinistryCard } from "@/components/ministries/MinistryCard";
 import { getMinistries } from "@/lib/content";
+import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 
 export async function MinistriesSection() {
-  const ministries = await getMinistries();
+  const [ministries, settings] = await Promise.all([getMinistries(), getPublicSiteSettings()]);
 
   return (
     <section className="bg-slate-50 py-20 sm:py-28">
       <Container>
-        <SectionHeading
-          eyebrow="Ministerios"
-          title="Encuentra tu lugar"
-          description="Sea cual sea tu edad o etapa de vida, hay un equipo esperándote en New Life."
-        />
+        <ScrollReveal>
+          <SectionHeading
+            eyebrow={settings?.ministriesEyebrow || "Ministerios"}
+            title={settings?.ministriesTitle || "Encuentra tu lugar"}
+            description={
+              settings?.ministriesDescription ||
+              "Sea cual sea tu edad o etapa de vida, hay un equipo esperándote en New Life."
+            }
+          />
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {ministries.map((ministry, index) => (
-            <MinistryCard key={ministry.slug} ministry={ministry} index={index} />
-          ))}
-        </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {ministries.map((ministry, index) => (
+              <MinistryCard key={ministry.slug} ministry={ministry} index={index} />
+            ))}
+          </div>
 
-        <div className="mt-10 flex justify-center">
-          <Button href="/ministerios" variant="ghost">
-            Ver todos los ministerios
-          </Button>
-        </div>
+          <div className="mt-10 flex justify-center">
+            <Button href="/ministerios" variant="ghost">
+              Ver todos los ministerios
+            </Button>
+          </div>
+        </ScrollReveal>
       </Container>
     </section>
   );

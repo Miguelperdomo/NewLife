@@ -184,6 +184,12 @@ export async function duplicateNews(article: AdminNews, existingSlugs: string[])
   return fetchNewsById(data.id);
 }
 
+export async function removeNews(id: string): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase.from("news").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 export async function setNewsStatus(
   id: string,
   status: "draft" | "published" | "scheduled" | "archived"

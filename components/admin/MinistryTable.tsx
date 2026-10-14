@@ -1,4 +1,4 @@
-import { Archive, Copy, Eye, EyeOff, Pencil, RotateCcw } from "lucide-react";
+import { Archive, Copy, Eye, EyeOff, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { ContentCover } from "@/components/ui/ContentCover";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import type { AdminMinistry } from "@/lib/admin/types";
@@ -11,6 +11,7 @@ export function MinistryTable({
   onDuplicate,
   onArchive,
   onActivate,
+  onDelete,
 }: {
   ministries: AdminMinistry[];
   onView: (ministry: AdminMinistry) => void;
@@ -18,6 +19,7 @@ export function MinistryTable({
   onDuplicate: (ministry: AdminMinistry) => void;
   onArchive: (ministry: AdminMinistry) => void;
   onActivate: (ministry: AdminMinistry) => void;
+  onDelete: (ministry: AdminMinistry) => void;
 }) {
   if (ministries.length === 0) {
     return (
@@ -83,6 +85,7 @@ export function MinistryTable({
                     ) : (
                       <RowAction label="Archivar" onClick={() => onArchive(ministry)} icon={Archive} />
                     )}
+                    <RowAction label="Eliminar" onClick={() => onDelete(ministry)} icon={Trash2} />
                   </div>
                 </td>
               </tr>
@@ -137,6 +140,7 @@ export function MinistryTable({
               ) : (
                 <RowAction label="Archivar" onClick={() => onArchive(ministry)} icon={Archive} />
               )}
+              <RowAction label="Eliminar" onClick={() => onDelete(ministry)} icon={Trash2} />
             </div>
           </div>
         ))}

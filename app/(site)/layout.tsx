@@ -1,7 +1,9 @@
 import { Wrench } from "lucide-react";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { PageViewTracker } from "@/components/layout/PageViewTracker";
 import { ProvidentiaJsonLd } from "@/components/layout/ProvidentiaJsonLd";
+import { RouteProgressBar } from "@/components/layout/RouteProgressBar";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { siteConfig } from "@/data/site";
@@ -38,7 +40,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <>
       <ProvidentiaJsonLd />
-      <Navbar logoUrl={settings?.logoUrl} churchName={settings?.churchName} />
+      <RouteProgressBar />
+      <PageViewTracker />
+      <Navbar logoUrl={settings?.logoUrl} churchName={settings?.churchName} youtubeUrl={settings?.youtubeUrl} />
       <main className="flex-1">{children}</main>
       <Footer />
       <ScrollToTopButton />

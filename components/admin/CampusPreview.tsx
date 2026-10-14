@@ -1,6 +1,9 @@
 import { CampusCard } from "@/components/campuses/CampusCard";
 import type { AdminCampus } from "@/lib/admin/types";
 import type { Campus } from "@/lib/types";
+import { QRCodeCard } from "./QRCodeCard";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 function toPreviewCampus(campus: AdminCampus): Campus {
   return {
@@ -28,6 +31,7 @@ export function CampusPreview({ campus }: { campus: AdminCampus }) {
       <div className="pointer-events-none mx-auto max-w-sm">
         <CampusCard campus={toPreviewCampus(campus)} />
       </div>
+      {campus.slug && <QRCodeCard url={`${siteUrl}/sedes/${campus.slug}`} label={campus.name || "esta sede"} />}
     </div>
   );
 }

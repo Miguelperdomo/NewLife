@@ -128,6 +128,9 @@ export interface AdminSiteSettings {
   // Portada (Hero) del Home — el título grande. El texto debajo reutiliza
   // "description" de arriba, para no duplicar el mismo dato dos veces.
   heroTagline?: string;
+  // Año de fundación — si se define, la portada muestra "X años sirviendo"
+  // junto al conteo de sedes/ministerios. Si se deja vacío, ese dato no se muestra.
+  foundingYear?: number;
 
   // Apariencia — hex "#rrggbb". Sí cambian el sitio público: ver
   // lib/color.ts + app/layout.tsx, que generan las variables CSS a partir
@@ -186,10 +189,48 @@ export interface AdminSiteSettings {
   helpCtaLabel?: string;
   helpOptionsTitle?: string;
 
+  // Sección "¿Es tu primera vez?" del Home — las tarjetas viven en su propia
+  // tabla (ver lib/admin/firstTimeCards.ts), esto es el encabezado.
+  firstTimeEyebrow?: string;
+  firstTimeTitle?: string;
+  firstTimeDescription?: string;
+  firstTimeCtaLabel?: string;
+
+  // Encabezados de sección — se reutilizan tal cual tanto en el resumen del
+  // Home como en el título de la página completa (/ministerios, /sedes...),
+  // así que es un solo juego de campos por tema, no uno por lugar.
+  ministriesEyebrow?: string;
+  ministriesTitle?: string;
+  ministriesDescription?: string;
+  campusesEyebrow?: string;
+  campusesTitle?: string;
+  campusesDescription?: string;
+  eventsEyebrow?: string;
+  eventsTitle?: string;
+  eventsDescription?: string;
+  newsEyebrow?: string;
+  newsTitle?: string;
+  newsDescription?: string;
+  // Pastores no tiene resumen en el Home, solo aparece en /pastores.
+  pastorsEyebrow?: string;
+  pastorsTitle?: string;
+  pastorsDescription?: string;
+
+  // Miniatura del bloque "En vivo" del Home — imagen + texto alternativo.
+  liveThumbnailUrl?: string;
+  liveThumbnailAlt?: string;
+
+  // Páginas legales — /privacidad y /terminos.
+  privacyPolicy?: string;
+  termsOfService?: string;
+
   // Donaciones — se muestran en el widget de Ayuda cuando alguien elige
   // "Donación económica". `donationsEnabled` controla si se muestran ahí (por
   // defecto no, hasta que la iglesia confirme datos reales de cuenta).
   donationsEnabled: boolean;
+  donationTitle?: string;
+  donationTeaser?: string;
+  donationDescription?: string;
   bankName?: string;
   bankAccountType?: string;
   bankAccountNumber?: string;
@@ -234,6 +275,12 @@ export interface AdminHelpOption {
   icon: string;
   title: string;
   description: string;
+}
+
+/** Una foto del carrusel de la portada (Hero) — lista libre, se reemplaza completa al guardar. */
+export interface AdminHeroPhoto {
+  imageUrl: string;
+  alt?: string;
 }
 
 /**

@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, CalendarX, MapPin } from "lucide-react";
 import { Calendar } from "@/components/ui/Calendar";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { formatAgendaDayLabel, toISODate } from "@/lib/agenda";
 import { formatEventDate } from "@/lib/events";
 import type { AgendaItemType } from "@/lib/agenda";
@@ -142,9 +143,7 @@ export function EventCalendarView({
             })}
           </div>
         ) : (
-          <p className="mt-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
-            No hay eventos programados para este día.
-          </p>
+          <EmptyState icon={CalendarX} title="No hay eventos programados para este día." className="mt-4 p-6" />
         )}
       </div>
     </div>

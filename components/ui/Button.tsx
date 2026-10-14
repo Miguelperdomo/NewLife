@@ -7,9 +7,9 @@ type Size = "md" | "lg";
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600",
+    "bg-brand-600 text-white shadow-md shadow-brand-900/20 hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/40 focus-visible:outline-brand-600",
   secondary:
-    "bg-accent-500 text-brand-950 hover:bg-accent-600 focus-visible:outline-accent-500",
+    "bg-accent-500 text-brand-950 shadow-md shadow-accent-900/10 hover:bg-accent-600 hover:shadow-lg hover:shadow-accent-500/40 focus-visible:outline-accent-500",
   outline:
     "border border-white/40 text-white hover:bg-white/10 focus-visible:outline-white",
   ghost:
@@ -22,7 +22,7 @@ const sizeClasses: Record<Size, string> = {
 };
 
 const baseClasses =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full font-semibold uppercase tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full font-semibold uppercase tracking-wide transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60";
 
 type ButtonBaseProps = {
   variant?: Variant;

@@ -60,6 +60,13 @@ function OptionsForm({
           <div key={field.id} className="space-y-2.5 rounded-xl border border-slate-200 p-3">
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-[200px_1fr_auto]">
               <select className={inputClass} {...register(`options.${index}.icon`)}>
+                {/* Si esta fila quedó guardada con un ícono que ya no está en el
+                    catálogo (ej. uno que se retiró más adelante), se agrega como
+                    opción aparte — así el <select> sigue mostrando el valor real
+                    guardado en vez de cambiarlo solo al primero de la lista. */}
+                {!HELP_OPTION_ICON_OPTIONS.some((option) => option.value === field.icon) && field.icon && (
+                  <option value={field.icon}>{field.icon} (ícono anterior)</option>
+                )}
                 {HELP_OPTION_ICON_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -124,8 +131,8 @@ export function HelpOptionsPanel() {
 
   return (
     <FormSection
-      title="Widget de Ayuda — opciones"
-      description="Las formas de ayudar que aparecen al abrir el widget flotante. Agrega, edita o quita las que quieras."
+      title="Widget de Ayuda — formas de ayudar"
+      description="Agrega tantas como quieras (Ropa, Alimentos, Voluntariado...) — cada una abre WhatsApp con un mensaje ya escrito. La «Donación económica» NO va aquí: se activa arriba, en Configuración > Donaciones, y aparece sola conectada a tu cuenta bancaria/Nequi/Daviplata."
     >
       {isReady ? (
         <OptionsForm defaultOptions={options} onSave={save} />

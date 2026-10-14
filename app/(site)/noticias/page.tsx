@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { Newspaper } from "lucide-react";
 import { NewsList } from "@/components/news/NewsList";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/data/site";
 import { getNews } from "@/lib/content";
+import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 
 const description = "Mantente al día con lo que está pasando en New Life.";
@@ -16,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default async function NoticiasPage() {
-  const articles = await getNews();
+  const [articles, settings] = await Promise.all([getNews(), getPublicSiteSettings()]);
 
   return (
     <>
@@ -25,9 +28,9 @@ export default async function NoticiasPage() {
       <section className="py-20 sm:py-28">
         <Container>
           <SectionHeading
-            eyebrow="Noticias"
-            title="Noticias"
-            description="Mantente al día con lo que está pasando en New Life."
+            eyebrow={settings?.newsEyebrow || "Noticias"}
+            title={settings?.newsTitle || "Noticias"}
+            description={settings?.newsDescription || "Mantente al día con lo que está pasando en New Life."}
           />
 
           {articles.length > 0 ? (
@@ -35,9 +38,12 @@ export default async function NoticiasPage() {
               <NewsList articles={articles} />
             </div>
           ) : (
-            <p className="mt-12 rounded-2xl border border-dashed border-slate-200 p-10 text-center text-sm text-slate-500">
-              Todavía no hay noticias publicadas.
-            </p>
+            <EmptyState
+              icon={Newspaper}
+              title="Todavía no hay noticias publicadas."
+              description="Vuelve pronto — aquí aparecerán las últimas novedades de New Life."
+              className="mt-12"
+            />
           )}
         </Container>
       </section>

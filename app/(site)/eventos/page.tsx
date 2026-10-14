@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { siteConfig } from "@/data/site";
 import { getCampuses, getEvents, getMinistries } from "@/lib/content";
+import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 
 const description = "Hay un lugar para ti. Descubre lo que estamos viviendo juntos en New Life.";
@@ -16,7 +17,12 @@ export const metadata: Metadata = {
 };
 
 export default async function EventosPage() {
-  const [events, ministries, campuses] = await Promise.all([getEvents(), getMinistries(), getCampuses()]);
+  const [events, ministries, campuses, settings] = await Promise.all([
+    getEvents(),
+    getMinistries(),
+    getCampuses(),
+    getPublicSiteSettings(),
+  ]);
 
   return (
     <>
@@ -32,13 +38,14 @@ export default async function EventosPage() {
 
         <Container className="relative flex min-h-[45vh] flex-col items-center justify-center gap-4 py-24 text-center text-white">
           <span className="text-sm font-semibold uppercase tracking-[0.3em] text-white/80">
-            Eventos
+            {settings?.eventsEyebrow || "Eventos"}
           </span>
           <h1 className="max-w-2xl font-heading text-4xl font-bold leading-tight sm:text-5xl">
-            Próximos eventos
+            {settings?.eventsTitle || "Próximos eventos"}
           </h1>
           <p className="max-w-xl text-base text-white/80">
-            Hay un lugar para ti. Descubre lo que estamos viviendo juntos en New Life.
+            {settings?.eventsDescription ||
+              "Hay un lugar para ti. Descubre lo que estamos viviendo juntos en New Life."}
           </p>
         </Container>
       </section>

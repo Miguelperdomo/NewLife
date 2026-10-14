@@ -193,6 +193,7 @@ export function siteSettingsFormValuesToInput(values: SiteSettingsFormValues): S
     generalSchedule: orUndefined(values.generalSchedule),
 
     heroTagline: orUndefined(values.heroTagline),
+    foundingYear: values.foundingYear ? Number(values.foundingYear) : undefined,
 
     primaryColor: values.primaryColor,
     accentColor: values.accentColor,
@@ -236,7 +237,37 @@ export function siteSettingsFormValuesToInput(values: SiteSettingsFormValues): S
     helpCtaLabel: orUndefined(values.helpCtaLabel),
     helpOptionsTitle: orUndefined(values.helpOptionsTitle),
 
+    firstTimeEyebrow: orUndefined(values.firstTimeEyebrow),
+    firstTimeTitle: orUndefined(values.firstTimeTitle),
+    firstTimeDescription: orUndefined(values.firstTimeDescription),
+    firstTimeCtaLabel: orUndefined(values.firstTimeCtaLabel),
+
+    ministriesEyebrow: orUndefined(values.ministriesEyebrow),
+    ministriesTitle: orUndefined(values.ministriesTitle),
+    ministriesDescription: orUndefined(values.ministriesDescription),
+    campusesEyebrow: orUndefined(values.campusesEyebrow),
+    campusesTitle: orUndefined(values.campusesTitle),
+    campusesDescription: orUndefined(values.campusesDescription),
+    eventsEyebrow: orUndefined(values.eventsEyebrow),
+    eventsTitle: orUndefined(values.eventsTitle),
+    eventsDescription: orUndefined(values.eventsDescription),
+    newsEyebrow: orUndefined(values.newsEyebrow),
+    newsTitle: orUndefined(values.newsTitle),
+    newsDescription: orUndefined(values.newsDescription),
+    pastorsEyebrow: orUndefined(values.pastorsEyebrow),
+    pastorsTitle: orUndefined(values.pastorsTitle),
+    pastorsDescription: orUndefined(values.pastorsDescription),
+
+    liveThumbnailUrl: orUndefined(values.liveThumbnailUrl),
+    liveThumbnailAlt: orUndefined(values.liveThumbnailAlt),
+
+    privacyPolicy: orUndefined(values.privacyPolicy),
+    termsOfService: orUndefined(values.termsOfService),
+
     donationsEnabled: values.donationsEnabled,
+    donationTitle: orUndefined(values.donationTitle),
+    donationTeaser: orUndefined(values.donationTeaser),
+    donationDescription: orUndefined(values.donationDescription),
     bankName: orUndefined(values.bankName),
     bankAccountType: orUndefined(values.bankAccountType),
     bankAccountNumber: orUndefined(values.bankAccountNumber),
@@ -263,6 +294,7 @@ export function siteSettingsToFormValues(settings: AdminSiteSettings): SiteSetti
     generalSchedule: settings.generalSchedule ?? "",
 
     heroTagline: settings.heroTagline ?? "",
+    foundingYear: settings.foundingYear !== undefined ? String(settings.foundingYear) : "",
 
     primaryColor: settings.primaryColor,
     accentColor: settings.accentColor,
@@ -306,7 +338,37 @@ export function siteSettingsToFormValues(settings: AdminSiteSettings): SiteSetti
     helpCtaLabel: settings.helpCtaLabel ?? "",
     helpOptionsTitle: settings.helpOptionsTitle ?? "",
 
+    firstTimeEyebrow: settings.firstTimeEyebrow ?? "",
+    firstTimeTitle: settings.firstTimeTitle ?? "",
+    firstTimeDescription: settings.firstTimeDescription ?? "",
+    firstTimeCtaLabel: settings.firstTimeCtaLabel ?? "",
+
+    ministriesEyebrow: settings.ministriesEyebrow ?? "",
+    ministriesTitle: settings.ministriesTitle ?? "",
+    ministriesDescription: settings.ministriesDescription ?? "",
+    campusesEyebrow: settings.campusesEyebrow ?? "",
+    campusesTitle: settings.campusesTitle ?? "",
+    campusesDescription: settings.campusesDescription ?? "",
+    eventsEyebrow: settings.eventsEyebrow ?? "",
+    eventsTitle: settings.eventsTitle ?? "",
+    eventsDescription: settings.eventsDescription ?? "",
+    newsEyebrow: settings.newsEyebrow ?? "",
+    newsTitle: settings.newsTitle ?? "",
+    newsDescription: settings.newsDescription ?? "",
+    pastorsEyebrow: settings.pastorsEyebrow ?? "",
+    pastorsTitle: settings.pastorsTitle ?? "",
+    pastorsDescription: settings.pastorsDescription ?? "",
+
+    liveThumbnailUrl: settings.liveThumbnailUrl ?? "",
+    liveThumbnailAlt: settings.liveThumbnailAlt ?? "",
+
+    privacyPolicy: settings.privacyPolicy ?? "",
+    termsOfService: settings.termsOfService ?? "",
+
     donationsEnabled: settings.donationsEnabled,
+    donationTitle: settings.donationTitle ?? "",
+    donationTeaser: settings.donationTeaser ?? "",
+    donationDescription: settings.donationDescription ?? "",
     bankName: settings.bankName ?? "",
     bankAccountType: settings.bankAccountType ?? "",
     bankAccountNumber: settings.bankAccountNumber ?? "",
