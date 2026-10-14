@@ -21,7 +21,7 @@ export const navLinks: NavLink[] = [
   { label: "Eventos", href: "/eventos" },
   { label: "Noticias", href: "/noticias" },
   { label: "Sedes", href: "/sedes" },
-  { label: "Pastores", href: "/pastores" },
+  { label: "Pastor", href: "/pastores" },
 ];
 
 // [LINKS PLACEHOLDER] Reemplazar con los enlaces oficiales de New Life.
