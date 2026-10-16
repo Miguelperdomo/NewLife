@@ -97,10 +97,11 @@ export function useAdminMinistries() {
 
   const removeMinistry = useCallback(
     async (id: string) => {
-      await removeMinistryRequest(id);
+      const target = ministries.find((ministry) => ministry.id === id);
+      await removeMinistryRequest(id, target?.name);
       await refresh();
     },
-    [refresh]
+    [ministries, refresh]
   );
 
   return {

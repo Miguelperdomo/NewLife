@@ -6,6 +6,7 @@ import { useAdminCampuses } from "@/lib/admin/useAdminCampuses";
 import { useAdminContent } from "@/lib/admin/useAdminContent";
 import { useAdminMinistries } from "@/lib/admin/useAdminMinistries";
 import { getEventStatus } from "@/lib/events";
+import type { AdminSection } from "@/lib/admin/types";
 import { DashboardStats } from "./DashboardStats";
 import { PageViewsCard } from "./PageViewsCard";
 import { QuickActions } from "./QuickActions";
@@ -28,7 +29,7 @@ function useGreeting() {
   return greeting;
 }
 
-export function AdminDashboard() {
+export function AdminDashboard({ sections }: { sections: AdminSection[] }) {
   const { events, news, isReady } = useAdminContent();
   const { ministries: adminMinistries, isReady: ministriesReady } = useAdminMinistries();
   const { campuses, isReady: campusesReady } = useAdminCampuses();
@@ -87,7 +88,7 @@ export function AdminDashboard() {
         totalCampuses={campusesReady ? campuses.length : undefined}
       />
 
-      <QuickActions />
+      <QuickActions sections={sections} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <RecentContent rows={recentRows} />

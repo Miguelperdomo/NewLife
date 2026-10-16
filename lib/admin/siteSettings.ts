@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { logActivity } from "@/lib/admin/activityLog";
 import { siteConfig, socialLinks } from "@/data/site";
 import type { AdminSiteSettings } from "@/lib/admin/types";
 
@@ -404,6 +405,7 @@ export async function saveSiteSettings(settings: AdminSiteSettings): Promise<Adm
   if (error || !data) {
     throw new Error(error?.message ?? "No se pudo guardar la configuración.");
   }
+  await logActivity("editó Configuración");
   return rowToSettings(data as SiteSettingsRow);
 }
 

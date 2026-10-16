@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { logActivity } from "@/lib/admin/activityLog";
 import { slugify, uniqueSlug } from "@/lib/admin/slug";
 import type { AdminNews } from "@/lib/admin/types";
 
@@ -82,6 +83,28 @@ async function resolveCategoryId(categoryName?: string): Promise<string | null> 
   return (created as { id: string }).id;
 }
 
+/** Campos legibles para el informe de Actividad. */
+function newsDetails(input: {
+  title?: string;
+  summary?: string;
+  content?: string;
+  status?: string;
+  publishedAt?: string;
+  author?: string;
+  category?: string;
+  featured?: boolean;
+}): Record<string, string | undefined> {
+  return {
+    Título: input.title,
+    Resumen: input.summary,
+    Contenido: input.content,
+    "Fecha de publicación": input.publishedAt,
+    Autor: input.author,
+    Categoría: input.category,
+    Destacada: input.featured !== undefined ? (input.featured ? "Sí" : "No") : undefined,
+  };
+}
+
 async function fetchNewsById(id: string): Promise<AdminNews> {
   const supabase = createClient();
   const { data, error } = await supabase.from("news").select(SELECT_COLUMNS).eq("id", id).single();
@@ -129,6 +152,7 @@ export async function createNews(input: NewNewsInput, existingSlugs: string[]): 
     .single();
 
   if (error || !data) throw new Error(error?.message ?? "No se pudo crear la noticia.");
+  await logActivity(`creó la noticia "${input.title}"`, newsDetails(input));
   return fetchNewsById(data.id);
 }
 
@@ -154,6 +178,7 @@ export async function updateNews(id: string, input: Partial<AdminNews>): Promise
 
   const { error } = await supabase.from("news").update(patch).eq("id", id);
   if (error) throw new Error(error.message);
+  await logActivity(`editó la noticia "${input.title ?? id}"`, newsDetails(input));
   return fetchNewsById(id);
 }
 
@@ -181,13 +206,15 @@ export async function duplicateNews(article: AdminNews, existingSlugs: string[])
     .single();
 
   if (error || !data) throw new Error(error?.message ?? "No se pudo duplicar la noticia.");
+  await logActivity(`duplicó la noticia "${article.title}"`, newsDetails({ ...article, title: `${article.title} (copia)` }));
   return fetchNewsById(data.id);
 }
 
-export async function removeNews(id: string): Promise<void> {
+export async function removeNews(id: string, title?: string): Promise<void> {
   const supabase = createClient();
   const { error } = await supabase.from("news").delete().eq("id", id);
   if (error) throw new Error(error.message);
+  await logActivity(`eliminó la noticia "${title ?? id}"`);
 }
 
 export async function setNewsStatus(
@@ -195,7 +222,14 @@ export async function setNewsStatus(
   status: "draft" | "published" | "scheduled" | "archived"
 ): Promise<AdminNews> {
   const supabase = createClient();
-  const { error } = await supabase.from("news").update({ status }).eq("id", id);
+  const { data, error } = await supabase.from("news").update({ status }).eq("id", id).select("title").single();
   if (error) throw new Error(error.message);
+  const statusLabel: Record<typeof status, string> = {
+    draft: "puso como borrador",
+    published: "publicó",
+    scheduled: "programó",
+    archived: "archivó",
+  };
+  await logActivity(`${statusLabel[status]} la noticia "${data?.title ?? id}"`);
   return fetchNewsById(id);
 }

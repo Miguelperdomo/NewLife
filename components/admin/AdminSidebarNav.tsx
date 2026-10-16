@@ -3,45 +3,43 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  History,
   LayoutDashboard,
   LayoutGrid,
   MapPin,
   Settings,
   Users,
+  UserCog,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { AdminSection } from "@/lib/admin/types";
 
-const navItems = [
-  { label: "Dashboard", href: "/admin", icon: LayoutGrid, active: true, exact: true },
-  { label: "Contenido", href: "/admin/contenido", icon: LayoutDashboard, active: true, exact: false },
-  { label: "Ministerios", href: "/admin/ministerios", icon: Users, active: true, exact: false },
-  { label: "Sedes", href: "/admin/sedes", icon: MapPin, active: true, exact: false },
-  { label: "Configuración", href: "/admin/configuracion", icon: Settings, active: true, exact: false },
+const navItems: { label: string; href: string; icon: typeof LayoutGrid; exact: boolean; section: AdminSection | null }[] = [
+  { label: "Dashboard", href: "/admin", icon: LayoutGrid, exact: true, section: null },
+  { label: "Contenido", href: "/admin/contenido", icon: LayoutDashboard, exact: false, section: "content" },
+  { label: "Ministerios", href: "/admin/ministerios", icon: Users, exact: false, section: "ministries" },
+  { label: "Sedes", href: "/admin/sedes", icon: MapPin, exact: false, section: "campuses" },
+  { label: "Configuración", href: "/admin/configuracion", icon: Settings, exact: false, section: "settings" },
+  { label: "Usuarios", href: "/admin/usuarios", icon: UserCog, exact: false, section: "full" },
+  { label: "Actividad", href: "/admin/actividad", icon: History, exact: false, section: "full" },
 ];
 
-export function AdminSidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+/** `sections` = lo que puede ver esta cuenta ("full" lo destraba todo) — ver lib/admin/auth.ts. */
+export function AdminSidebarNav({
+  sections,
+  onNavigate,
+}: {
+  sections: AdminSection[];
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
+  const canSeeAll = sections.includes("full");
+  const visibleItems = navItems.filter((item) => item.section === null || canSeeAll || sections.includes(item.section));
 
   return (
     <nav className="flex-1 space-y-1 px-3 py-4">
-      {navItems.map((item) => {
+      {visibleItems.map((item) => {
         const Icon = item.icon;
-
-        if (!item.active) {
-          return (
-            <span
-              key={item.label}
-              className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2.5 text-sm text-white/30"
-            >
-              <span className="flex items-center gap-3">
-                <Icon className="h-4 w-4" aria-hidden="true" />
-                {item.label}
-              </span>
-              <span className="text-[10px] uppercase tracking-wide">Pronto</span>
-            </span>
-          );
-        }
-
         const isCurrent = item.exact ? pathname === item.href : pathname.startsWith(item.href);
 
         return (

@@ -331,7 +331,7 @@ export function SiteSettingsForm({
 
       <FormSection
         title="Encabezados de secciones"
-        description="La etiqueta, título y descripción de cada sección del Home y su página completa (Ministerios, Sedes, Eventos, Noticias, Pastores). Un mismo texto se usa en los dos lugares."
+        description="La etiqueta, título y descripción de cada sección del Home y su página completa (Ministerios, Sedes, Eventos, Noticias, Apóstol). Un mismo texto se usa en los dos lugares."
        defaultOpen={false}>
         <div className="rounded-2xl border border-slate-100 p-4">
           <p className="text-sm font-semibold text-slate-800">Ministerios</p>
@@ -394,7 +394,7 @@ export function SiteSettingsForm({
         </div>
 
         <div className="rounded-2xl border border-slate-100 p-4">
-          <p className="text-sm font-semibold text-slate-800">Pastores</p>
+          <p className="text-sm font-semibold text-slate-800">Apóstol</p>
           <p className="mt-0.5 text-xs text-slate-500">Solo aparece en /pastores, no tiene resumen en el Home.</p>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
             <FormField label="Etiqueta" htmlFor="pastorsEyebrow">

@@ -65,10 +65,11 @@ export function useAdminCampuses() {
 
   const removeCampus = useCallback(
     async (id: string) => {
-      await removeCampusRequest(id);
+      const target = campuses.find((campus) => campus.id === id);
+      await removeCampusRequest(id, target?.name);
       await refresh();
     },
-    [refresh]
+    [campuses, refresh]
   );
 
   return { campuses, isReady, createCampus, updateCampus, removeCampus };

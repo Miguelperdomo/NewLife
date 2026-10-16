@@ -414,3 +414,14 @@ export const loginFormSchema = z.object({
 });
 
 export type LoginFormValues = z.infer<typeof loginFormSchema>;
+
+export const createAdminUserFormSchema = z.object({
+  name: z.string().trim().min(2, "El nombre es obligatorio."),
+  email: z.string().trim().min(1, "El correo es obligatorio.").email("Ingresa un correo válido."),
+  password: z.string().min(8, "Mínimo 8 caracteres."),
+  sections: z.array(z.string()).min(1, "Selecciona al menos un permiso."),
+  // Vacío = sin fecha límite (acceso indefinido).
+  accessUntil: z.string().optional(),
+});
+
+export type CreateAdminUserFormValues = z.infer<typeof createAdminUserFormSchema>;

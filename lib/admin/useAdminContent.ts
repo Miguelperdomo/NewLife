@@ -110,10 +110,11 @@ export function useAdminContent() {
 
   const removeEvent = useCallback(
     async (id: string) => {
-      await removeEventRequest(id);
+      const target = events.find((event) => event.id === id);
+      await removeEventRequest(id, target?.title);
       await refreshEvents();
     },
-    [refreshEvents]
+    [events, refreshEvents]
   );
 
   const createNews = useCallback(
@@ -161,10 +162,11 @@ export function useAdminContent() {
 
   const removeNews = useCallback(
     async (id: string) => {
-      await removeNewsRequest(id);
+      const target = news.find((article) => article.id === id);
+      await removeNewsRequest(id, target?.title);
       await refreshNews();
     },
-    [refreshNews]
+    [news, refreshNews]
   );
 
   return {

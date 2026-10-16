@@ -1,4 +1,4 @@
-import { CalendarDays, Newspaper } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import type { AdminContentType } from "@/lib/admin/types";
 
 const options: { type: AdminContentType; label: string; description: string; icon: typeof CalendarDays }[] = [
@@ -8,12 +8,15 @@ const options: { type: AdminContentType; label: string; description: string; ico
     description: "Reuniones, retiros, servicios especiales — con fecha, hora y lugar.",
     icon: CalendarDays,
   },
-  {
-    type: "news",
-    label: "Noticia",
-    description: "Anuncios, reflexiones, actualizaciones — un artículo para leer.",
-    icon: Newspaper,
-  },
+  // Noticia — comentada a propósito, Noticias está en pausa por ahora (ver
+  // data/site.ts y components/admin/QuickActions.tsx). Para reactivarla,
+  // descomenta esto y vuelve a importar Newspaper de lucide-react arriba.
+  // {
+  //   type: "news",
+  //   label: "Noticia",
+  //   description: "Anuncios, reflexiones, actualizaciones — un artículo para leer.",
+  //   icon: Newspaper,
+  // },
 ];
 
 export function ContentTypePicker({
@@ -24,7 +27,7 @@ export function ContentTypePicker({
   return (
     <div>
       <h2 className="font-heading text-xl font-bold text-slate-900">¿Qué quieres crear?</h2>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <div className={`mt-6 grid gap-4 ${options.length > 1 ? "sm:grid-cols-2" : "sm:max-w-sm"}`}>
         {options.map(({ type, label, description, icon: Icon }) => (
           <button
             key={type}

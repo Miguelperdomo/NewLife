@@ -19,9 +19,12 @@ export const navLinks: NavLink[] = [
   { label: "Conócenos", href: "/nosotros" },
   { label: "Ministerios", href: "/ministerios" },
   { label: "Eventos", href: "/eventos" },
-  { label: "Noticias", href: "/noticias" },
+  // Noticias — comentado a propósito, por ahora no se muestra en el menú ni
+  // en el pie de página (Footer reutiliza este mismo arreglo). Para
+  // reactivarlo, solo descomenta esta línea.
+  // { label: "Noticias", href: "/noticias" },
   { label: "Sedes", href: "/sedes" },
-  { label: "Pastor", href: "/pastores" },
+  { label: "Apóstol", href: "/pastores" },
 ];
 
 // [LINKS PLACEHOLDER] Reemplazar con los enlaces oficiales de New Life.

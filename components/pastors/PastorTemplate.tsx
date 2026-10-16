@@ -28,7 +28,7 @@ export async function PastorTemplate({ pastor }: { pastor: Pastor }) {
 
   return (
     <>
-      <Breadcrumbs items={[{ label: "Pastores", href: "/pastores" }, { label: pastor.name }]} />
+      <Breadcrumbs items={[{ label: "Apóstol", href: "/pastores" }, { label: pastor.name }]} />
 
       <section className="relative overflow-hidden bg-slate-950 py-20 sm:py-28">
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">

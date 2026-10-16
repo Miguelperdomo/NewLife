@@ -8,12 +8,12 @@ import { getPastors } from "@/lib/content";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 
-const description = "Conoce a nuestro Pastor Fundador.";
+const description = "Conoce a nuestro Apóstol Fundador.";
 
 export const metadata: Metadata = {
-  title: `Pastor — ${siteConfig.name}`,
+  title: `Apóstol — ${siteConfig.name}`,
   description,
-  ...buildOpenGraphMetadata({ title: `Pastor — ${siteConfig.name}`, description }),
+  ...buildOpenGraphMetadata({ title: `Apóstol — ${siteConfig.name}`, description }),
 };
 
 export default async function PastoresPage() {
@@ -21,7 +21,7 @@ export default async function PastoresPage() {
 
   return (
     <>
-      <Breadcrumbs items={[{ label: "Pastor" }]} />
+      <Breadcrumbs items={[{ label: "Apóstol" }]} />
 
       <section className="relative overflow-hidden bg-slate-950 py-20 sm:py-28">
         <div
@@ -40,7 +40,7 @@ export default async function PastoresPage() {
         <Container className="relative">
           <SectionHeading
             eyebrow={settings?.pastorsEyebrow || "Liderazgo"}
-            title={settings?.pastorsTitle || "Conoce a nuestro Pastor"}
+            title={settings?.pastorsTitle || "Conoce a nuestro Apóstol"}
             description={
               settings?.pastorsDescription ||
               "Llamado a pastorear, servir y caminar junto a la comunidad de New Life."

@@ -1,5 +1,48 @@
 export type ContentStatus = "draft" | "published" | "scheduled" | "archived";
 
+/**
+ * Secciones del panel que se pueden otorgar por separado a un administrador
+ * (ver lib/admin/users.ts) — "full" es el comodín: quien lo tenga, puede
+ * todo, sin importar qué más tenga marcado. "content" cubre Eventos y
+ * Noticias juntos porque viven en un solo módulo del panel (/admin/contenido).
+ */
+export const ADMIN_SECTIONS = ["full", "ministries", "campuses", "content", "settings"] as const;
+export type AdminSection = (typeof ADMIN_SECTIONS)[number];
+
+// "content" se sigue llamando así por dentro (cubre Eventos y Noticias en la
+// base de datos), pero mientras Noticias esté en pausa, se muestra solo como
+// "Eventos" para no confundir a quien esté creando un usuario. Si Noticias
+// se reactiva, basta con volver esta etiqueta a "Eventos y Noticias" — el
+// permiso de quien ya tenga "content" sigue aplicando a ambos sin tocar nada más.
+export const ADMIN_SECTION_LABELS: Record<AdminSection, string> = {
+  full: "Todo",
+  ministries: "Ministerios",
+  campuses: "Sedes",
+  content: "Eventos",
+  settings: "Configuración",
+};
+
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  sections: AdminSection[];
+  /** "YYYY-MM-DD" o null = acceso indefinido. Pasada esta fecha, la sesión se trata como "Sin permisos" sin borrar los permisos guardados (ver lib/admin/auth.ts). */
+  accessUntil: string | null;
+  /** Último inicio de sesión real (Supabase Auth) — null si nunca ha entrado. Viene de auth.admin.listUsers(), no de la tabla `admins`. */
+  lastSignInAt: string | null;
+  createdAt: string;
+}
+
+export interface AdminActivityLogEntry {
+  id: number;
+  adminName: string;
+  summary: string;
+  createdAt: string;
+  /** Campos y valores de lo que se guardó en esa acción — se muestra al hacer clic en el registro. Clave = nombre legible ("Nombre", "Estado"...), valor = lo que quedó guardado. */
+  details?: Record<string, string>;
+}
+
 export type MinistryAudience =
   | { mode: "all" }
   | { mode: "specific"; ministrySlugs: string[] }

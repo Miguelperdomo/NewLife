@@ -19,12 +19,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <p className="mt-1 text-xs uppercase tracking-widest text-white/40">Panel administrativo</p>
           </div>
 
-          <AdminSidebarNav />
+          <AdminSidebarNav sections={session.sections} />
         </aside>
 
         <div className="min-w-0 flex-1">
           <header className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-4 sm:gap-4 sm:px-6">
-            <AdminMobileSidebar />
+            <AdminMobileSidebar sections={session.sections} />
             <div className="lg:hidden">
               <Logo variant="dark" />
             </div>

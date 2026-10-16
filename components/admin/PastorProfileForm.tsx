@@ -94,9 +94,9 @@ function Form({
       </FormField>
 
       <FormField
-        label="WhatsApp del pastor"
+        label="WhatsApp del Apóstol"
         htmlFor="whatsappNumber"
-        hint="Opcional. Si se deja vacío, la página del pastor usa el WhatsApp general de New Life."
+        hint="Opcional. Si se deja vacío, la página del Apóstol usa el WhatsApp general de New Life."
       >
         <input id="whatsappNumber" className={inputClass} {...register("whatsappNumber")} />
       </FormField>
@@ -138,7 +138,7 @@ export function PastorProfileForm() {
   const { profile, isReady, update } = usePastorProfile();
 
   return (
-    <FormSection title="Pastor principal" description="Nombre, foto y biografía que se muestran en /pastores.">
+    <FormSection title="Apóstol principal" description="Nombre, foto y biografía que se muestran en /pastores.">
       {isReady && profile ? (
         <Form key={profile.updatedAt} defaultValues={toFormValues(profile)} onSave={update} />
       ) : (

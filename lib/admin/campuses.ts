@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { logActivity } from "@/lib/admin/activityLog";
 import { slugify, uniqueSlug } from "@/lib/admin/slug";
 import type { AdminCampus, AdminServiceSchedule } from "@/lib/admin/types";
 
@@ -93,6 +94,19 @@ async function resolvePastorId(slug: string | undefined) {
   return (data as { id: string } | null)?.id ?? null;
 }
 
+/** Campos legibles para el informe de Actividad. */
+function campusDetails(input: { name?: string; fullName?: string; address?: string; mapQuery?: string; isMain?: boolean; whatsappNumber?: string; schedules?: AdminServiceSchedule[] }): Record<string, string | undefined> {
+  return {
+    "Nombre corto": input.name,
+    "Nombre completo": input.fullName,
+    Dirección: input.address,
+    "Ubicación en Maps": input.mapQuery,
+    "Sede principal": input.isMain !== undefined ? (input.isMain ? "Sí" : "No") : undefined,
+    WhatsApp: input.whatsappNumber,
+    Horarios: input.schedules && input.schedules.length > 0 ? String(input.schedules.length) : undefined,
+  };
+}
+
 async function fetchCampusById(id: string): Promise<AdminCampus> {
   const supabase = createClient();
   const { data, error } = await supabase.from("campuses").select(SELECT_COLUMNS).eq("id", id).single();
@@ -143,6 +157,7 @@ export async function createCampus(input: NewCampusInput, existingSlugs: string[
 
   if (error || !data) throw new Error(error?.message ?? "No se pudo crear la sede.");
   await syncCampusSchedules(data.id, input.schedules);
+  await logActivity(`creó la sede "${input.name}"`, campusDetails(input));
   return fetchCampusById(data.id);
 }
 
@@ -175,11 +190,13 @@ export async function updateCampus(id: string, input: Partial<AdminCampus>): Pro
   if (error) throw new Error(error.message);
 
   await syncCampusSchedules(id, input.schedules ?? []);
+  await logActivity(`editó la sede "${input.name ?? id}"`, campusDetails(input));
   return fetchCampusById(id);
 }
 
-export async function removeCampus(id: string): Promise<void> {
+export async function removeCampus(id: string, name?: string): Promise<void> {
   const supabase = createClient();
   const { error } = await supabase.from("campuses").delete().eq("id", id);
   if (error) throw new Error(error.message);
+  await logActivity(`eliminó la sede "${name ?? id}"`);
 }

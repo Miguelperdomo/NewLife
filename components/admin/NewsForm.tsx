@@ -119,7 +119,7 @@ export function NewsForm({
           <FormField label="Categoría" htmlFor="category">
             <input id="category" className={inputClass} placeholder="Anuncio" {...register("category")} />
           </FormField>
-          <FormField label="Autor" htmlFor="author" hint='Opcional. Ej. «Pastor Giovany» o «Equipo de comunicaciones».'>
+          <FormField label="Autor" htmlFor="author" hint='Opcional. Ej. «Apóstol Giovany» o «Equipo de comunicaciones».'>
             <input id="author" className={inputClass} {...register("author")} />
           </FormField>
           <FormField label="Noticia destacada" htmlFor="featured">

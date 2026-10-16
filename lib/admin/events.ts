@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { logActivity } from "@/lib/admin/activityLog";
 import { slugify, uniqueSlug } from "@/lib/admin/slug";
 import type { AdminEvent, MinistryAudience } from "@/lib/admin/types";
 
@@ -110,6 +111,52 @@ async function syncEventMinistries(eventId: string, audience: MinistryAudience) 
   }
 }
 
+/** Campos legibles para el informe de Actividad. */
+function eventDetails(input: {
+  title?: string;
+  shortDescription?: string;
+  description?: string;
+  category?: string;
+  startDate?: string;
+  endDate?: string;
+  startTime?: string;
+  endTime?: string;
+  campus?: string;
+  location?: string;
+  audience?: MinistryAudience;
+  registrationUrl?: string;
+  whatsappNumber?: string;
+  capacity?: number;
+  featured?: boolean;
+}): Record<string, string | undefined> {
+  const audienceLabel =
+    input.audience?.mode === "all"
+      ? "Todos los ministerios"
+      : input.audience?.mode === "specific"
+        ? `Ministerios: ${input.audience.ministrySlugs.join(", ")}`
+        : input.audience?.mode === "general"
+          ? "General (sin ministerio)"
+          : undefined;
+
+  return {
+    Título: input.title,
+    "Descripción corta": input.shortDescription,
+    Descripción: input.description,
+    Categoría: input.category,
+    "Fecha de inicio": input.startDate,
+    "Fecha de fin": input.endDate,
+    "Hora de inicio": input.startTime,
+    "Hora de fin": input.endTime,
+    Sede: input.campus,
+    Lugar: input.location,
+    Audiencia: audienceLabel,
+    "Enlace de inscripción": input.registrationUrl,
+    WhatsApp: input.whatsappNumber,
+    Cupos: input.capacity !== undefined ? String(input.capacity) : undefined,
+    Destacado: input.featured !== undefined ? (input.featured ? "Sí" : "No") : undefined,
+  };
+}
+
 async function fetchEventById(id: string): Promise<AdminEvent> {
   const supabase = createClient();
   const { data, error } = await supabase.from("events").select(SELECT_COLUMNS).eq("id", id).single();
@@ -165,6 +212,7 @@ export async function createEvent(input: NewEventInput, existingSlugs: string[])
   if (error || !data) throw new Error(error?.message ?? "No se pudo crear el evento.");
 
   await syncEventMinistries(data.id, input.audience);
+  await logActivity(`creó el evento "${input.title}"`, eventDetails(input));
   return fetchEventById(data.id);
 }
 
@@ -206,6 +254,7 @@ export async function updateEvent(id: string, input: Partial<AdminEvent>): Promi
     await syncEventMinistries(id, input.audience);
   }
 
+  await logActivity(`editó el evento "${input.title ?? id}"`, eventDetails(input));
   return fetchEventById(id);
 }
 
@@ -246,6 +295,7 @@ export async function duplicateEvent(event: AdminEvent, existingSlugs: string[])
   if (error || !data) throw new Error(error?.message ?? "No se pudo duplicar el evento.");
 
   await syncEventMinistries(data.id, event.audience);
+  await logActivity(`duplicó el evento "${event.title}"`, eventDetails({ ...event, title: `${event.title} (copia)` }));
   return fetchEventById(data.id);
 }
 
@@ -254,16 +304,24 @@ export async function setEventStatus(
   status: "draft" | "published" | "scheduled" | "archived"
 ): Promise<AdminEvent> {
   const supabase = createClient();
-  const { error } = await supabase.from("events").update({ status }).eq("id", id);
+  const { data, error } = await supabase.from("events").update({ status }).eq("id", id).select("title").single();
   if (error) throw new Error(error.message);
+  const statusLabel: Record<typeof status, string> = {
+    draft: "puso como borrador",
+    published: "publicó",
+    scheduled: "programó",
+    archived: "archivó",
+  };
+  await logActivity(`${statusLabel[status]} el evento "${data?.title ?? id}"`);
   return fetchEventById(id);
 }
 
-export async function removeEvent(id: string): Promise<void> {
+export async function removeEvent(id: string, title?: string): Promise<void> {
   const supabase = createClient();
   // Primero las filas de event_ministries (FK a este evento) — mismo motivo
   // que en syncEventMinistries: sin esto, borrar el evento fallaría.
   await supabase.from("event_ministries").delete().eq("event_id", id);
   const { error } = await supabase.from("events").delete().eq("id", id);
   if (error) throw new Error(error.message);
+  await logActivity(`eliminó el evento "${title ?? id}"`);
 }

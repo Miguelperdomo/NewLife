@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
 import { Logo } from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
+import type { AdminSection } from "@/lib/admin/types";
 
 /**
  * En pantallas menores a `lg` el <aside> fijo del layout se oculta por
@@ -14,7 +15,7 @@ import { cn } from "@/lib/utils";
  * Sedes. Es el mismo patrón de menú móvil que el Navbar público, adaptado a
  * un panel lateral en vez de un desplegable debajo del encabezado.
  */
-export function AdminMobileSidebar() {
+export function AdminMobileSidebar({ sections }: { sections: AdminSection[] }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -85,7 +86,7 @@ export function AdminMobileSidebar() {
             </button>
           </div>
 
-          <AdminSidebarNav onNavigate={() => setOpen(false)} />
+          <AdminSidebarNav sections={sections} onNavigate={() => setOpen(false)} />
         </div>
       </div>
     </>

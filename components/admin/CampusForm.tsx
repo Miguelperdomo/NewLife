@@ -117,7 +117,7 @@ export function CampusForm({
       </FormSection>
 
       <FormSection title="Liderazgo y contacto" description="Ambos campos son opcionales.">
-        <FormField label="Pastor/líder responsable" htmlFor="leadPastorSlug">
+        <FormField label="Apóstol/líder responsable" htmlFor="leadPastorSlug">
           <select id="leadPastorSlug" className={inputClass} {...register("leadPastorSlug")}>
             <option value="">Sin especificar</option>
             {pastors.map((pastor) => (

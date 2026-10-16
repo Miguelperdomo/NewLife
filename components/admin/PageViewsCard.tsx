@@ -11,7 +11,7 @@ const FRIENDLY_LABELS: Record<string, string> = {
   "/eventos": "Eventos",
   "/noticias": "Noticias",
   "/sedes": "Sedes",
-  "/pastores": "Pastores",
+  "/pastores": "Apóstol",
 };
 
 const MAX_ROWS = 8;

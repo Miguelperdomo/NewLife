@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { logActivity } from "@/lib/admin/activityLog";
 import { slugify, uniqueSlug } from "@/lib/admin/slug";
 import type { AdminMinistry } from "@/lib/admin/types";
 
@@ -50,6 +51,22 @@ function rowToMinistry(row: MinistryRow): AdminMinistry {
   };
 }
 
+/** Campos legibles para el informe de Actividad — mismos datos que guarda el formulario, con nombres en español. */
+function ministryDetails(input: { name?: string; shortDescription?: string; description?: string; leader?: string; whatsapp?: string; meetingSchedule?: string; meetingLocation?: string; status?: string; displayOrder?: number; showPublicly?: boolean }): Record<string, string | undefined> {
+  return {
+    Nombre: input.name,
+    "Descripción corta": input.shortDescription,
+    "Descripción completa": input.description,
+    Líder: input.leader,
+    WhatsApp: input.whatsapp,
+    Horario: input.meetingSchedule,
+    Lugar: input.meetingLocation,
+    Estado: input.status === "archived" ? "Archivado" : input.status === "active" ? "Activo" : undefined,
+    Orden: input.displayOrder !== undefined ? String(input.displayOrder) : undefined,
+    "Visible públicamente": input.showPublicly !== undefined ? (input.showPublicly ? "Sí" : "No") : undefined,
+  };
+}
+
 export async function loadMinistries(): Promise<AdminMinistry[]> {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -90,6 +107,7 @@ export async function createMinistry(
     .single();
 
   if (error || !data) throw new Error(error?.message ?? "No se pudo crear el ministerio.");
+  await logActivity(`creó el ministerio "${input.name}"`, ministryDetails(input));
   return rowToMinistry(data as unknown as MinistryRow);
 }
 
@@ -133,6 +151,7 @@ export async function updateMinistry(
     .single();
 
   if (error || !data) throw new Error(error?.message ?? "No se pudo actualizar el ministerio.");
+  await logActivity(`editó el ministerio "${input.name ?? currentSlug}"`, ministryDetails(input));
   return rowToMinistry(data as unknown as MinistryRow);
 }
 
@@ -165,6 +184,7 @@ export async function duplicateMinistry(
     .single();
 
   if (error || !data) throw new Error(error?.message ?? "No se pudo duplicar el ministerio.");
+  await logActivity(`duplicó el ministerio "${ministry.name}"`, ministryDetails({ ...ministry, name: `${ministry.name} (copia)` }));
   return rowToMinistry(data as unknown as MinistryRow);
 }
 
@@ -181,10 +201,11 @@ export async function setMinistryStatus(
     .single();
 
   if (error || !data) throw new Error(error?.message ?? "No se pudo actualizar el estado.");
+  await logActivity(`${status === "archived" ? "archivó" : "activó"} el ministerio "${data.name}"`);
   return rowToMinistry(data as unknown as MinistryRow);
 }
 
-export async function removeMinistry(id: string): Promise<void> {
+export async function removeMinistry(id: string, name?: string): Promise<void> {
   const supabase = createClient();
   // event_ministries referencia ministerios — se limpia primero por la misma
   // razón que al borrar un evento: sin esto, el borrado fallaría si el
@@ -192,4 +213,5 @@ export async function removeMinistry(id: string): Promise<void> {
   await supabase.from("event_ministries").delete().eq("ministry_id", id);
   const { error } = await supabase.from("ministries").delete().eq("id", id);
   if (error) throw new Error(error.message);
+  await logActivity(`eliminó el ministerio "${name ?? id}"`);
 }
