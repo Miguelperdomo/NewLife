@@ -4,7 +4,6 @@ import { Logo } from "@/components/ui/Logo";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { navLinks, siteConfig, socialLinks } from "@/data/site";
 import { getCampuses, getMinistries } from "@/lib/content";
-import { PROVIDENTIA_TECH_MESSAGE, PROVIDENTIA_TECH_WHATSAPP } from "@/lib/providentia";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import type { NavLink, SocialLink } from "@/lib/types";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
@@ -36,6 +35,10 @@ export async function Footer() {
   const ministryLinks: NavLink[] = ministries.map((ministry) => ({
     label: ministry.name,
     href: `/ministerios/${ministry.slug}`,
+  }));
+  const campusLinks: NavLink[] = campuses.map((campus) => ({
+    label: campus.name,
+    href: `/sedes/${campus.slug}`,
   }));
   const mainCampus = campuses.find((campus) => campus.isMain);
 
@@ -82,45 +85,58 @@ export async function Footer() {
 
         <FooterColumn title="Enlaces" links={navLinks} />
         <FooterColumn title="Ministerios" links={ministryLinks} />
-
-        <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-white">
-            Contacto
-          </h3>
-          <ul className="mt-4 space-y-2 text-sm text-slate-400">
-            <li>{contactEmail}</li>
-            <li>{contactPhone}</li>
-            {address && (
-              <li>
-                {address}
-                {settings?.city ? `, ${settings.city}` : ""}
-              </li>
-            )}
-            {settings?.generalSchedule && <li>{settings.generalSchedule}</li>}
-            {mainCampus && (
-              <li>
-                <Link href="/sedes" className="text-slate-300 underline-offset-2 hover:text-white hover:underline">
-                  Ver todas las sedes
-                </Link>
-              </li>
-            )}
-          </ul>
-          <div className="mt-6 flex gap-3">
-            {resolvedSocialLinks.map((social) => (
-              <a
-                key={social.platform}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={social.label}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-brand-600"
-              >
-                <SocialIcon platform={social.platform} className="h-5 w-5" />
-              </a>
-            ))}
-          </div>
-        </div>
+        <FooterColumn title="Sedes" links={campusLinks} />
       </Container>
+
+      <div className="border-t border-white/10">
+        <Container className="grid gap-8 py-10 sm:grid-cols-2">
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-white">Contacto</h3>
+            <ul className="mt-4 space-y-2 text-sm text-slate-400">
+              {contactEmail && <li>{contactEmail}</li>}
+              {contactPhone && <li>{contactPhone}</li>}
+              {address && (
+                <li>
+                  {address}
+                  {settings?.city ? `, ${settings.city}` : ""}
+                </li>
+              )}
+              {settings?.generalSchedule && <li>{settings.generalSchedule}</li>}
+              {mainCampus && (
+                <li>
+                  <Link href="/sedes" className="text-slate-300 underline-offset-2 hover:text-white hover:underline">
+                    Ver todas las sedes
+                  </Link>
+                </li>
+              )}
+            </ul>
+          </div>
+
+          <div className="sm:text-right">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-white">Síguenos</h3>
+            <div className="mt-4 flex gap-3 sm:justify-end">
+              {resolvedSocialLinks.map((social) => (
+                <a
+                  key={social.platform}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-brand-600"
+                >
+                  <SocialIcon platform={social.platform} className="h-5 w-5" />
+                </a>
+              ))}
+            </div>
+            <Link
+              href="/#primeros-pasos"
+              className="mt-4 inline-block text-sm font-medium text-slate-300 underline-offset-2 hover:text-white hover:underline"
+            >
+              ¿Es tu primera vez? Empieza aquí →
+            </Link>
+          </div>
+        </Container>
+      </div>
 
       <div className="border-t border-white/10 py-6">
         <Container className="flex flex-col items-center justify-between gap-2 text-center text-xs text-slate-500 sm:flex-row sm:text-left">
@@ -141,7 +157,7 @@ export async function Footer() {
           <p>
             Diseñado y desarrollado por{" "}
             <a
-              href={buildWhatsAppLink(PROVIDENTIA_TECH_WHATSAPP, PROVIDENTIA_TECH_MESSAGE)}
+              href="https://providentiatech.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-slate-400 transition-colors hover:text-white"

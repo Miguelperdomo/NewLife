@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Droplet,
+  HandHeart,
   History,
   LayoutDashboard,
   LayoutGrid,
   MapPin,
   Settings,
+  UserPlus,
   Users,
   UserCog,
 } from "lucide-react";
@@ -19,6 +22,9 @@ const navItems: { label: string; href: string; icon: typeof LayoutGrid; exact: b
   { label: "Contenido", href: "/admin/contenido", icon: LayoutDashboard, exact: false, section: "content" },
   { label: "Ministerios", href: "/admin/ministerios", icon: Users, exact: false, section: "ministries" },
   { label: "Sedes", href: "/admin/sedes", icon: MapPin, exact: false, section: "campuses" },
+  { label: "Oración", href: "/admin/oracion", icon: HandHeart, exact: false, section: "prayer" },
+  { label: "Bautismo", href: "/admin/bautismo", icon: Droplet, exact: false, section: "baptism" },
+  { label: "Primera visita", href: "/admin/visitas", icon: UserPlus, exact: false, section: "visits" },
   { label: "Configuración", href: "/admin/configuracion", icon: Settings, exact: false, section: "settings" },
   { label: "Usuarios", href: "/admin/usuarios", icon: UserCog, exact: false, section: "full" },
   { label: "Actividad", href: "/admin/actividad", icon: History, exact: false, section: "full" },

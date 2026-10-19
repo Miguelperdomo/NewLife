@@ -6,7 +6,7 @@ export type ContentStatus = "draft" | "published" | "scheduled" | "archived";
  * todo, sin importar qué más tenga marcado. "content" cubre Eventos y
  * Noticias juntos porque viven en un solo módulo del panel (/admin/contenido).
  */
-export const ADMIN_SECTIONS = ["full", "ministries", "campuses", "content", "settings"] as const;
+export const ADMIN_SECTIONS = ["full", "ministries", "campuses", "content", "settings", "prayer", "baptism", "visits"] as const;
 export type AdminSection = (typeof ADMIN_SECTIONS)[number];
 
 // "content" se sigue llamando así por dentro (cubre Eventos y Noticias en la
@@ -20,6 +20,9 @@ export const ADMIN_SECTION_LABELS: Record<AdminSection, string> = {
   campuses: "Sedes",
   content: "Eventos",
   settings: "Configuración",
+  prayer: "Oración",
+  baptism: "Bautismo",
+  visits: "Primera visita",
 };
 
 export interface AdminUser {
@@ -31,6 +34,40 @@ export interface AdminUser {
   accessUntil: string | null;
   /** Último inicio de sesión real (Supabase Auth) — null si nunca ha entrado. Viene de auth.admin.listUsers(), no de la tabla `admins`. */
   lastSignInAt: string | null;
+  createdAt: string;
+}
+
+/** Un pedido de oración enviado desde el sitio público — privado, solo lo ve quien tenga el permiso "prayer". */
+export interface AdminPrayerRequest {
+  id: number;
+  /** null = la persona lo dejó anónimo a propósito. */
+  name: string | null;
+  message: string;
+  /** WhatsApp o correo, opcional — solo si la persona quiere que la contacten. */
+  contact: string | null;
+  status: "nueva" | "atendida";
+  createdAt: string;
+}
+
+/** "Quiero bautizarme" enviado desde el sitio público — solo lo ve quien tenga el permiso "baptism". */
+export interface AdminBaptismRequest {
+  id: number;
+  name: string;
+  phone: string;
+  status: "nueva" | "atendida";
+  createdAt: string;
+}
+
+/** Check-in anticipado ("Avísanos que vienes") enviado desde el Home — solo lo ve quien tenga el permiso "visits". */
+export interface AdminVisitCheckin {
+  id: number;
+  name: string;
+  peopleCount: number;
+  /** Nombre de la sede tal como se mostró en el formulario (texto libre, no FK — evita que un cambio de nombre de sede rompa check-ins viejos). */
+  campus: string;
+  /** "YYYY-MM-DD" — el domingo (u otro día) que la persona dijo que vendría. */
+  visitDate: string;
+  status: "nueva" | "atendida";
   createdAt: string;
 }
 
@@ -105,6 +142,8 @@ export interface AdminCampus {
   name: string;
   fullName: string;
   address: string;
+  /** Ciudad de esta sede — separada de `address` a propósito, para poder agrupar/filtrar sedes por ciudad (ej. el mapa conjunto de /sedes) sin tener que adivinarla del texto de la dirección. */
+  city?: string;
   /** Texto usado para buscar la ubicación en Google Maps (dirección o plus code). */
   mapQuery: string;
   imageSrc?: string;
@@ -138,6 +177,8 @@ export interface AdminMinistry {
   leader?: string;
   /** Número de WhatsApp propio del ministerio; si no se define, la capa pública usa el general de New Life. */
   whatsapp?: string;
+  /** Link externo de inscripción (ej. Google Forms) — si se define, el botón "Quiero inscribirme" lleva ahí en vez de abrir WhatsApp. */
+  registrationUrl?: string;
   meetingSchedule?: string;
   meetingLocation?: string;
   status: MinistryStatus;

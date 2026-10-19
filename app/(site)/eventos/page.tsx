@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { EventCountdownBanner } from "@/components/events/EventCountdownBanner";
 import { EventsView } from "@/components/events/EventsView";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
@@ -52,6 +53,7 @@ export default async function EventosPage() {
 
       <section className="py-16 sm:py-24">
         <Container>
+          <EventCountdownBanner events={events} className="mb-10" />
           <EventsView events={events} ministries={ministries} campuses={campuses} />
         </Container>
       </section>

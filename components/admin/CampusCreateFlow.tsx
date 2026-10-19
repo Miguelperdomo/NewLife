@@ -16,9 +16,10 @@ function draftCampusForPreview(values: CampusFormValues): AdminCampus {
 
 export function CampusCreateFlow() {
   const router = useRouter();
-  const { createCampus } = useAdminCampuses();
+  const { campuses, createCampus } = useAdminCampuses();
   const [preview, setPreview] = useState<AdminCampus | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const existingCities = Array.from(new Set(campuses.map((campus) => campus.city).filter((city): city is string => Boolean(city))));
 
   async function handleSubmit(values: CampusFormValues) {
     setError(null);
@@ -38,7 +39,11 @@ export function CampusCreateFlow() {
         </div>
       )}
 
-      <CampusForm onPreview={(values) => setPreview(draftCampusForPreview(values))} onSubmit={handleSubmit} />
+      <CampusForm
+        onPreview={(values) => setPreview(draftCampusForPreview(values))}
+        onSubmit={handleSubmit}
+        existingCities={existingCities}
+      />
 
       <Modal open={preview !== null} onClose={() => setPreview(null)} title="Vista previa">
         {preview && <CampusPreview campus={preview} />}

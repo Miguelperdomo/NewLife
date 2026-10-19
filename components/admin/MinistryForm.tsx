@@ -18,6 +18,7 @@ export const ministryFormDefaults: MinistryFormValues = {
   imageSrc: "",
   leader: "",
   whatsapp: "",
+  registrationUrl: "",
   meetingSchedule: "",
   meetingLocation: "",
   status: "active",
@@ -128,6 +129,13 @@ export function MinistryForm({
           hint="Si se deja vacío, la capa pública usaría el WhatsApp general de New Life."
         >
           <input id="whatsapp" className={inputClass} {...register("whatsapp")} />
+        </FormField>
+        <FormField
+          label="Enlace de inscripción (opcional)"
+          htmlFor="registrationUrl"
+          hint='Ej. un Google Form. Si lo pones, el botón "Quiero inscribirme" lleva ahí en vez de abrir WhatsApp.'
+        >
+          <input id="registrationUrl" className={inputClass} {...register("registrationUrl")} />
         </FormField>
       </FormSection>
 

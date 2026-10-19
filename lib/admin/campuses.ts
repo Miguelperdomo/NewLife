@@ -27,6 +27,7 @@ interface CampusRow {
   name: string;
   full_name: string;
   address: string;
+  city: string | null;
   map_query: string;
   image_url: string | null;
   is_main: boolean;
@@ -48,6 +49,7 @@ function rowToCampus(row: CampusRow): AdminCampus {
     name: row.name,
     fullName: row.full_name,
     address: row.address,
+    city: row.city ?? undefined,
     mapQuery: row.map_query,
     imageSrc: row.image_url ?? undefined,
     isMain: row.is_main,
@@ -95,11 +97,12 @@ async function resolvePastorId(slug: string | undefined) {
 }
 
 /** Campos legibles para el informe de Actividad. */
-function campusDetails(input: { name?: string; fullName?: string; address?: string; mapQuery?: string; isMain?: boolean; whatsappNumber?: string; schedules?: AdminServiceSchedule[] }): Record<string, string | undefined> {
+function campusDetails(input: { name?: string; fullName?: string; address?: string; city?: string; mapQuery?: string; isMain?: boolean; whatsappNumber?: string; schedules?: AdminServiceSchedule[] }): Record<string, string | undefined> {
   return {
     "Nombre corto": input.name,
     "Nombre completo": input.fullName,
     Dirección: input.address,
+    Ciudad: input.city,
     "Ubicación en Maps": input.mapQuery,
     "Sede principal": input.isMain !== undefined ? (input.isMain ? "Sí" : "No") : undefined,
     WhatsApp: input.whatsappNumber,
@@ -146,6 +149,7 @@ export async function createCampus(input: NewCampusInput, existingSlugs: string[
       name: input.name,
       full_name: input.fullName,
       address: input.address,
+      city: input.city || null,
       map_query: input.mapQuery,
       image_url: input.imageSrc || null,
       is_main: input.isMain ?? false,
@@ -179,6 +183,7 @@ export async function updateCampus(id: string, input: Partial<AdminCampus>): Pro
     name: input.name,
     full_name: input.fullName,
     address: input.address,
+    city: input.city || null,
     map_query: input.mapQuery,
     image_url: input.imageSrc || null,
     is_main: input.isMain ?? false,

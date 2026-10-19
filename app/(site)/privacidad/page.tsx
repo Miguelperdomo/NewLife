@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: `Política de privacidad — ${siteConfig.name}`,
   description,
   ...buildOpenGraphMetadata({ title: `Política de privacidad — ${siteConfig.name}`, description }),
-};
+}; 
 
 const FALLBACK_TEXT = `En New Life valoramos tu confianza y queremos ser transparentes sobre cómo funciona este sitio web.
 

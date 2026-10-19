@@ -8,6 +8,7 @@ import { Hero } from "@/components/sections/Hero";
 import { LatestNewsSection } from "@/components/sections/LatestNewsSection";
 import { LiveSection } from "@/components/sections/LiveSection";
 import { MinistriesSection } from "@/components/sections/MinistriesSection";
+import { PersonalStepsSection } from "@/components/sections/PersonalStepsSection";
 import { UpcomingEventsSection } from "@/components/sections/UpcomingEventsSection";
 import { WaveDivider } from "@/components/ui/WaveDivider";
 import { getCampuses, getHelpOptions, getMinistries } from "@/lib/content";
@@ -57,6 +58,7 @@ export default async function Home() {
       <FirstTimeSection />
       <AboutSection />
       <DailyVerseCard />
+      <PersonalStepsSection />
       {show.ministries && <MinistriesSection />}
       {show.live && !showLiveFirst && (
         <>

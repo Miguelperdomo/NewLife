@@ -15,6 +15,7 @@ export const campusFormDefaults: CampusFormValues = {
   name: "",
   fullName: "",
   address: "",
+  city: "",
   mapQuery: "",
   imageSrc: "",
   isMain: false,
@@ -28,11 +29,14 @@ export function CampusForm({
   submitLabel = "Crear sede",
   onSubmit,
   onPreview,
+  existingCities = [],
 }: {
   defaultValues?: Partial<CampusFormValues>;
   submitLabel?: string;
   onSubmit: (values: CampusFormValues) => void | Promise<void>;
   onPreview: (values: CampusFormValues) => void;
+  /** Ciudades que ya usan otras sedes — se sugieren al escribir, para que "Ibagué" no termine escrita de 3 formas distintas por error de dedo. */
+  existingCities?: string[];
 }) {
   const pastors = getPastors();
 
@@ -103,6 +107,19 @@ export function CampusForm({
           hint="Ej. «Calle 42 #15-30, Ibagué» — la que se muestra en el sitio."
         >
           <input id="address" className={inputClass} {...register("address")} />
+        </FormField>
+
+        <FormField
+          label="Ciudad (opcional)"
+          htmlFor="city"
+          hint='Ej. «Ibagué», «Girardot», «Bucaramanga». Si ya existe, elígela de la lista que aparece al escribir, en vez de escribirla de memoria — así no queda "Ibagué" y "ibague" como si fueran dos ciudades distintas.'
+        >
+          <input id="city" list="existing-cities" className={inputClass} {...register("city")} />
+          <datalist id="existing-cities">
+            {existingCities.map((city) => (
+              <option key={city} value={city} />
+            ))}
+          </datalist>
         </FormField>
 
         <FormField

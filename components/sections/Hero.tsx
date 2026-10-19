@@ -6,6 +6,7 @@ import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { HeroCarousel } from "@/components/sections/HeroCarousel";
 import { siteConfig } from "@/data/site";
 import { getCampuses, getHeroPhotos, getMinistries } from "@/lib/content";
+import { getImpactStats } from "@/lib/impactStats";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 
 function HeroStat({ value, label }: { value: number; label: string }) {
@@ -20,11 +21,12 @@ function HeroStat({ value, label }: { value: number; label: string }) {
 }
 
 export async function Hero() {
-  const [settings, campuses, ministries, heroPhotos] = await Promise.all([
+  const [settings, campuses, ministries, heroPhotos, impactStats] = await Promise.all([
     getPublicSiteSettings(),
     getCampuses(),
     getMinistries(),
     getHeroPhotos(),
+    getImpactStats(),
   ]);
   const churchName = settings?.churchName || siteConfig.name;
   const tagline = settings?.heroTagline || siteConfig.tagline;
@@ -74,16 +76,24 @@ export async function Hero() {
           <Button href="/nosotros" variant="secondary" size="lg">
             Conoce New Life
           </Button>
-          <Button href="/ministerios" variant="outline" size="lg">
+          <Button href="/#primeros-pasos" variant="outline" size="lg">
             Quiero ser parte
           </Button>
         </div>
 
-        {(campuses.length > 0 || ministries.length > 0 || yearsServing !== undefined) && (
-          <div className="mt-8 flex flex-wrap items-center justify-center divide-x divide-white/10 border-t border-white/10 pt-6">
+        {(campuses.length > 0 ||
+          ministries.length > 0 ||
+          yearsServing !== undefined ||
+          impactStats.prayerCount > 0 ||
+          impactStats.baptismCount > 0 ||
+          impactStats.visitCount > 0) && (
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-y-4 divide-x divide-white/10 border-t border-white/10 pt-6">
             {campuses.length > 0 && <HeroStat value={campuses.length} label="Sedes" />}
             {ministries.length > 0 && <HeroStat value={ministries.length} label="Ministerios" />}
             {yearsServing !== undefined && <HeroStat value={yearsServing} label="Años sirviendo" />}
+            {impactStats.baptismCount > 0 && <HeroStat value={impactStats.baptismCount} label="Bautizados" />}
+            {impactStats.prayerCount > 0 && <HeroStat value={impactStats.prayerCount} label="Oraciones recibidas" />}
+            {impactStats.visitCount > 0 && <HeroStat value={impactStats.visitCount} label="Visitas nuevas" />}
           </div>
         )}
       </Container>

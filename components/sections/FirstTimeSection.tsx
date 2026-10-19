@@ -1,9 +1,11 @@
+import { Gift } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { VisitCheckinWidget } from "@/components/sections/VisitCheckinWidget";
 import { firstTimeContent, firstTimeInfo } from "@/data/firstTime";
-import { getFirstTimeCards } from "@/lib/content";
+import { getCampuses, getFirstTimeCards } from "@/lib/content";
 import { getFirstTimeIcon } from "@/lib/firstTimeIcons";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 
@@ -18,11 +20,11 @@ const FALLBACK_CARDS = firstTimeInfo.map((info) => ({
 }));
 
 export async function FirstTimeSection() {
-  const [cards, settings] = await Promise.all([getFirstTimeCards(), getPublicSiteSettings()]);
+  const [cards, settings, campuses] = await Promise.all([getFirstTimeCards(), getPublicSiteSettings(), getCampuses()]);
   const items = cards.length > 0 ? cards : FALLBACK_CARDS;
 
   return (
-    <section className="bg-slate-50 py-20 sm:py-28">
+    <section id="primeros-pasos" className="scroll-mt-20 bg-slate-50 py-20 sm:py-28">
       <Container>
         <ScrollReveal>
           <SectionHeading
@@ -51,10 +53,21 @@ export async function FirstTimeSection() {
             })}
           </div>
 
-          <div className="mt-10 flex justify-center">
-            <Button href="/sedes" variant="primary">
-              {settings?.firstTimeCtaLabel || firstTimeContent.ctaLabel}
-            </Button>
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button href="/sedes" variant="primary">
+                {settings?.firstTimeCtaLabel || firstTimeContent.ctaLabel}
+              </Button>
+              {campuses.length > 0 && (
+                <VisitCheckinWidget campuses={campuses.map((campus) => ({ slug: campus.slug, name: campus.name }))} />
+              )}
+            </div>
+            {campuses.length > 0 && (
+              <p className="flex items-center gap-1.5 text-sm text-slate-500">
+                <Gift className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
+                Avísanos que vienes y te tendremos un detalle especial al finalizar el culto.
+              </p>
+            )}
           </div>
         </ScrollReveal>
       </Container>

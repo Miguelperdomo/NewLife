@@ -29,6 +29,10 @@ export interface Ministry {
   /** Ruta local de la foto/logo real, si ya se subió (ver /public/img). */
   imageSrc?: string;
   social?: SocialLink[];
+  /** WhatsApp propio de este ministerio — si se define, se usa en vez del WhatsApp general de la iglesia. */
+  whatsapp?: string;
+  /** Link externo de inscripción (ej. Google Forms) — si se define, el botón de inscripción lleva ahí en vez de abrir WhatsApp. */
+  registrationUrl?: string;
 }
 
 /** Una foto de la galería de instalaciones de una sede (ver Campus.gallery). */
@@ -53,6 +57,8 @@ export interface Campus {
   name: string;
   fullName: string;
   address: string;
+  /** Ciudad de esta sede — para agrupar/filtrar sedes por ciudad en el mapa conjunto de /sedes. */
+  city?: string;
   /** Texto usado para buscar la ubicación en Google Maps (dirección o plus code). */
   mapQuery: string;
   imageLabel: string;
@@ -145,6 +151,12 @@ export interface ChurchEvent {
   location?: string;
   /** false = no mostrar botón de inscripción (por defecto true). */
   registrationByWhatsApp?: boolean;
+  /** Marcado como "Destacado" en el panel admin — lo usa, por ejemplo, la cuenta regresiva del Home. */
+  featured?: boolean;
+  /** Link externo de inscripción (ej. Google Forms) — si se define, el botón de inscripción lleva ahí en vez de abrir WhatsApp. */
+  registrationUrl?: string;
+  /** WhatsApp propio de este evento — si se define, el botón de inscripción lo usa en vez del WhatsApp general de la iglesia. */
+  whatsappNumber?: string;
 }
 
 /**

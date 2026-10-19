@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Clock, MapPin, MessageCircle, User, Users } from "lucide-react";
+import { ArrowLeft, Clock, ExternalLink, MapPin, MessageCircle, User, Users } from "lucide-react";
 import { EventCard } from "@/components/events/EventCard";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
@@ -32,10 +32,15 @@ export function MinistryTemplate({
   /** Configuración > WhatsApp principal; el llamador la resuelve (ver comentario de arriba). */
   whatsappNumber?: string;
 }) {
-  const whatsappHref = buildWhatsAppLink(
-    whatsappNumber || siteConfig.whatsappNumber,
-    ministryInscriptionMessage(ministry.name)
-  );
+  // Si el ministerio tiene su propio link de inscripción (ej. Google Forms),
+  // ese manda — si no, WhatsApp, con el número propio del ministerio antes
+  // de caer al general de la iglesia (igual que ya pasa con Eventos y Sedes).
+  const registrationHref = ministry.registrationUrl
+    ? ministry.registrationUrl
+    : buildWhatsAppLink(
+        ministry.whatsapp || whatsappNumber || siteConfig.whatsappNumber,
+        ministryInscriptionMessage(ministry.name)
+      );
 
   return (
     <>
@@ -118,17 +123,23 @@ export function MinistryTemplate({
             )}
 
             <Button
-              href={whatsappHref}
+              href={registrationHref}
               target="_blank"
               rel="noopener noreferrer"
               variant="primary"
               className="mt-6 w-full justify-center"
             >
-              <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              {ministry.registrationUrl ? (
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              )}
               Quiero inscribirme
             </Button>
             <p className="mt-3 text-center text-xs text-slate-500">
-              Se abre WhatsApp con un mensaje ya escrito para ti.
+              {ministry.registrationUrl
+                ? "Se abre el formulario de inscripción en una pestaña nueva."
+                : "Se abre WhatsApp con un mensaje ya escrito para ti."}
             </p>
           </aside>
         </Container>

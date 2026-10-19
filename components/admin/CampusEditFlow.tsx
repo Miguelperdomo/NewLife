@@ -26,6 +26,9 @@ export function CampusEditFlow() {
   }
 
   const campus = campuses.find((item) => item.id === params.id);
+  const existingCities = Array.from(
+    new Set(campuses.map((item) => item.city).filter((city): city is string => Boolean(city)))
+  );
 
   if (!campus) {
     return (
@@ -59,6 +62,7 @@ export function CampusEditFlow() {
         defaultValues={campusToFormValues(campus)}
         onPreview={(values) => setPreview(draftCampusForPreview(values))}
         onSubmit={handleSubmit}
+        existingCities={existingCities}
       />
 
       <Modal open={preview !== null} onClose={() => setPreview(null)} title="Vista previa">

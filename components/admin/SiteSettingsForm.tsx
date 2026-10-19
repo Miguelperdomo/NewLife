@@ -329,6 +329,15 @@ export function SiteSettingsForm({
         </FormField>
       </FormSection>
 
+      {/*
+        "Encabezados de secciones" — comentado a pedido del usuario (no se
+        borró nada): la etiqueta/título/descripción de cada sección (Home +
+        página completa) seguían guardadas en la base de datos y siguen
+        usándose tal cual en el sitio público, solo se quitó la posibilidad
+        de editarlas desde el panel. Para reactivarlo, descomentar este
+        bloque — los campos del formulario (register, defaultValues, schema)
+        no se tocaron.
+
       <FormSection
         title="Encabezados de secciones"
         description="La etiqueta, título y descripción de cada sección del Home y su página completa (Ministerios, Sedes, Eventos, Noticias, Apóstol). Un mismo texto se usa en los dos lugares."
@@ -357,7 +366,7 @@ export function SiteSettingsForm({
             <FormField label="Título" htmlFor="campusesTitle">
               <input id="campusesTitle" className={inputClass} {...register("campusesTitle")} />
             </FormField>
-          </div>
+          </div> 
           <FormField label="Descripción" htmlFor="campusesDescription">
             <textarea id="campusesDescription" rows={2} className={textareaClass} {...register("campusesDescription")} />
           </FormField>
@@ -409,6 +418,7 @@ export function SiteSettingsForm({
           </FormField>
         </div>
       </FormSection>
+      */}
 
       <FormSection
         title="Bloque «En vivo» — miniatura"

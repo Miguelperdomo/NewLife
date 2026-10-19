@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Clock, MapPin, MessageCircle, Tag } from "lucide-react";
+import { ArrowLeft, Clock, ExternalLink, MapPin, MessageCircle, Tag } from "lucide-react";
 import type { ReactNode } from "react";
 import { EventBadge } from "@/components/events/EventBadge";
 import { EventCard } from "@/components/events/EventCard";
@@ -35,10 +35,16 @@ export async function EventTemplate({ event }: { event: ChurchEvent }) {
 
   const related = await getRelatedEvents(event, 3);
   const canRegister = status !== "finalizado" && event.registrationByWhatsApp !== false;
-  const whatsappHref = buildWhatsAppLink(
-    settings?.whatsappNumber ?? siteConfig.whatsappNumber,
-    eventInscriptionMessage(event.name, ministry?.name)
-  );
+  // Si el evento tiene su propio link de inscripción (ej. Google Forms), ese
+  // manda — si no, WhatsApp, usando el número propio del evento si lo tiene
+  // (ej. el celular del encargado de ese evento específico) antes de caer al
+  // general de la iglesia.
+  const registrationHref = event.registrationUrl
+    ? event.registrationUrl
+    : buildWhatsAppLink(
+        event.whatsappNumber ?? settings?.whatsappNumber ?? siteConfig.whatsappNumber,
+        eventInscriptionMessage(event.name, ministry?.name)
+      );
 
   const iconClass = "mt-0.5 h-4 w-4 shrink-0 text-brand-600";
   const infoRows: InfoRowData[] = [
@@ -123,17 +129,23 @@ export async function EventTemplate({ event }: { event: ChurchEvent }) {
             {canRegister ? (
               <>
                 <Button
-                  href={whatsappHref}
+                  href={registrationHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   variant="primary"
                   className="mt-6 w-full justify-center"
                 >
-                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  {event.registrationUrl ? (
+                    <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  )}
                   Quiero inscribirme
                 </Button>
                 <p className="mt-3 text-center text-xs text-slate-500">
-                  Se abre WhatsApp con un mensaje ya escrito para ti.
+                  {event.registrationUrl
+                    ? "Se abre el formulario de inscripción en una pestaña nueva."
+                    : "Se abre WhatsApp con un mensaje ya escrito para ti."}
                 </p>
               </>
             ) : (

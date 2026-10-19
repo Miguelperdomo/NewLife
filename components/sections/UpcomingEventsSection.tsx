@@ -1,4 +1,5 @@
 import { EventCard } from "@/components/events/EventCard";
+import { EventCountdownBanner } from "@/components/events/EventCountdownBanner";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -7,16 +8,18 @@ import { getCampuses, getMinistries, getUpcomingEvents } from "@/lib/content";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 
 export async function UpcomingEventsSection() {
-  const [events, ministries, campuses, settings] = await Promise.all([
-    getUpcomingEvents(3),
+  const [upcoming, ministries, campuses, settings] = await Promise.all([
+    getUpcomingEvents(),
     getMinistries(),
     getCampuses(),
     getPublicSiteSettings(),
   ]);
 
-  if (events.length === 0) {
+  if (upcoming.length === 0) {
     return null;
   }
+
+  const events = upcoming.slice(0, 3);
 
   return (
     <section className="py-20 sm:py-28">
@@ -30,6 +33,8 @@ export async function UpcomingEventsSection() {
               "Hay un lugar para ti. Descubre lo que estamos viviendo juntos en New Life."
             }
           />
+
+          <EventCountdownBanner events={upcoming} className="mt-10" />
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {events.map((event, index) => (

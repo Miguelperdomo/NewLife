@@ -19,6 +19,7 @@ interface MinistryRow {
   image_url: string | null;
   leader: string | null;
   whatsapp: string | null;
+  registration_url: string | null;
   meeting_schedule: string | null;
   meeting_location: string | null;
   status: "active" | "archived";
@@ -29,7 +30,7 @@ interface MinistryRow {
 }
 
 const SELECT_COLUMNS =
-  "id, slug, name, short_description, description, image_url, leader, whatsapp, meeting_schedule, meeting_location, status, display_order, show_publicly, created_at, updated_at";
+  "id, slug, name, short_description, description, image_url, leader, whatsapp, registration_url, meeting_schedule, meeting_location, status, display_order, show_publicly, created_at, updated_at";
 
 function rowToMinistry(row: MinistryRow): AdminMinistry {
   return {
@@ -41,6 +42,7 @@ function rowToMinistry(row: MinistryRow): AdminMinistry {
     imageSrc: row.image_url ?? undefined,
     leader: row.leader ?? undefined,
     whatsapp: row.whatsapp ?? undefined,
+    registrationUrl: row.registration_url ?? undefined,
     meetingSchedule: row.meeting_schedule ?? undefined,
     meetingLocation: row.meeting_location ?? undefined,
     status: row.status,
@@ -52,13 +54,14 @@ function rowToMinistry(row: MinistryRow): AdminMinistry {
 }
 
 /** Campos legibles para el informe de Actividad — mismos datos que guarda el formulario, con nombres en español. */
-function ministryDetails(input: { name?: string; shortDescription?: string; description?: string; leader?: string; whatsapp?: string; meetingSchedule?: string; meetingLocation?: string; status?: string; displayOrder?: number; showPublicly?: boolean }): Record<string, string | undefined> {
+function ministryDetails(input: { name?: string; shortDescription?: string; description?: string; leader?: string; whatsapp?: string; registrationUrl?: string; meetingSchedule?: string; meetingLocation?: string; status?: string; displayOrder?: number; showPublicly?: boolean }): Record<string, string | undefined> {
   return {
     Nombre: input.name,
     "Descripción corta": input.shortDescription,
     "Descripción completa": input.description,
     Líder: input.leader,
     WhatsApp: input.whatsapp,
+    "Enlace de inscripción": input.registrationUrl,
     Horario: input.meetingSchedule,
     Lugar: input.meetingLocation,
     Estado: input.status === "archived" ? "Archivado" : input.status === "active" ? "Activo" : undefined,
@@ -97,6 +100,7 @@ export async function createMinistry(
       image_url: input.imageSrc || null,
       leader: input.leader || null,
       whatsapp: input.whatsapp || null,
+      registration_url: input.registrationUrl || null,
       meeting_schedule: input.meetingSchedule || null,
       meeting_location: input.meetingLocation || null,
       status: input.status,
@@ -133,6 +137,7 @@ export async function updateMinistry(
     image_url: input.imageSrc || null,
     leader: input.leader || null,
     whatsapp: input.whatsapp || null,
+    registration_url: input.registrationUrl || null,
     meeting_schedule: input.meetingSchedule || null,
     meeting_location: input.meetingLocation || null,
     status: input.status,
@@ -172,6 +177,7 @@ export async function duplicateMinistry(
       image_url: ministry.imageSrc || null,
       leader: ministry.leader || null,
       whatsapp: ministry.whatsapp || null,
+      registration_url: ministry.registrationUrl || null,
       meeting_schedule: ministry.meetingSchedule || null,
       meeting_location: ministry.meetingLocation || null,
       // Sin estado "draft" en este módulo (solo active/archived) — una copia

@@ -1,6 +1,6 @@
 export type EventStatus = "hoy" | "proximo" | "finalizado";
 
-function todayISO() {
+export function todayISO() {
   const now = new Date();
   const y = now.getFullYear();
   const m = String(now.getMonth() + 1).padStart(2, "0");
@@ -19,6 +19,13 @@ export function getEventStatus(date: string, endDate?: string): EventStatus {
   const effectiveEnd = endDate ?? date;
   if (today >= date && today <= effectiveEnd) return "hoy";
   return today < date ? "proximo" : "finalizado";
+}
+
+/** Días que faltan para `date` (0 si es hoy, negativo si ya pasó). Compara a medianoche local, nunca con la hora exacta, para que no cambie según a qué hora del día se calcule. */
+export function getDaysUntil(date: string): number {
+  const today = new Date(`${todayISO()}T00:00:00`);
+  const target = new Date(`${date}T00:00:00`);
+  return Math.round((target.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
 }
 
 function formatSingleDate(date: string) {

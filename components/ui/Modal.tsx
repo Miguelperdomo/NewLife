@@ -29,15 +29,18 @@ export function Modal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    // En celular ocupa toda la pantalla (nada de fondo borroso visible detrás,
+    // como una pantalla nueva) — en pantallas grandes (sm:) vuelve a ser un
+    // diálogo centrado y angosto, con el fondo borroso alrededor.
+    <div className="fixed inset-0 z-50 flex justify-center sm:items-center sm:p-4">
       <div
-        className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-brand-950/70 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
       <div
         className={cn(
-          "relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl sm:p-8",
+          "relative h-full w-full overflow-y-auto bg-white p-6 shadow-2xl sm:h-auto sm:max-h-[90vh] sm:max-w-2xl sm:rounded-2xl sm:p-8",
           className
         )}
       >

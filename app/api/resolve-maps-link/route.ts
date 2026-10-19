@@ -35,7 +35,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(parsed.toString(), { method: "HEAD", redirect: "follow" });
+    // GET, no HEAD: algunos links cortos de Google (maps.app.goo.gl) no
+    // redirigen igual de confiable con HEAD — a veces responden 200 sin
+    // seguir la redirección real, dejando la URL "larga" sin resolver.
+    const response = await fetch(parsed.toString(), {
+      method: "GET",
+      redirect: "follow",
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; NewLifeSiteBot/1.0)" },
+    });
     return NextResponse.json({ url: response.url });
   } catch {
     return NextResponse.json({ error: "No se pudo abrir ese link." }, { status: 502 });

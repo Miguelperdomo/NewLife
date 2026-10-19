@@ -12,6 +12,7 @@ import { PageViewsCard } from "./PageViewsCard";
 import { QuickActions } from "./QuickActions";
 import { RecentContent } from "./RecentContent";
 import { SystemStatusCard } from "./SystemStatusCard";
+import { TodaySummaryCard } from "./TodaySummaryCard";
 import { UpcomingEvents } from "./UpcomingEvents";
 
 function useGreeting() {
@@ -78,6 +79,8 @@ export function AdminDashboard({ sections }: { sections: AdminSection[] }) {
           Bienvenido al panel administrativo de New Life
         </h2>
       </div>
+
+      <TodaySummaryCard sections={sections} />
 
       <DashboardStats
         totalEvents={events.length}

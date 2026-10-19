@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AllCampusesMap } from "@/components/campuses/AllCampusesMap";
 import { CampusCard } from "@/components/campuses/CampusCard";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
@@ -36,7 +37,11 @@ export default async function SedesPage() {
             }
           />
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2">
+          <div className="mt-12">
+            <AllCampusesMap campuses={campuses} />
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2">
             {campuses.map((campus, index) => (
               <CampusCard key={campus.slug} campus={campus} tone={tones[index % tones.length]} />
             ))}

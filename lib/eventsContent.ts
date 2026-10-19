@@ -25,12 +25,15 @@ interface EventRow {
   end_time: string | null;
   location: string | null;
   applies_to_all_ministries: boolean;
+  featured: boolean | null;
+  registration_url: string | null;
+  whatsapp_number: string | null;
   campus: { slug: string } | null;
   event_ministries: { ministry: { slug: string } | null }[];
 }
 
 const EVENT_COLUMNS =
-  "slug, title, short_description, description, category, image_url, start_date, end_date, start_time, end_time, location, applies_to_all_ministries, campus:campuses(slug), event_ministries(ministry:ministries(slug))";
+  "slug, title, short_description, description, category, image_url, start_date, end_date, start_time, end_time, location, applies_to_all_ministries, featured, registration_url, whatsapp_number, campus:campuses(slug), event_ministries(ministry:ministries(slug))";
 
 function rowToEvent(row: EventRow): ChurchEvent {
   const ministrySlugs = (row.event_ministries ?? [])
@@ -58,6 +61,9 @@ function rowToEvent(row: EventRow): ChurchEvent {
     ministry,
     campus: row.campus?.slug,
     location: row.location ?? undefined,
+    featured: row.featured ?? false,
+    registrationUrl: row.registration_url ?? undefined,
+    whatsappNumber: row.whatsapp_number ?? undefined,
   };
 }
 

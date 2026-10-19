@@ -8,6 +8,7 @@ import { Modal } from "@/components/ui/Modal";
 import { loadActivityLog, loadActivityLogForExport, removeActivityLogEntries } from "@/lib/admin/activityLog";
 import type { AdminActivityLogEntry } from "@/lib/admin/types";
 import { inputClass } from "./form/FormField";
+import { RefreshButton } from "./RefreshButton";
 
 function timeAgo(iso: string): string {
   const diffMs = Date.now() - new Date(iso).getTime();
@@ -114,6 +115,7 @@ export function ActivityLogDashboard() {
   const [exportTo, setExportTo] = useState("");
   const [exportAdmin, setExportAdmin] = useState("");
   const [exporting, setExporting] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -127,6 +129,13 @@ export function ActivityLogDashboard() {
       cancelled = true;
     };
   }, []);
+
+  async function refresh() {
+    setRefreshing(true);
+    const loaded = await loadActivityLog();
+    setEntries(loaded);
+    setRefreshing(false);
+  }
 
   function toggleOne(id: number) {
     setChecked((current) => {
@@ -181,7 +190,10 @@ export function ActivityLogDashboard() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="font-heading text-xl font-bold text-slate-900">Actividad</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="font-heading text-xl font-bold text-slate-900">Actividad</h2>
+            <RefreshButton onClick={refresh} refreshing={refreshing} />
+          </div>
           <p className="mt-1 text-sm text-slate-500">
             Qué ha hecho cada usuario en el panel — últimos {entries.length ? entries.length : "50"} cambios, más
             reciente primero. Haz clic en uno para ver el informe completo.

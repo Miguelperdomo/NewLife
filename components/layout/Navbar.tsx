@@ -92,7 +92,7 @@ export function Navbar({
 
           <div className="hidden items-center gap-3 md:flex">
             <LiveNavBadge className="hidden lg:inline-flex" youtubeUrl={youtubeUrl} />
-            <Button href="/ministerios" variant="primary" className="px-5 py-2.5 text-xs">
+            <Button href="/#primeros-pasos" variant="primary" className="px-5 py-2.5 text-xs">
               Quiero ser parte
             </Button>
           </div>
@@ -130,7 +130,7 @@ export function Navbar({
             );
           })}
           <Button
-            href="/ministerios"
+            href="/#primeros-pasos"
             variant="primary"
             className="mt-2 justify-center"
             onClick={() => setOpen(false)}

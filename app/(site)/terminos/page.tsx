@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: `Términos y condiciones — ${siteConfig.name}`,
   description,
   ...buildOpenGraphMetadata({ title: `Términos y condiciones — ${siteConfig.name}`, description }),
-};
+}; 
 
 const FALLBACK_TEXT = `Al usar el sitio web de New Life, aceptas estos términos.
 

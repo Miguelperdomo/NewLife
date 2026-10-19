@@ -20,10 +20,12 @@ interface MinistryRow {
   leader: string | null;
   image_url: string | null;
   social: SocialLink[] | null;
+  whatsapp: string | null;
+  registration_url: string | null;
 }
 
 const MINISTRY_COLUMNS =
-  "slug, name, short_description, description, audience, meeting_schedule, meeting_location, leader, image_url, social";
+  "slug, name, short_description, description, audience, meeting_schedule, meeting_location, leader, image_url, social, whatsapp, registration_url";
 
 function rowToMinistry(row: MinistryRow): Ministry {
   return {
@@ -38,6 +40,8 @@ function rowToMinistry(row: MinistryRow): Ministry {
     imageLabel: row.name,
     imageSrc: row.image_url ?? undefined,
     social: row.social && row.social.length > 0 ? row.social : undefined,
+    whatsapp: row.whatsapp ?? undefined,
+    registrationUrl: row.registration_url ?? undefined,
   };
 }
 
@@ -81,6 +85,7 @@ interface CampusRow {
   name: string;
   full_name: string;
   address: string;
+  city: string | null;
   map_query: string;
   image_url: string | null;
   is_main: boolean;
@@ -91,7 +96,7 @@ interface CampusRow {
 }
 
 const CAMPUS_COLUMNS =
-  "slug, name, full_name, address, map_query, image_url, is_main, whatsapp_number, pastor:pastors(slug), campus_gallery_images(label, image_url), campus_service_schedules(day_of_week, service_time, title, description, display_order)";
+  "slug, name, full_name, address, city, map_query, image_url, is_main, whatsapp_number, pastor:pastors(slug), campus_gallery_images(label, image_url), campus_service_schedules(day_of_week, service_time, title, description, display_order)";
 
 function rowToCampus(row: CampusRow): Campus {
   return {
@@ -99,6 +104,7 @@ function rowToCampus(row: CampusRow): Campus {
     name: row.name,
     fullName: row.full_name,
     address: row.address,
+    city: row.city ?? undefined,
     mapQuery: row.map_query,
     imageLabel: row.full_name,
     imageSrc: row.image_url ?? undefined,
