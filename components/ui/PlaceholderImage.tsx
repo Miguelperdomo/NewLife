@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -27,6 +30,11 @@ export function PlaceholderImage({
   fit?: "cover" | "contain";
   className?: string;
 }) {
+  // Mientras la foto real todavía está cargando, se ve una cajita gris con
+  // brillo (mismo efecto que ListSkeleton en el panel admin) en vez de un
+  // espacio vacío — next/image avisa con onLoad cuándo ya terminó.
+  const [loaded, setLoaded] = useState(false);
+
   if (src) {
     if (fit === "contain") {
       // Relación de aspecto de la imagen muy distinta a la del contenedor:
@@ -34,6 +42,7 @@ export function PlaceholderImage({
       // misma para que no queden franjas vacías arriba/abajo.
       return (
         <div className={cn("relative overflow-hidden bg-slate-950", className)}>
+          {!loaded && <div className="absolute inset-0 animate-pulse bg-slate-800" aria-hidden="true" />}
           <Image
             src={src}
             alt=""
@@ -41,14 +50,15 @@ export function PlaceholderImage({
             fill
             className="scale-110 object-cover opacity-40 blur-2xl"
           />
-          <Image src={src} alt={label} fill className="object-contain" />
+          <Image src={src} alt={label} fill className="object-contain" onLoad={() => setLoaded(true)} />
         </div>
       );
     }
 
     return (
       <div className={cn("relative overflow-hidden", className)}>
-        <Image src={src} alt={label} fill className="object-cover" />
+        {!loaded && <div className="absolute inset-0 animate-pulse bg-slate-200" aria-hidden="true" />}
+        <Image src={src} alt={label} fill className="object-cover" onLoad={() => setLoaded(true)} />
       </div>
     );
   }

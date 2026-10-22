@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { CheckCircle2, Droplet, HandHeart } from "lucide-react";
+import { Droplet, HandHeart } from "lucide-react";
+import { AnimatedCheck } from "@/components/ui/AnimatedCheck";
+import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Modal } from "@/components/ui/Modal";
@@ -72,8 +74,9 @@ function PrayerModalBody({ onClose }: { onClose: () => void }) {
 
   if (sent) {
     return (
-      <div className="flex flex-col items-center gap-3 py-6 text-center">
-        <CheckCircle2 className="h-10 w-10 text-emerald-500" aria-hidden="true" />
+      <div className="relative flex flex-col items-center gap-3 overflow-hidden py-6 text-center">
+        <ConfettiBurst />
+        <AnimatedCheck />
         <p className="font-semibold text-slate-900">Tu pedido fue enviado</p>
         <p className="text-sm text-slate-500">Nuestro equipo va a orar por ti. Gracias por confiarnos esto.</p>
         <Button type="button" variant="ghost" className="border border-slate-200" onClick={onClose}>
@@ -156,8 +159,9 @@ function BaptismModalBody({ onClose }: { onClose: () => void }) {
 
   if (sent) {
     return (
-      <div className="flex flex-col items-center gap-3 py-6 text-center">
-        <CheckCircle2 className="h-10 w-10 text-emerald-500" aria-hidden="true" />
+      <div className="relative flex flex-col items-center gap-3 overflow-hidden py-6 text-center">
+        <ConfettiBurst />
+        <AnimatedCheck />
         <p className="font-semibold text-slate-900">¡Recibimos tu mensaje!</p>
         <p className="text-sm text-slate-500">Nuestro equipo te va a contactar pronto. Gracias por dar este paso.</p>
         <Button type="button" variant="ghost" className="border border-slate-200" onClick={onClose}>

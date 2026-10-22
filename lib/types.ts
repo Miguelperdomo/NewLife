@@ -157,6 +157,8 @@ export interface ChurchEvent {
   registrationUrl?: string;
   /** WhatsApp propio de este evento — si se define, el botón de inscripción lo usa en vez del WhatsApp general de la iglesia. */
   whatsappNumber?: string;
+  /** Cuándo se publicó (no confundir con `date`, que es cuándo ocurre el evento) — para la insignia "Nuevo". */
+  createdAt?: string;
 }
 
 /**

@@ -108,7 +108,7 @@ export function SiteSettingsForm({
   const accentColor = watch("accentColor");
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="focus-mode-form space-y-6">
       <FormSection title="Información general">
         <FormField label="Nombre de la iglesia" htmlFor="churchName" required error={errors.churchName?.message}>
           <input id="churchName" className={inputClass} {...register("churchName")} />

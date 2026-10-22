@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Droplet, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ListSkeleton } from "./ListSkeleton";
 import { RefreshButton } from "./RefreshButton";
 import { loadBaptismRequests, removeBaptismRequests, setBaptismRequestStatus } from "@/lib/admin/baptismRequests";
 import { isOverdue, sortOverdueFirst } from "@/lib/admin/pendingStatus";
@@ -133,9 +134,7 @@ export function BaptismRequestsDashboard() {
       )}
 
       {!isReady ? (
-        <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-          Cargando…
-        </p>
+        <ListSkeleton />
       ) : entries.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
           Todavía nadie ha pedido bautizarse desde el sitio.

@@ -8,6 +8,7 @@ import { Modal } from "@/components/ui/Modal";
 import { loadActivityLog, loadActivityLogForExport, removeActivityLogEntries } from "@/lib/admin/activityLog";
 import type { AdminActivityLogEntry } from "@/lib/admin/types";
 import { inputClass } from "./form/FormField";
+import { ListSkeleton } from "./ListSkeleton";
 import { RefreshButton } from "./RefreshButton";
 
 function timeAgo(iso: string): string {
@@ -263,9 +264,7 @@ export function ActivityLogDashboard() {
       )}
 
       {!isReady ? (
-        <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-          Cargando…
-        </p>
+        <ListSkeleton />
       ) : entries.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
           Todavía no hay actividad registrada.

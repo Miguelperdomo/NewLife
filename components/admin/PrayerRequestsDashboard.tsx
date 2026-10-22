@@ -5,6 +5,7 @@ import { HandHeart, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Modal } from "@/components/ui/Modal";
+import { ListSkeleton } from "./ListSkeleton";
 import { RefreshButton } from "./RefreshButton";
 import { loadPrayerRequests, removePrayerRequests, setPrayerRequestStatus } from "@/lib/admin/prayerRequests";
 import { isOverdue, sortOverdueFirst } from "@/lib/admin/pendingStatus";
@@ -158,9 +159,7 @@ export function PrayerRequestsDashboard() {
       )}
 
       {!isReady ? (
-        <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-          Cargando…
-        </p>
+        <ListSkeleton />
       ) : entries.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
           Todavía no ha llegado ningún pedido de oración.

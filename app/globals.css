@@ -48,6 +48,58 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Textura sutil de puntos para fondos claros grandes — casi imperceptible a
+   propósito (se nota como "más cuidado", no como un patrón llamativo).
+   Encima del color propio de cada sección (background-color del elemento),
+   nunca en vez de él. */
+.bg-dot-texture {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Check que se "dibuja" solo (círculo primero, luego el palomazo) — ver
+   components/ui/AnimatedCheck.tsx. Números fijos porque van con el path
+   exacto de ese SVG, no son un valor de diseño libre. */
+@keyframes draw-circle {
+  from {
+    stroke-dashoffset: 166;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes draw-check {
+  from {
+    stroke-dashoffset: 48;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.animated-check-circle {
+  stroke-dasharray: 166;
+  animation: draw-circle 0.45s ease-out forwards;
+}
+.animated-check-mark {
+  stroke-dasharray: 48;
+  animation: draw-check 0.3s 0.35s ease-out forwards;
+}
+
+/* Fundido al entrar a cada página — ver components/layout/PageFadeIn.tsx. */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-page-fade-in {
+  animation: page-fade-in 0.3s ease-out;
+}
+
 /* Accesibilidad — ver components/layout/AccessibilityMenu.tsx. El tamaño de
    texto escala el tamaño raíz: casi todo el texto de Tailwind usa rem, así
    que sube junto con él, sin tener que tocar cada componente. El alto
@@ -73,4 +125,48 @@ html[data-a11y-contrast="true"] .text-white\/80 {
 html[data-a11y-contrast="true"] .border-slate-100,
 html[data-a11y-contrast="true"] .border-slate-200 {
   border-color: #64748b !important;
+}
+
+/* Confeti al enviar un formulario — ver components/ui/ConfettiBurst.tsx. */
+@keyframes confetti-fall {
+  from {
+    transform: translateY(-10px) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(160px) translateX(var(--confetti-drift)) rotate(var(--confetti-rotate));
+    opacity: 0;
+  }
+}
+.confetti-particle {
+  animation-name: confetti-fall;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
+/* Número de la cuenta regresiva "volteando" al aparecer — ver EventCountdownBanner.tsx. */
+@keyframes flip-in {
+  from {
+    transform: rotateX(90deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+.animate-flip-in {
+  display: inline-block;
+  animation: flip-in 0.5s ease-out;
+  transform-style: preserve-3d;
+}
+
+/* Modo enfoque en formularios largos (ej. Configuración) — mientras algún
+   campo del formulario tiene el foco, las demás secciones se atenúan.
+   :has() ya es compatible en todos los navegadores modernos (2023+). */
+.focus-mode-form:has(:focus-within) .focus-mode-section:not(:focus-within) {
+  opacity: 0.45;
+}
+.focus-mode-section {
+  transition: opacity 0.2s ease;
 }

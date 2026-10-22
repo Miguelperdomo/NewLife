@@ -25,7 +25,10 @@ function CountdownRow({ event }: { event: ChurchEvent }) {
         <p className={cn("font-heading font-bold", event.featured ? "text-xl" : "text-lg")}>{event.name}</p>
       </div>
       <div className="flex items-baseline gap-2">
-        <span className={cn("font-heading font-bold leading-none", event.featured ? "text-5xl" : "text-4xl")}>
+        <span
+          key={daysUntil}
+          className={cn("animate-flip-in font-heading font-bold leading-none", event.featured ? "text-5xl" : "text-4xl")}
+        >
           {daysUntil}
         </span>
         <span className="text-sm text-white/80">día{daysUntil === 1 ? "" : "s"}</span>

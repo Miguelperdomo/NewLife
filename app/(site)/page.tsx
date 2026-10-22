@@ -62,6 +62,7 @@ export default async function Home() {
       {show.ministries && <MinistriesSection />}
       {show.live && !showLiveFirst && (
         <>
+          <WaveDivider className="bg-slate-950" fillClassName="text-slate-50" />
           <LiveSection />
           <WaveDivider className="bg-white" fillClassName="text-slate-950" />
         </>

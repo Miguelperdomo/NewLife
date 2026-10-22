@@ -8,6 +8,7 @@ import { useAdminMinistries } from "@/lib/admin/useAdminMinistries";
 import { getEventStatus } from "@/lib/events";
 import type { AdminSection } from "@/lib/admin/types";
 import { DashboardStats } from "./DashboardStats";
+import { ImpactChart } from "./ImpactChart";
 import { PageViewsCard } from "./PageViewsCard";
 import { QuickActions } from "./QuickActions";
 import { RecentContent } from "./RecentContent";
@@ -92,6 +93,8 @@ export function AdminDashboard({ sections }: { sections: AdminSection[] }) {
       />
 
       <QuickActions sections={sections} />
+
+      <ImpactChart sections={sections} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <RecentContent rows={recentRows} />

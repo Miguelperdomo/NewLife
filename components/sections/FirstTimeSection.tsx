@@ -24,7 +24,7 @@ export async function FirstTimeSection() {
   const items = cards.length > 0 ? cards : FALLBACK_CARDS;
 
   return (
-    <section id="primeros-pasos" className="scroll-mt-20 bg-slate-50 py-20 sm:py-28">
+    <section id="primeros-pasos" className="scroll-mt-20 bg-slate-50 bg-dot-texture py-20 sm:py-28">
       <Container>
         <ScrollReveal>
           <SectionHeading

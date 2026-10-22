@@ -10,7 +10,7 @@ export async function MinistriesSection() {
   const [ministries, settings] = await Promise.all([getMinistries(), getPublicSiteSettings()]);
 
   return (
-    <section className="bg-slate-50 py-20 sm:py-28">
+    <section className="bg-slate-50 bg-dot-texture py-20 sm:py-28">
       <Container>
         <ScrollReveal>
           <SectionHeading

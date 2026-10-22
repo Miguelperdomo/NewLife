@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Clock, ExternalLink, MapPin, MessageCircle, Tag } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock, ExternalLink, MapPin, MessageCircle, Tag } from "lucide-react";
 import type { ReactNode } from "react";
 import { EventBadge } from "@/components/events/EventBadge";
 import { EventCard } from "@/components/events/EventCard";
@@ -13,6 +13,7 @@ import { ShareButtons } from "@/components/ui/ShareButtons";
 import { siteConfig } from "@/data/site";
 import { getCampuses, getCampusBySlug, getMinistries, getMinistryBySlug, getRelatedEvents } from "@/lib/content";
 import { formatEventDate, getEventStatus } from "@/lib/events";
+import { formatReadingTime } from "@/lib/readingTime";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import type { ChurchEvent } from "@/lib/types";
 import { buildWhatsAppLink, eventInscriptionMessage } from "@/lib/whatsapp";
@@ -79,6 +80,12 @@ export async function EventTemplate({ event }: { event: ChurchEvent }) {
       value: event.category,
     });
   }
+  infoRows.push({
+    key: "reading-time",
+    icon: <BookOpen className={iconClass} aria-hidden="true" />,
+    label: "Lectura",
+    value: formatReadingTime(event.description),
+  });
 
   return (
     <>

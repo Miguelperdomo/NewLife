@@ -11,6 +11,7 @@ import { createAdminUserFormSchema, type CreateAdminUserFormValues } from "@/lib
 import { useAdminUsers } from "@/lib/admin/useAdminUsers";
 import { ADMIN_SECTIONS, ADMIN_SECTION_LABELS, type AdminSection, type AdminUser } from "@/lib/admin/types";
 import { FormField, inputClass } from "./form/FormField";
+import { ListSkeleton } from "./ListSkeleton";
 
 function SectionCheckboxes({
   value,
@@ -261,9 +262,7 @@ export function UsersDashboard({ currentUserId }: { currentUserId: string }) {
       )}
 
       {!isReady ? (
-        <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-          Cargando…
-        </p>
+        <ListSkeleton />
       ) : (
         <div className="space-y-3">
           {users.map((user) => (

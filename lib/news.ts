@@ -7,11 +7,7 @@ export function formatNewsDate(date: string) {
   }).format(parsed);
 }
 
-const WORDS_PER_MINUTE = 200;
-
-/** Estimación clásica: palabras del contenido / 200 ppm, redondeado, mínimo 1 minuto. */
-export function formatReadingTime(content: string) {
-  const words = content.trim().split(/\s+/).filter(Boolean).length;
-  const minutes = Math.max(1, Math.round(words / WORDS_PER_MINUTE));
-  return `${minutes} min de lectura`;
-}
+// Reexportada desde lib/readingTime.ts — se movió ahí porque Eventos
+// también la usa ahora, no solo Noticias. Se reexporta acá para no romper
+// los imports ya existentes (NewsCard, NewsTemplate).
+export { formatReadingTime } from "@/lib/readingTime";

@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { CheckCircle2, Gift } from "lucide-react";
+import { Gift } from "lucide-react";
+import { AnimatedCheck } from "@/components/ui/AnimatedCheck";
 import { Button } from "@/components/ui/Button";
+import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
 import { Modal } from "@/components/ui/Modal";
 import { nextSundayISO, submitVisitCheckin } from "@/lib/visitCheckins";
 import { visitCheckinFormSchema, type VisitCheckinFormValues } from "@/lib/schemas";
@@ -55,8 +57,9 @@ export function VisitCheckinWidget({ campuses }: { campuses: { slug: string; nam
 
       <Modal open={open} onClose={close} title="Avísanos que vienes">
         {sent ? (
-          <div className="flex flex-col items-center gap-3 py-6 text-center">
-            <CheckCircle2 className="h-10 w-10 text-emerald-500" aria-hidden="true" />
+          <div className="relative flex flex-col items-center gap-3 overflow-hidden py-6 text-center">
+            <ConfettiBurst />
+            <AnimatedCheck />
             <p className="font-semibold text-slate-900">¡Listo, te esperamos!</p>
             <p className="text-sm text-slate-500">Nuestro equipo de bienvenida ya sabe que vienes.</p>
             <Button type="button" variant="ghost" className="border border-slate-200" onClick={close}>

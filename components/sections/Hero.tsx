@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { CountUp } from "@/components/ui/CountUp";
 import { LogoMark } from "@/components/ui/LogoMark";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { HeroCarousel } from "@/components/sections/HeroCarousel";
+import { TypewriterText } from "@/components/sections/TypewriterText";
 import { siteConfig } from "@/data/site";
 import { getCampuses, getHeroPhotos, getMinistries } from "@/lib/content";
 import { getImpactStats } from "@/lib/impactStats";
@@ -64,21 +66,25 @@ export async function Hero() {
 
         <span className="text-sm font-semibold uppercase tracking-[0.3em] text-white/80">{churchName}</span>
 
-        <h1 className="max-w-3xl font-heading text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+        <h1 className="max-w-3xl font-heading text-4xl font-bold leading-[1.02] tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
           <span className="bg-gradient-to-br from-white via-white to-white/60 bg-clip-text text-transparent">
-            {tagline}
+            <TypewriterText text={tagline} />
           </span>
         </h1>
 
         <p className="max-w-xl text-base text-white/80 sm:text-lg">{description}</p>
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-          <Button href="/nosotros" variant="secondary" size="lg">
-            Conoce New Life
-          </Button>
-          <Button href="/#primeros-pasos" variant="outline" size="lg">
-            Quiero ser parte
-          </Button>
+          <MagneticButton>
+            <Button href="/nosotros" variant="secondary" size="lg">
+              Conoce New Life
+            </Button>
+          </MagneticButton>
+          <MagneticButton>
+            <Button href="/#primeros-pasos" variant="outline" size="lg">
+              Quiero ser parte
+            </Button>
+          </MagneticButton>
         </div>
 
         {(campuses.length > 0 ||
