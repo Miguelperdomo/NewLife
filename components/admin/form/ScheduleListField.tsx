@@ -3,6 +3,7 @@
 import { Controller, useFieldArray, type Control, type FieldErrors } from "react-hook-form";
 import { Plus, Trash2 } from "lucide-react";
 import type { CampusFormValues } from "@/lib/admin/schemas";
+import type { AdminMinistry } from "@/lib/admin/types";
 import { DAY_OF_WEEK_LABELS } from "@/lib/schedule";
 import { inputClass } from "./FormField";
 
@@ -15,9 +16,12 @@ import { inputClass } from "./FormField";
 export function ScheduleListField({
   control,
   errors,
+  ministries = [],
 }: {
   control: Control<CampusFormValues>;
   errors?: FieldErrors<CampusFormValues>["schedules"];
+  /** Si un horario es de un ministerio en particular (ej. "Reunión Juvenil" -> New Gen), se puede enlazar aquí — aplica en cualquier sede, no solo esta. */
+  ministries?: AdminMinistry[];
 }) {
   const { fields, append, remove } = useFieldArray({ control, name: "schedules" });
 
@@ -100,13 +104,30 @@ export function ScheduleListField({
                 />
               )}
             />
+
+            {ministries.length > 0 && (
+              <Controller
+                control={control}
+                name={`schedules.${index}.ministrySlug`}
+                render={({ field: ministryField }) => (
+                  <select className={inputClass} value={ministryField.value ?? ""} onChange={ministryField.onChange}>
+                    <option value="">¿Es de algún ministerio? (opcional)</option>
+                    {ministries.map((ministry) => (
+                      <option key={ministry.slug} value={ministry.slug}>
+                        {ministry.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              />
+            )}
           </div>
         );
       })}
 
       <button
         type="button"
-        onClick={() => append({ dayOfWeek: "0", time: "09:00", title: "", description: "" })}
+        onClick={() => append({ dayOfWeek: "0", time: "09:00", title: "", description: "", ministrySlug: "" })}
         className="inline-flex items-center gap-1.5 rounded-xl border border-dashed border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
       >
         <Plus className="h-4 w-4" aria-hidden="true" />

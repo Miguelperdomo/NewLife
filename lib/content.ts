@@ -78,6 +78,7 @@ interface ScheduleRow {
   title: string;
   description: string | null;
   display_order: number;
+  ministry: { slug: string } | null;
 }
 
 interface CampusRow {
@@ -90,13 +91,16 @@ interface CampusRow {
   image_url: string | null;
   is_main: boolean;
   whatsapp_number: string | null;
+  has_parking: boolean;
+  is_wheelchair_accessible: boolean;
+  has_childcare: boolean;
   pastor: { slug: string } | null;
   campus_gallery_images: { label: string; image_url: string | null }[];
   campus_service_schedules: ScheduleRow[];
 }
 
 const CAMPUS_COLUMNS =
-  "slug, name, full_name, address, city, map_query, image_url, is_main, whatsapp_number, pastor:pastors(slug), campus_gallery_images(label, image_url), campus_service_schedules(day_of_week, service_time, title, description, display_order)";
+  "slug, name, full_name, address, city, map_query, image_url, is_main, whatsapp_number, has_parking, is_wheelchair_accessible, has_childcare, pastor:pastors(slug), campus_gallery_images(label, image_url), campus_service_schedules(day_of_week, service_time, title, description, display_order, ministry:ministries(slug))";
 
 function rowToCampus(row: CampusRow): Campus {
   return {
@@ -115,6 +119,9 @@ function rowToCampus(row: CampusRow): Campus {
         ? row.campus_gallery_images.map((image) => ({ label: image.label, src: image.image_url ?? undefined }))
         : undefined,
     whatsappNumber: row.whatsapp_number ?? undefined,
+    hasParking: row.has_parking,
+    isWheelchairAccessible: row.is_wheelchair_accessible,
+    hasChildcare: row.has_childcare,
     schedules: (row.campus_service_schedules ?? [])
       .slice()
       .sort((a, b) => a.display_order - b.display_order)
@@ -124,6 +131,7 @@ function rowToCampus(row: CampusRow): Campus {
         time: schedule.service_time.slice(0, 5),
         title: schedule.title,
         description: schedule.description ?? undefined,
+        ministrySlug: schedule.ministry?.slug ?? undefined,
       })),
   };
 }

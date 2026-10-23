@@ -50,6 +50,8 @@ export interface ServiceSchedule {
   time: string;
   title: string;
   description?: string;
+  /** Si este horario es de un ministerio en particular (ej. "Reunión Juvenil" -> New Gen), enlaza a su página. */
+  ministrySlug?: string;
 }
 
 export interface Campus {
@@ -72,6 +74,10 @@ export interface Campus {
   /** Si se define, se usa en vez del WhatsApp general de New Life para esta sede. */
   whatsappNumber?: string;
   schedules?: ServiceSchedule[];
+  /** Comodidades de esta sede — se muestran como íconos en su página pública. */
+  hasParking?: boolean;
+  isWheelchairAccessible?: boolean;
+  hasChildcare?: boolean;
 }
 
 export interface LiveLinks {

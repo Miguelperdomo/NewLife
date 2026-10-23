@@ -35,7 +35,7 @@ const TAB_CONTENT: Record<
     eyebrow: "Oración",
     title: "¿Necesitas oración?",
     description: "Cuéntanos qué está pasando — es privado, solo lo lee nuestro equipo pastoral, y oramos por ti.",
-    cta: "Enviar un pedido de oración",
+    cta: "Enviar una petición de oración",
     iconClass: "bg-brand-50 text-brand-600",
   },
   baptism: {
@@ -77,7 +77,7 @@ function PrayerModalBody({ onClose }: { onClose: () => void }) {
       <div className="relative flex flex-col items-center gap-3 overflow-hidden py-6 text-center">
         <ConfettiBurst />
         <AnimatedCheck />
-        <p className="font-semibold text-slate-900">Tu pedido fue enviado</p>
+        <p className="font-semibold text-slate-900">Tu petición fue enviada</p>
         <p className="text-sm text-slate-500">Nuestro equipo va a orar por ti. Gracias por confiarnos esto.</p>
         <Button type="button" variant="ghost" className="border border-slate-200" onClick={onClose}>
           Cerrar
@@ -104,7 +104,7 @@ function PrayerModalBody({ onClose }: { onClose: () => void }) {
 
       <div>
         <label htmlFor="prayerMessage" className="block text-sm font-semibold text-slate-700">
-          Tu pedido <span className="text-red-500">*</span>
+          Tu petición <span className="text-red-500">*</span>
         </label>
         <textarea id="prayerMessage" rows={4} className={`${fieldClass} resize-y`} {...register("message")} />
         {errors.message && <p className="mt-1 text-xs font-medium text-red-600">{errors.message.message}</p>}
@@ -126,7 +126,7 @@ function PrayerModalBody({ onClose }: { onClose: () => void }) {
           Cancelar
         </Button>
         <Button type="submit" variant="primary" disabled={isSubmitting}>
-          {isSubmitting ? "Enviando…" : "Enviar pedido"}
+          {isSubmitting ? "Enviando…" : "Enviar petición"}
         </Button>
       </div>
     </form>

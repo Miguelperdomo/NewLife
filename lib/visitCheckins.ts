@@ -15,16 +15,20 @@ export function nextSundayISO(): string {
  */
 export async function submitVisitCheckin(input: {
   name: string;
+  phone: string;
   peopleCount: number;
   campus: string;
   visitDate: string;
+  isPastor: boolean;
 }): Promise<void> {
   const supabase = createPublicClient();
   const { error } = await supabase.from("visit_checkins").insert({
     name: input.name.trim(),
+    phone: input.phone.trim(),
     people_count: input.peopleCount,
     campus: input.campus,
     visit_date: input.visitDate,
+    is_pastor: input.isPastor,
   });
   if (error) throw new Error(error.message);
 }

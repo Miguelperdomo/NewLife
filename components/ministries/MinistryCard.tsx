@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Clock, User } from "lucide-react";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import type { Ministry } from "@/lib/types";
@@ -9,6 +9,7 @@ const tones = ["brand", "accent", "dark"] as const;
 
 export function MinistryCard({ ministry, index = 0 }: { ministry: Ministry; index?: number }) {
   const tone = tones[index % tones.length];
+  const hasHoverInfo = Boolean(ministry.schedule || ministry.leader);
 
   return (
     <RevealOnScroll index={index}>
@@ -16,12 +17,30 @@ export function MinistryCard({ ministry, index = 0 }: { ministry: Ministry; inde
         href={`/ministerios/${ministry.slug}`}
         className="group flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm shadow-slate-100 transition-all hover:-translate-y-1.5 hover:shadow-xl hover:shadow-slate-200/80"
       >
-        <PlaceholderImage
-          label={ministry.imageLabel}
-          src={ministry.imageSrc}
-          tone={tone}
-          className="aspect-[4/3] w-full"
-        />
+        <div className="relative">
+          <PlaceholderImage
+            label={ministry.imageLabel}
+            src={ministry.imageSrc}
+            tone={tone}
+            className="aspect-[4/3] w-full"
+          />
+          {hasHoverInfo && (
+            <div className="absolute inset-0 flex flex-col justify-end gap-1.5 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              {ministry.schedule && (
+                <p className="flex items-center gap-1.5 text-xs font-semibold">
+                  <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  {ministry.schedule}
+                </p>
+              )}
+              {ministry.leader && (
+                <p className="flex items-center gap-1.5 text-xs font-semibold">
+                  <User className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  {ministry.leader}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="flex flex-1 flex-col p-6">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600">

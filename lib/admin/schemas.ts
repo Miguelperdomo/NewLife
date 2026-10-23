@@ -79,6 +79,7 @@ const serviceScheduleFormSchema = z.object({
   time: z.string().trim().min(1, "La hora es obligatoria."),
   title: z.string().trim().min(2, "El título es obligatorio.").max(80, "Máximo 80 caracteres."),
   description: z.string().trim().optional(),
+  ministrySlug: z.string().trim().optional(),
 });
 
 export type ServiceScheduleFormValues = z.infer<typeof serviceScheduleFormSchema>;
@@ -94,6 +95,9 @@ export const campusFormSchema = z.object({
   leadPastorSlug: z.string().trim().optional(),
   whatsappNumber: z.string().trim().optional(),
   schedules: z.array(serviceScheduleFormSchema),
+  hasParking: z.boolean(),
+  isWheelchairAccessible: z.boolean(),
+  hasChildcare: z.boolean(),
 });
 
 export type CampusFormValues = z.infer<typeof campusFormSchema>;
@@ -120,6 +124,7 @@ export const ministryFormSchema = z.object({
   leader: z.string().trim().optional(),
   whatsapp: z.string().trim().optional(),
   registrationUrl: z.string().trim().optional(),
+  instagramUrl: z.string().trim().optional(),
   meetingSchedule: z.string().trim().optional(),
   meetingLocation: z.string().trim().optional(),
   status: ministryStatusEnum,

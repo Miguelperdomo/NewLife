@@ -19,6 +19,7 @@ interface ScheduleRow {
   title: string;
   description: string | null;
   display_order: number;
+  ministry: { slug: string } | null;
 }
 
 interface CampusRow {
@@ -33,6 +34,9 @@ interface CampusRow {
   is_main: boolean;
   lead_pastor_id: string | null;
   whatsapp_number: string | null;
+  has_parking: boolean;
+  is_wheelchair_accessible: boolean;
+  has_childcare: boolean;
   created_at: string;
   updated_at: string;
   pastor: { slug: string } | null;
@@ -40,7 +44,7 @@ interface CampusRow {
 }
 
 const SELECT_COLUMNS =
-  "*, pastor:pastors(slug), campus_service_schedules(day_of_week, service_time, title, description, display_order)";
+  "*, pastor:pastors(slug), campus_service_schedules(day_of_week, service_time, title, description, display_order, ministry:ministries(slug))";
 
 function rowToCampus(row: CampusRow): AdminCampus {
   return {
@@ -55,6 +59,9 @@ function rowToCampus(row: CampusRow): AdminCampus {
     isMain: row.is_main,
     leadPastorSlug: row.pastor?.slug ?? undefined,
     whatsappNumber: row.whatsapp_number ?? undefined,
+    hasParking: row.has_parking,
+    isWheelchairAccessible: row.is_wheelchair_accessible,
+    hasChildcare: row.has_childcare,
     schedules: (row.campus_service_schedules ?? [])
       .slice()
       .sort((a, b) => a.display_order - b.display_order)
@@ -64,10 +71,19 @@ function rowToCampus(row: CampusRow): AdminCampus {
         time: schedule.service_time.slice(0, 5),
         title: schedule.title,
         description: schedule.description ?? undefined,
+        ministrySlug: schedule.ministry?.slug ?? undefined,
       })),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
+}
+
+/** slug -> id de ministerios, solo para los slugs pedidos — mismo patrón que resolveMinistryIds en lib/admin/events.ts. */
+async function resolveMinistryIdsBySlug(slugs: string[]): Promise<Map<string, string>> {
+  if (slugs.length === 0) return new Map();
+  const supabase = createClient();
+  const { data } = await supabase.from("ministries").select("id, slug").in("slug", slugs);
+  return new Map(((data as { id: string; slug: string }[] | null) ?? []).map((row) => [row.slug, row.id]));
 }
 
 /** Reemplaza por completo los horarios de una sede — mismo patrón que syncEventMinistries. */
@@ -76,6 +92,9 @@ async function syncCampusSchedules(campusId: string, schedules: AdminServiceSche
   await supabase.from("campus_service_schedules").delete().eq("campus_id", campusId);
 
   if (schedules.length > 0) {
+    const ministrySlugs = schedules.map((schedule) => schedule.ministrySlug).filter((slug): slug is string => Boolean(slug));
+    const ministryIdBySlug = await resolveMinistryIdsBySlug(ministrySlugs);
+
     await supabase.from("campus_service_schedules").insert(
       schedules.map((schedule, index) => ({
         campus_id: campusId,
@@ -84,6 +103,7 @@ async function syncCampusSchedules(campusId: string, schedules: AdminServiceSche
         title: schedule.title,
         description: schedule.description ?? null,
         display_order: index,
+        ministry_id: schedule.ministrySlug ? (ministryIdBySlug.get(schedule.ministrySlug) ?? null) : null,
       }))
     );
   }
@@ -155,6 +175,9 @@ export async function createCampus(input: NewCampusInput, existingSlugs: string[
       is_main: input.isMain ?? false,
       lead_pastor_id: leadPastorId,
       whatsapp_number: input.whatsappNumber || null,
+      has_parking: input.hasParking ?? false,
+      is_wheelchair_accessible: input.isWheelchairAccessible ?? false,
+      has_childcare: input.hasChildcare ?? false,
     })
     .select("id")
     .single();
@@ -189,6 +212,9 @@ export async function updateCampus(id: string, input: Partial<AdminCampus>): Pro
     is_main: input.isMain ?? false,
     whatsapp_number: input.whatsappNumber || null,
     lead_pastor_id: await resolvePastorId(input.leadPastorSlug),
+    has_parking: input.hasParking ?? false,
+    is_wheelchair_accessible: input.isWheelchairAccessible ?? false,
+    has_childcare: input.hasChildcare ?? false,
   };
 
   const { error } = await supabase.from("campuses").update(patch).eq("id", id);

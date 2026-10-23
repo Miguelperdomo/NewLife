@@ -9,12 +9,12 @@ import { getCampuses } from "@/lib/content";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 
-const description = "Encuentra la sede de New Life más cercana a ti.";
+const description = "Encuentra el campus de New Life más cercano a ti.";
 
 export const metadata: Metadata = {
-  title: `Sedes — ${siteConfig.name}`,
+  title: `Campus — ${siteConfig.name}`,
   description,
-  ...buildOpenGraphMetadata({ title: `Sedes — ${siteConfig.name}`, description }),
+  ...buildOpenGraphMetadata({ title: `Campus — ${siteConfig.name}`, description }),
 };
 
 const tones = ["dark", "brand"] as const;
@@ -24,13 +24,13 @@ export default async function SedesPage() {
 
   return (
     <>
-      <Breadcrumbs items={[{ label: "Sedes" }]} />
+      <Breadcrumbs items={[{ label: "Campus" }]} />
 
       <section className="py-20 sm:py-28">
         <Container>
           <SectionHeading
-            eyebrow={settings?.campusesEyebrow || "Sedes"}
-            title={settings?.campusesTitle || "Visítanos en cualquiera de nuestras sedes"}
+            eyebrow={settings?.campusesEyebrow || "Campus"}
+            title={settings?.campusesTitle || "Visítanos en cualquiera de nuestros campus"}
             description={
               settings?.campusesDescription ||
               "Toca “Cómo llegar” para abrir la ruta en Google Maps, o revisa la ficha del lugar para ver reseñas."

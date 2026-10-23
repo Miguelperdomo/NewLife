@@ -121,7 +121,11 @@ export function campusFormValuesToInput(values: CampusFormValues): NewCampusInpu
       time: schedule.time,
       title: schedule.title,
       description: orUndefined(schedule.description),
+      ministrySlug: orUndefined(schedule.ministrySlug),
     })),
+    hasParking: values.hasParking,
+    isWheelchairAccessible: values.isWheelchairAccessible,
+    hasChildcare: values.hasChildcare,
   };
 }
 
@@ -142,7 +146,11 @@ export function campusToFormValues(campus: AdminCampus): CampusFormValues {
       time: schedule.time,
       title: schedule.title,
       description: schedule.description ?? "",
+      ministrySlug: schedule.ministrySlug ?? "",
     })),
+    hasParking: campus.hasParking ?? false,
+    isWheelchairAccessible: campus.isWheelchairAccessible ?? false,
+    hasChildcare: campus.hasChildcare ?? false,
   };
 }
 
@@ -156,6 +164,7 @@ export function ministryFormValuesToInput(values: MinistryFormValues): NewMinist
     leader: orUndefined(values.leader),
     whatsapp: orUndefined(values.whatsapp),
     registrationUrl: orUndefined(values.registrationUrl),
+    instagramUrl: orUndefined(values.instagramUrl),
     meetingSchedule: orUndefined(values.meetingSchedule),
     meetingLocation: orUndefined(values.meetingLocation),
     status: values.status,
@@ -175,6 +184,7 @@ export function ministryToFormValues(ministry: AdminMinistry): MinistryFormValue
     leader: ministry.leader ?? "",
     whatsapp: ministry.whatsapp ?? "",
     registrationUrl: ministry.registrationUrl ?? "",
+    instagramUrl: ministry.instagramUrl ?? "",
     meetingSchedule: ministry.meetingSchedule ?? "",
     meetingLocation: ministry.meetingLocation ?? "",
     status: ministry.status,

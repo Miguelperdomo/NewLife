@@ -18,8 +18,8 @@ export async function CampusesPreviewSection() {
       <Container>
         <ScrollReveal>
           <SectionHeading
-            eyebrow={settings?.campusesEyebrow || "Sedes"}
-            title={settings?.campusesTitle || "Encuentra la sede más cercana"}
+            eyebrow={settings?.campusesEyebrow || "Campus"}
+            title={settings?.campusesTitle || "Encuentra el campus más cercano"}
             description={
               settings?.campusesDescription ||
               "Estamos en varios puntos de la ciudad — elige el que te quede más cerca y ven a visitarnos."
@@ -34,7 +34,7 @@ export async function CampusesPreviewSection() {
 
           <div className="mt-10 flex justify-center">
             <Button href="/sedes" variant="ghost">
-              Ver todas las sedes
+              Ver todos los campus
             </Button>
           </div>
         </ScrollReveal>

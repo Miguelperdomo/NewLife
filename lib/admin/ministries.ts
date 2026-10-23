@@ -2,13 +2,16 @@ import { createClient } from "@/lib/supabase/client";
 import { logActivity } from "@/lib/admin/activityLog";
 import { slugify, uniqueSlug } from "@/lib/admin/slug";
 import type { AdminMinistry } from "@/lib/admin/types";
+import type { SocialLink } from "@/lib/types";
 
 /**
  * Capa de datos de Ministerios contra Supabase (tabla `ministries`). La
- * tabla también tiene columnas `audience` y `social` (jsonb) que el
- * formulario admin todavía no expone — quedan sin tocar (null / `[]` por
- * defecto) hasta que se agregue esa parte del formulario, igual que la
- * galería/horarios de Sedes.
+ * tabla también tiene una columna `audience` que el formulario admin todavía
+ * no expone — queda sin tocar hasta que se agregue esa parte del formulario,
+ * igual que la galería/horarios de Sedes. `social` (jsonb) sí se expone, pero
+ * solo para Instagram por ahora (ver `instagramUrl` abajo) — es un array
+ * genérico de SocialLink pensado para más adelante agregar otras redes sin
+ * otra migración.
  */
 interface MinistryRow {
   id: string;
@@ -20,6 +23,7 @@ interface MinistryRow {
   leader: string | null;
   whatsapp: string | null;
   registration_url: string | null;
+  social: SocialLink[] | null;
   meeting_schedule: string | null;
   meeting_location: string | null;
   status: "active" | "archived";
@@ -30,7 +34,12 @@ interface MinistryRow {
 }
 
 const SELECT_COLUMNS =
-  "id, slug, name, short_description, description, image_url, leader, whatsapp, registration_url, meeting_schedule, meeting_location, status, display_order, show_publicly, created_at, updated_at";
+  "id, slug, name, short_description, description, image_url, leader, whatsapp, registration_url, social, meeting_schedule, meeting_location, status, display_order, show_publicly, created_at, updated_at";
+
+/** `instagramUrl` del formulario admin <-> entrada "instagram" dentro del array `social` (jsonb). */
+function socialFromInstagramUrl(instagramUrl: string | undefined): SocialLink[] {
+  return instagramUrl ? [{ platform: "instagram", label: "Instagram", url: instagramUrl }] : [];
+}
 
 function rowToMinistry(row: MinistryRow): AdminMinistry {
   return {
@@ -43,6 +52,7 @@ function rowToMinistry(row: MinistryRow): AdminMinistry {
     leader: row.leader ?? undefined,
     whatsapp: row.whatsapp ?? undefined,
     registrationUrl: row.registration_url ?? undefined,
+    instagramUrl: row.social?.find((link) => link.platform === "instagram")?.url ?? undefined,
     meetingSchedule: row.meeting_schedule ?? undefined,
     meetingLocation: row.meeting_location ?? undefined,
     status: row.status,
@@ -54,7 +64,7 @@ function rowToMinistry(row: MinistryRow): AdminMinistry {
 }
 
 /** Campos legibles para el informe de Actividad — mismos datos que guarda el formulario, con nombres en español. */
-function ministryDetails(input: { name?: string; shortDescription?: string; description?: string; leader?: string; whatsapp?: string; registrationUrl?: string; meetingSchedule?: string; meetingLocation?: string; status?: string; displayOrder?: number; showPublicly?: boolean }): Record<string, string | undefined> {
+function ministryDetails(input: { name?: string; shortDescription?: string; description?: string; leader?: string; whatsapp?: string; registrationUrl?: string; instagramUrl?: string; meetingSchedule?: string; meetingLocation?: string; status?: string; displayOrder?: number; showPublicly?: boolean }): Record<string, string | undefined> {
   return {
     Nombre: input.name,
     "Descripción corta": input.shortDescription,
@@ -62,6 +72,7 @@ function ministryDetails(input: { name?: string; shortDescription?: string; desc
     Líder: input.leader,
     WhatsApp: input.whatsapp,
     "Enlace de inscripción": input.registrationUrl,
+    Instagram: input.instagramUrl,
     Horario: input.meetingSchedule,
     Lugar: input.meetingLocation,
     Estado: input.status === "archived" ? "Archivado" : input.status === "active" ? "Activo" : undefined,
@@ -101,6 +112,7 @@ export async function createMinistry(
       leader: input.leader || null,
       whatsapp: input.whatsapp || null,
       registration_url: input.registrationUrl || null,
+      social: socialFromInstagramUrl(input.instagramUrl),
       meeting_schedule: input.meetingSchedule || null,
       meeting_location: input.meetingLocation || null,
       status: input.status,
@@ -138,6 +150,7 @@ export async function updateMinistry(
     leader: input.leader || null,
     whatsapp: input.whatsapp || null,
     registration_url: input.registrationUrl || null,
+    social: socialFromInstagramUrl(input.instagramUrl),
     meeting_schedule: input.meetingSchedule || null,
     meeting_location: input.meetingLocation || null,
     status: input.status,
@@ -178,6 +191,7 @@ export async function duplicateMinistry(
       leader: ministry.leader || null,
       whatsapp: ministry.whatsapp || null,
       registration_url: ministry.registrationUrl || null,
+      social: socialFromInstagramUrl(ministry.instagramUrl),
       meeting_schedule: ministry.meetingSchedule || null,
       meeting_location: ministry.meetingLocation || null,
       // Sin estado "draft" en este módulo (solo active/archived) — una copia

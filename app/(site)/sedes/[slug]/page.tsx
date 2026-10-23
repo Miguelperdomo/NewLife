@@ -17,7 +17,7 @@ export async function generateMetadata(
   const campus = await getCampusBySlug(slug);
 
   if (!campus) {
-    return { title: `Sede no encontrada — ${siteConfig.name}` };
+    return { title: `Campus no encontrado — ${siteConfig.name}` };
   }
 
   return {

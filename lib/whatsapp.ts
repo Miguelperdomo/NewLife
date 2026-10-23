@@ -51,3 +51,9 @@ export function prayerRequestFollowUpMessage(name?: string | null) {
 export function baptismRequestFollowUpMessage(name: string) {
   return `Hola ${name}, somos del equipo de New Life. Vimos que quieres bautizarte — queremos contarte los próximos pasos y acompañarte en esto.`;
 }
+
+export function visitCheckinFollowUpMessage(name: string, isPastor: boolean) {
+  return isPastor
+    ? `Hola Pastor(a) ${name}, somos del equipo de New Life. Gracias por avisarnos que nos visita — ya quedamos pendientes para recibirlo como corresponde.`
+    : `Hola ${name}, somos del equipo de bienvenida de New Life. Gracias por avisarnos que vienes — te vamos a estar esperando.`;
+}

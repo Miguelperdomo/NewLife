@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { getPastors } from "@/lib/pastors";
+import { useAdminMinistries } from "@/lib/admin/useAdminMinistries";
 import { campusFormSchema, type CampusFormValues } from "@/lib/admin/schemas";
 import { useUnsavedChangesWarning } from "@/lib/admin/useUnsavedChangesWarning";
 import { FormField, FormSection, inputClass } from "./form/FormField";
@@ -22,6 +23,9 @@ export const campusFormDefaults: CampusFormValues = {
   leadPastorSlug: "",
   whatsappNumber: "",
   schedules: [],
+  hasParking: false,
+  isWheelchairAccessible: false,
+  hasChildcare: false,
 };
 
 export function CampusForm({
@@ -39,6 +43,7 @@ export function CampusForm({
   existingCities?: string[];
 }) {
   const pastors = getPastors();
+  const { ministries } = useAdminMinistries();
 
   const {
     register,
@@ -158,7 +163,24 @@ export function CampusForm({
         title="Horarios de servicio"
         description="Se muestran en la página de esta sede y en la Agenda del Home. Agrega cuantos necesites."
       >
-        <ScheduleListField control={control} errors={errors.schedules} />
+        <ScheduleListField control={control} errors={errors.schedules} ministries={ministries} />
+      </FormSection>
+
+      <FormSection title="Comodidades" description="Aparecen como íconos en la página pública de esta sede.">
+        <div className="flex flex-wrap gap-4">
+          <label className="flex items-center gap-2 text-sm text-slate-600">
+            <input type="checkbox" className="h-4 w-4 rounded" {...register("hasParking")} />
+            Parqueadero
+          </label>
+          <label className="flex items-center gap-2 text-sm text-slate-600">
+            <input type="checkbox" className="h-4 w-4 rounded" {...register("isWheelchairAccessible")} />
+            Accesible en silla de ruedas
+          </label>
+          <label className="flex items-center gap-2 text-sm text-slate-600">
+            <input type="checkbox" className="h-4 w-4 rounded" {...register("hasChildcare")} />
+            Cuidado de niños
+          </label>
+        </div>
       </FormSection>
 
       <div className="flex flex-wrap items-center justify-end gap-3">

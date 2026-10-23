@@ -94,7 +94,7 @@ export async function Hero() {
           impactStats.baptismCount > 0 ||
           impactStats.visitCount > 0) && (
           <div className="mt-8 flex flex-wrap items-center justify-center gap-y-4 divide-x divide-white/10 border-t border-white/10 pt-6">
-            {campuses.length > 0 && <HeroStat value={campuses.length} label="Sedes" />}
+            {campuses.length > 0 && <HeroStat value={campuses.length} label="Campus" />}
             {ministries.length > 0 && <HeroStat value={ministries.length} label="Ministerios" />}
             {yearsServing !== undefined && <HeroStat value={yearsServing} label="Años sirviendo" />}
             {impactStats.baptismCount > 0 && <HeroStat value={impactStats.baptismCount} label="Bautizados" />}

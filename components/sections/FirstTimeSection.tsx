@@ -59,13 +59,15 @@ export async function FirstTimeSection() {
                 {settings?.firstTimeCtaLabel || firstTimeContent.ctaLabel}
               </Button>
               {campuses.length > 0 && (
-                <VisitCheckinWidget campuses={campuses.map((campus) => ({ slug: campus.slug, name: campus.name }))} />
+                <VisitCheckinWidget
+                  campuses={campuses.map((campus) => ({ slug: campus.slug, name: campus.name, city: campus.city }))}
+                />
               )}
             </div>
             {campuses.length > 0 && (
               <p className="flex items-center gap-1.5 text-sm text-slate-500">
                 <Gift className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
-                Avísanos que vienes y te tendremos un detalle especial al finalizar el culto.
+                Avísanos que vienes y te tendremos un detalle especial al finalizar el servicio.
               </p>
             )}
           </div>

@@ -62,11 +62,15 @@ export interface AdminBaptismRequest {
 export interface AdminVisitCheckin {
   id: number;
   name: string;
+  /** Opcional solo por avisos viejos (antes de agregar este campo) — el formulario público ya lo exige. */
+  phone?: string;
   peopleCount: number;
   /** Nombre de la sede tal como se mostró en el formulario (texto libre, no FK — evita que un cambio de nombre de sede rompa check-ins viejos). */
   campus: string;
   /** "YYYY-MM-DD" — el domingo (u otro día) que la persona dijo que vendría. */
   visitDate: string;
+  /** Marcado desde el formulario público — visita de un pastor, se gestiona aparte de una visita normal. */
+  isPastor: boolean;
   status: "nueva" | "atendida";
   createdAt: string;
 }
@@ -134,6 +138,8 @@ export interface AdminServiceSchedule {
   time: string;
   title: string;
   description?: string;
+  /** Si este horario es de un ministerio en particular, enlaza a su página en el sitio público. */
+  ministrySlug?: string;
 }
 
 export interface AdminCampus {
@@ -153,6 +159,10 @@ export interface AdminCampus {
   /** Si se define, se usa en vez del WhatsApp general de New Life para esta sede. */
   whatsappNumber?: string;
   schedules: AdminServiceSchedule[];
+  /** Comodidades de esta sede — se muestran como íconos en su página pública. */
+  hasParking?: boolean;
+  isWheelchairAccessible?: boolean;
+  hasChildcare?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -179,6 +189,8 @@ export interface AdminMinistry {
   whatsapp?: string;
   /** Link externo de inscripción (ej. Google Forms) — si se define, el botón "Quiero inscribirme" lleva ahí en vez de abrir WhatsApp. */
   registrationUrl?: string;
+  /** Se guarda en la columna `social` (jsonb) como un SocialLink de plataforma "instagram" — ver lib/admin/ministries.ts. */
+  instagramUrl?: string;
   meetingSchedule?: string;
   meetingLocation?: string;
   status: MinistryStatus;

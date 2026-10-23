@@ -18,7 +18,7 @@ export function CampusCard({ campus, tone = "brand" }: { campus: Campus; tone?: 
       <div className="flex flex-1 flex-col p-6">
         {campus.isMain && (
           <span className="mb-2 inline-flex w-fit items-center rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-600">
-            Sede principal
+            Campus principal
           </span>
         )}
         <h3 className="font-heading text-lg font-semibold text-slate-900">{campus.fullName}</h3>
@@ -55,7 +55,7 @@ export function CampusCard({ campus, tone = "brand" }: { campus: Campus; tone?: 
           href={`/sedes/${campus.slug}`}
           className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700"
         >
-          Ver sede
+          Ver campus
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
         </Link>
       </div>

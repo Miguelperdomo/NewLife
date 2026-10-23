@@ -38,7 +38,7 @@ export function NotFoundContent() {
             Ministerios
           </Button>
           <Button href="/sedes" variant="ghost">
-            Sedes
+            Campus
           </Button>
         </div>
       </Container>

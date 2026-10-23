@@ -85,7 +85,7 @@ export async function Footer() {
 
         <FooterColumn title="Enlaces" links={navLinks} />
         <FooterColumn title="Ministerios" links={ministryLinks} />
-        <FooterColumn title="Sedes" links={campusLinks} />
+        <FooterColumn title="Campus" links={campusLinks} />
       </Container>
 
       <div className="border-t border-white/10">
@@ -105,7 +105,7 @@ export async function Footer() {
               {mainCampus && (
                 <li>
                   <Link href="/sedes" className="text-slate-300 underline-offset-2 hover:text-white hover:underline">
-                    Ver todas las sedes
+                    Ver todos los campus
                   </Link>
                 </li>
               )}

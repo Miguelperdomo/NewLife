@@ -23,7 +23,7 @@ export const navLinks: NavLink[] = [
   // en el pie de página (Footer reutiliza este mismo arreglo). Para
   // reactivarlo, solo descomenta esta línea.
   // { label: "Noticias", href: "/noticias" },
-  { label: "Sedes", href: "/sedes" },
+  { label: "Campus", href: "/sedes" },
   { label: "Apóstol", href: "/pastores" },
 ];
 

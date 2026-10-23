@@ -26,6 +26,7 @@ export type BaptismRequestFormValues = z.infer<typeof baptismRequestFormSchema>;
 
 export const visitCheckinFormSchema = z.object({
   name: z.string().trim().min(2, "Ingresa tu nombre.").max(120, "Máximo 120 caracteres."),
+  phone: z.string().trim().min(7, "Ingresa un teléfono válido.").max(30, "Máximo 30 caracteres."),
   // Se mantiene como string, igual que lo guarda RHF desde un <input> — se
   // convierte a número solo al enviar (ver VisitCheckinWidget), no aquí.
   peopleCount: z
@@ -35,6 +36,7 @@ export const visitCheckinFormSchema = z.object({
     .refine((value) => Number(value) >= 1 && Number(value) <= 50, "Debe ser entre 1 y 50 personas."),
   campus: z.string().trim().min(1, "Selecciona una sede."),
   visitDate: z.string().trim().min(1, "Elige una fecha."),
+  isPastor: z.boolean(),
 });
 
 export type VisitCheckinFormValues = z.infer<typeof visitCheckinFormSchema>;

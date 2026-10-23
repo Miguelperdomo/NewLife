@@ -21,7 +21,7 @@ const MARKER_RETINA_URL_MAIN = "https://cdn.jsdelivr.net/gh/pointhi/leaflet-colo
 // Ciudad que se muestra de entrada cuando hay sedes en más de una — si no
 // existe entre las ciudades cargadas, cae a la primera en orden alfabético.
 const DEFAULT_CITY = "Ibagué";
-const FALLBACK_CITY_LABEL = "Otras sedes";
+const FALLBACK_CITY_LABEL = "Otros campus";
 
 /**
  * Mapa con todas las sedes a la vez — sin API key (Leaflet + OpenStreetMap,

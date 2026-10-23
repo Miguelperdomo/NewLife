@@ -1,18 +1,39 @@
 import Link from "next/link";
 import { ArrowLeft, Clock, MapPin, MessageCircle, Navigation, Star } from "lucide-react";
+import { VisitCheckinWidget } from "@/components/sections/VisitCheckinWidget";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
+import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/data/site";
-import { getPastorBySlug } from "@/lib/content";
+import { activeCampusAmenities } from "@/lib/campusAmenities";
+import { getCampuses, getMinistries, getPastorBySlug } from "@/lib/content";
 import { formatEventTime } from "@/lib/events";
 import { googleMapsDirectionsUrl, googleMapsEmbedUrl, googleMapsSearchUrl } from "@/lib/maps";
-import { dayOfWeekLabel } from "@/lib/schedule";
+import { dayOfWeekLabel, findNextService } from "@/lib/schedule";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
-import type { Campus } from "@/lib/types";
+import type { Campus, ServiceSchedule } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { buildWhatsAppLink, campusInquiryMessage } from "@/lib/whatsapp";
+
+function scheduleKey(service: ServiceSchedule): string {
+  return `${service.dayOfWeek}-${service.time}-${service.title}`;
+}
+
+/** Agrupa los horarios por día (domingo -> sábado) y los ordena por hora dentro de cada día — en vez de la lista plana de siempre. */
+function groupServicesByDay(services: ServiceSchedule[]): [number, ServiceSchedule[]][] {
+  const groups = new Map<number, ServiceSchedule[]>();
+  for (const service of services) {
+    if (!groups.has(service.dayOfWeek)) groups.set(service.dayOfWeek, []);
+    groups.get(service.dayOfWeek)!.push(service);
+  }
+  for (const group of groups.values()) {
+    group.sort((a, b) => a.time.localeCompare(b.time));
+  }
+  return [...groups.entries()].sort(([a], [b]) => a - b);
+}
 
 /**
  * Plantilla única reutilizada por todas las páginas /sedes/[slug]. Análoga a
@@ -20,16 +41,30 @@ import { buildWhatsAppLink, campusInquiryMessage } from "@/lib/whatsapp";
  */
 export async function CampusTemplate({ campus }: { campus: Campus }) {
   const services = campus.schedules ?? [];
-  const pastor = campus.leadPastorSlug ? await getPastorBySlug(campus.leadPastorSlug) : undefined;
-  const settings = await getPublicSiteSettings();
+  const [pastor, settings, ministries, allCampuses] = await Promise.all([
+    campus.leadPastorSlug ? getPastorBySlug(campus.leadPastorSlug) : Promise.resolve(undefined),
+    getPublicSiteSettings(),
+    getMinistries(),
+    getCampuses(),
+  ]);
   const whatsappHref = buildWhatsAppLink(
     campus.whatsappNumber ?? settings?.whatsappNumber ?? siteConfig.whatsappNumber,
     campusInquiryMessage(campus.fullName)
   );
+  const groupedServices = groupServicesByDay(services);
+  const nextService = findNextService(services, new Date());
+  const nextServiceKey = nextService ? scheduleKey(nextService) : undefined;
+  const activeAmenities = activeCampusAmenities(campus);
+  // La sede actual va primero — así "Avísanos que vienes" arranca con esta ya seleccionada.
+  const checkinCampuses = [campus, ...allCampuses.filter((item) => item.slug !== campus.slug)].map((item) => ({
+    slug: item.slug,
+    name: item.name,
+    city: item.city,
+  }));
 
   return (
     <>
-      <Breadcrumbs items={[{ label: "Sedes", href: "/sedes" }, { label: campus.fullName }]} />
+      <Breadcrumbs items={[{ label: "Campus", href: "/sedes" }, { label: campus.fullName }]} />
 
       <section className="relative overflow-hidden bg-slate-950">
         <PlaceholderImage
@@ -47,11 +82,11 @@ export async function CampusTemplate({ campus }: { campus: Campus }) {
             className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-white/70 hover:text-white"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-            Sedes
+            Campus
           </Link>
           {campus.isMain && (
             <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent-400">
-              Sede principal
+              Campus principal
             </span>
           )}
           <h1 className="max-w-2xl font-heading text-4xl font-bold leading-tight sm:text-5xl">
@@ -67,28 +102,90 @@ export async function CampusTemplate({ campus }: { campus: Campus }) {
       <section className="py-16 sm:py-24">
         <Container className="grid gap-12 lg:grid-cols-3">
           <div className="space-y-12 lg:col-span-2">
+            {activeAmenities.length > 0 && (
+              <RevealOnScroll>
+                <div className="flex flex-wrap gap-4">
+                  {activeAmenities.map((amenity) => (
+                    <div
+                      key={amenity.key}
+                      className="group flex items-center gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-sm shadow-slate-100 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/70"
+                    >
+                      <span
+                        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${amenity.gradient} text-white shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6`}
+                      >
+                        <amenity.icon className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                      <span className="text-sm font-semibold text-slate-700">{amenity.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </RevealOnScroll>
+            )}
+
             <div>
               <h2 className="font-heading text-2xl font-bold text-slate-900">Horarios de servicio</h2>
-              {services.length > 0 ? (
-                <div className="mt-4 space-y-2.5">
-                  {services.map((service, index) => (
-                    <div
-                      key={`${service.dayOfWeek}-${service.time}-${index}`}
-                      className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4"
-                    >
-                      <Clock className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
-                      <div>
-                        <p className="text-sm font-semibold text-slate-900">
-                          {dayOfWeekLabel(service.dayOfWeek)} · {formatEventTime(service.time)} — {service.title}
-                        </p>
-                        {service.description && <p className="text-sm text-slate-500">{service.description}</p>}
+              {groupedServices.length > 0 ? (
+                <div className="mt-4 space-y-6">
+                  {groupedServices.map(([dayOfWeek, group]) => (
+                    <div key={dayOfWeek}>
+                      <p className="text-xs font-bold uppercase tracking-widest text-brand-600">
+                        {dayOfWeekLabel(dayOfWeek)}
+                      </p>
+                      <div className="mt-2.5 space-y-2.5">
+                        {group.map((service) => {
+                          const isNext = scheduleKey(service) === nextServiceKey;
+                          const ministry = service.ministrySlug
+                            ? ministries.find((item) => item.slug === service.ministrySlug)
+                            : undefined;
+                          const row = (
+                            <div
+                              className={cn(
+                                "flex items-start gap-3 rounded-2xl border p-4 transition-colors",
+                                isNext ? "border-brand-200 bg-brand-50" : "border-slate-100 bg-slate-50",
+                                ministry && "hover:border-brand-300 hover:bg-white"
+                              )}
+                            >
+                              <Clock
+                                className={cn("mt-0.5 h-4 w-4 shrink-0", isNext ? "text-brand-600" : "text-slate-400")}
+                                aria-hidden="true"
+                              />
+                              <div className="min-w-0 flex-1">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <p className="text-sm font-semibold text-slate-900">
+                                    {formatEventTime(service.time)} — {service.title}
+                                  </p>
+                                  {isNext && (
+                                    <span className="rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                                      Próximo
+                                    </span>
+                                  )}
+                                </div>
+                                {service.description && (
+                                  <p className="text-sm text-slate-500">{service.description}</p>
+                                )}
+                                {ministry && (
+                                  <p className="mt-0.5 text-xs font-semibold text-brand-600">
+                                    Ministerio {ministry.name} →
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          );
+                          return ministry ? (
+                            <Link key={scheduleKey(service)} href={`/ministerios/${ministry.slug}`} className="block">
+                              {row}
+                            </Link>
+                          ) : (
+                            <div key={scheduleKey(service)}>{row}</div>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <p className="mt-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">
-                  Todavía no hay horarios fijos configurados para esta sede — escríbenos por WhatsApp y te
+                  Todavía no hay horarios fijos configurados para este campus — escríbenos por WhatsApp y te
                   contamos los horarios vigentes.
                 </p>
               )}
@@ -128,7 +225,7 @@ export async function CampusTemplate({ campus }: { campus: Campus }) {
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Pastor/líder de esta sede
+                    Pastor/líder de este campus
                   </p>
                   <p className="truncate font-heading text-sm font-semibold text-slate-900 transition-colors group-hover:text-brand-600">
                     {pastor.name}
@@ -166,8 +263,11 @@ export async function CampusTemplate({ campus }: { campus: Campus }) {
                 className="w-full justify-center"
               >
                 <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                Contactar esta sede
+                Contactar este campus
               </Button>
+              <div className="[&>button]:w-full [&>button]:justify-center">
+                <VisitCheckinWidget campuses={checkinCampuses} />
+              </div>
             </div>
           </aside>
         </Container>

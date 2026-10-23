@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Trash2, UserPlus } from "lucide-react";
+import { Crown, Trash2, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ListSkeleton } from "./ListSkeleton";
 import { RefreshButton } from "./RefreshButton";
 import { loadVisitCheckins, removeVisitCheckins, setVisitCheckinStatus } from "@/lib/admin/visitCheckins";
+import { buildWhatsAppLink, normalizeWhatsAppNumber, visitCheckinFollowUpMessage } from "@/lib/whatsapp";
 import type { AdminVisitCheckin } from "@/lib/admin/types";
 
 const dateFormatter = new Intl.DateTimeFormat("es-CO", { weekday: "long", day: "2-digit", month: "long" });
@@ -60,10 +61,25 @@ export function VisitCheckinsDashboard() {
   }
 
   async function toggleStatus(entry: AdminVisitCheckin) {
+    const nextStatus = entry.status === "nueva" ? "atendida" : "nueva";
+
+    // Se abre ANTES de esperar la respuesta de la base de datos — si se abre
+    // después de un await, varios navegadores bloquean el pop-up por no
+    // reconocerlo como reacción directa al clic.
+    if (nextStatus === "atendida" && entry.phone) {
+      const whatsappNumber = normalizeWhatsAppNumber(entry.phone);
+      if (whatsappNumber) {
+        window.open(
+          buildWhatsAppLink(whatsappNumber, visitCheckinFollowUpMessage(entry.name, entry.isPastor)),
+          "_blank",
+          "noopener,noreferrer"
+        );
+      }
+    }
+
     setUpdatingId(entry.id);
     setError(null);
     try {
-      const nextStatus = entry.status === "nueva" ? "atendida" : "nueva";
       await setVisitCheckinStatus(entry.id, nextStatus);
       setEntries((current) => current.map((item) => (item.id === entry.id ? { ...item, status: nextStatus } : item)));
     } catch (err) {
@@ -152,12 +168,27 @@ export function VisitCheckinsDashboard() {
                     onChange={() => toggleOne(entry.id)}
                     aria-label={`Seleccionar visita de ${entry.name}`}
                   />
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-                    <UserPlus className="h-4 w-4" aria-hidden="true" />
+                  <span
+                    className={
+                      entry.isPastor
+                        ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600"
+                        : "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"
+                    }
+                  >
+                    {entry.isPastor ? (
+                      <Crown className="h-4 w-4" aria-hidden="true" />
+                    ) : (
+                      <UserPlus className="h-4 w-4" aria-hidden="true" />
+                    )}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-sm font-semibold text-slate-900">{entry.name}</p>
+                      {entry.isPastor && (
+                        <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                          Pastor
+                        </span>
+                      )}
                       <span
                         className={
                           entry.status === "nueva"
@@ -170,6 +201,7 @@ export function VisitCheckinsDashboard() {
                     </div>
                     <p className="mt-1 text-sm text-slate-700">
                       {entry.peopleCount} persona{entry.peopleCount === 1 ? "" : "s"} · {entry.campus}
+                      {entry.phone ? ` · ${entry.phone}` : ""}
                     </p>
                     <p className="mt-0.5 text-xs text-slate-400">{formatVisitDate(entry.visitDate)}</p>
                   </div>

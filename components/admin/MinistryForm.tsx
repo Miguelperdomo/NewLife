@@ -19,6 +19,7 @@ export const ministryFormDefaults: MinistryFormValues = {
   leader: "",
   whatsapp: "",
   registrationUrl: "",
+  instagramUrl: "",
   meetingSchedule: "",
   meetingLocation: "",
   status: "active",
@@ -136,6 +137,13 @@ export function MinistryForm({
           hint='Ej. un Google Form. Si lo pones, el botón "Quiero inscribirme" lleva ahí en vez de abrir WhatsApp.'
         >
           <input id="registrationUrl" className={inputClass} {...register("registrationUrl")} />
+        </FormField>
+        <FormField
+          label="Instagram (opcional)"
+          htmlFor="instagramUrl"
+          hint="Ej. https://instagram.com/tu_ministerio. Si lo pones, aparece un ícono de Instagram en la página pública del ministerio."
+        >
+          <input id="instagramUrl" className={inputClass} {...register("instagramUrl")} />
         </FormField>
       </FormSection>
 
