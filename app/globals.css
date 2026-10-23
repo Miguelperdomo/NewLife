@@ -161,6 +161,27 @@ html[data-a11y-contrast="true"] .border-slate-200 {
   transform-style: preserve-3d;
 }
 
+/* Barras tipo ecualizador en la insignia "EN VIVO" — ver components/ui/LiveBadge.tsx. */
+@keyframes eq-bounce {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+.eq-bar {
+  animation: eq-bounce 0.9s ease-in-out infinite;
+  transform-origin: bottom;
+}
+@media (prefers-reduced-motion: reduce) {
+  .eq-bar {
+    animation: none;
+    transform: scaleY(0.7);
+  }
+}
+
 /* Modo enfoque en formularios largos (ej. Configuración) — mientras algún
    campo del formulario tiene el foco, las demás secciones se atenúan.
    :has() ya es compatible en todos los navegadores modernos (2023+). */
