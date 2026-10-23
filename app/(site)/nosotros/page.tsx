@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Clock, Compass, Eye, HandHeart, Mail, MapPin, MessageCircle, Navigation, Phone, Users } from "lucide-react";
+import { Compass, Eye, HandHeart, Mail, MapPin, MessageCircle, Navigation, Phone, Users } from "lucide-react";
 import type { ComponentType } from "react";
 import { AllCampusesMap } from "@/components/campuses/AllCampusesMap";
 import { VisitCheckinWidget } from "@/components/sections/VisitCheckinWidget";
@@ -104,7 +104,7 @@ export default async function NosotrosPage() {
     mainCampus
       ? {
           icon: MapPin,
-          label: `Dirección — ${mainCampus.fullName}${mainCampus.isMain ? " (sede principal)" : ""}`,
+          label: `Dirección — ${mainCampus.fullName}${mainCampus.isMain ? " (campus principal)" : ""}`,
           value: mainCampus.city ? `${mainCampus.address}, ${mainCampus.city}` : mainCampus.address,
         }
       : settings?.address && {
@@ -112,7 +112,6 @@ export default async function NosotrosPage() {
           label: "Dirección",
           value: settings.city ? `${settings.address}, ${settings.city}` : settings.address,
         },
-    settings?.generalSchedule && { icon: Clock, label: "Horarios", value: settings.generalSchedule },
     settings?.phone && { icon: Phone, label: "Teléfono", value: settings.phone },
     settings?.email && { icon: Mail, label: "Correo", value: settings.email },
   ].filter((item): item is { icon: typeof MapPin; label: string; value: string } => Boolean(item));

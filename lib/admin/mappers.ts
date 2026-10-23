@@ -204,7 +204,6 @@ export function siteSettingsFormValuesToInput(values: SiteSettingsFormValues): S
     email: orUndefined(values.email),
     address: orUndefined(values.address),
     city: orUndefined(values.city),
-    generalSchedule: orUndefined(values.generalSchedule),
 
     heroTagline: orUndefined(values.heroTagline),
     foundingYear: values.foundingYear ? Number(values.foundingYear) : undefined,
@@ -305,7 +304,6 @@ export function siteSettingsToFormValues(settings: AdminSiteSettings): SiteSetti
     email: settings.email ?? "",
     address: settings.address ?? "",
     city: settings.city ?? "",
-    generalSchedule: settings.generalSchedule ?? "",
 
     heroTagline: settings.heroTagline ?? "",
     foundingYear: settings.foundingYear !== undefined ? String(settings.foundingYear) : "",

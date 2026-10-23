@@ -22,7 +22,6 @@ interface SiteSettingsRow {
   email: string | null;
   address: string | null;
   city: string | null;
-  general_schedule: string | null;
   hero_tagline: string | null;
   founding_year: number | null;
   primary_color: string;
@@ -108,7 +107,6 @@ function rowToSettings(row: SiteSettingsRow): AdminSiteSettings {
     email: row.email ?? undefined,
     address: row.address ?? undefined,
     city: row.city ?? undefined,
-    generalSchedule: row.general_schedule ?? undefined,
     heroTagline: row.hero_tagline ?? undefined,
     foundingYear: row.founding_year ?? undefined,
     primaryColor: row.primary_color,
@@ -196,7 +194,6 @@ function settingsToRow(settings: AdminSiteSettings) {
     email: settings.email ?? null,
     address: settings.address ?? null,
     city: settings.city ?? null,
-    general_schedule: settings.generalSchedule ?? null,
     hero_tagline: settings.heroTagline ?? null,
     founding_year: settings.foundingYear ?? null,
     primary_color: settings.primaryColor,
@@ -291,7 +288,6 @@ function defaultSiteSettings(): AdminSiteSettings {
     email: siteConfig.contactEmail,
     address: undefined,
     city: undefined,
-    generalSchedule: undefined,
 
     heroTagline: undefined,
     foundingYear: undefined,

@@ -155,7 +155,6 @@ export const siteSettingsFormSchema = z.object({
   email: z.string().trim().optional(),
   address: z.string().trim().optional(),
   city: z.string().trim().optional(),
-  generalSchedule: z.string().trim().optional(),
 
   heroTagline: z.string().trim().max(120, "Máximo 120 caracteres.").optional(),
   foundingYear: z
@@ -272,7 +271,6 @@ export const adminSiteSettingsSchema = z.object({
   email: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
-  generalSchedule: z.string().optional(),
 
   heroTagline: z.string().optional(),
   foundingYear: z

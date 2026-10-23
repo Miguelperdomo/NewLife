@@ -219,7 +219,6 @@ export interface AdminSiteSettings {
   email?: string;
   address?: string;
   city?: string;
-  generalSchedule?: string;
 
   // Portada (Hero) del Home — el título grande. El texto debajo reutiliza
   // "description" de arriba, para no duplicar el mismo dato dos veces.

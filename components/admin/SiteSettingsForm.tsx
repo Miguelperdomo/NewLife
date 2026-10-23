@@ -176,10 +176,6 @@ export function SiteSettingsForm({
             <input id="city" className={inputClass} {...register("city")} />
           </FormField>
         </div>
-
-        <FormField label="Horarios generales" htmlFor="generalSchedule" hint="Ej. «Domingos 7:30 a. m., 10:30 a. m. y 5:00 p. m.»">
-          <input id="generalSchedule" className={inputClass} {...register("generalSchedule")} />
-        </FormField>
       </FormSection>
 
       <FormSection title="Apariencia" description="Estos colores sí cambian el sitio público en cuanto guardas." defaultOpen={false}>

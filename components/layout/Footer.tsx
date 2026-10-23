@@ -48,8 +48,11 @@ export async function Footer() {
   const settings = await getPublicSiteSettings();
   const churchName = settings?.churchName || siteConfig.name;
   const description = settings?.description || siteConfig.description;
-  const contactEmail = settings?.email || siteConfig.contactEmail;
-  const contactPhone = settings?.phone || siteConfig.contactPhone;
+  // Sin caer al placeholder de data/site.ts ("[CORREO DE CONTACTO —
+  // PLACEHOLDER]") — mejor no mostrar la línea que mostrar un texto de
+  // relleno con corchetes si todavía no se ha guardado nada en Configuración.
+  const contactEmail = settings?.email;
+  const contactPhone = settings?.phone;
   const address = settings?.address || mainCampus?.address;
 
   // Si la persona activó el ícono de WhatsApp pero no pegó un link propio,
@@ -101,7 +104,6 @@ export async function Footer() {
                   {settings?.city ? `, ${settings.city}` : ""}
                 </li>
               )}
-              {settings?.generalSchedule && <li>{settings.generalSchedule}</li>}
               {mainCampus && (
                 <li>
                   <Link href="/sedes" className="text-slate-300 underline-offset-2 hover:text-white hover:underline">
