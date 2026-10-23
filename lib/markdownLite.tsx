@@ -17,10 +17,11 @@ function parseInline(text: string): ReactNode[] {
   );
 }
 
-function headingLevel(line: string): 2 | 3 | 4 | null {
+function headingLevel(line: string): 1 | 2 | 3 | 4 | null {
   if (line.startsWith("#### ")) return 4;
   if (line.startsWith("### ")) return 3;
   if (line.startsWith("## ")) return 2;
+  if (line.startsWith("# ")) return 1;
   return null;
 }
 
@@ -40,16 +41,36 @@ export function renderMarkdownLite(text: string): ReactNode {
     const level = headingLevel(lines[0] ?? "");
 
     if (level && lines.length === 1) {
-      const content = lines[0].replace(/^#{2,4}\s+/, "");
-      const headingClass =
-        level === 2
-          ? "font-heading text-xl font-bold text-slate-900"
-          : level === 3
-            ? "font-heading text-lg font-bold text-slate-900"
-            : "font-heading text-base font-bold text-slate-900";
-      if (level === 2) return <h2 key={blockIndex} className={`mt-2 ${headingClass}`}>{parseInline(content)}</h2>;
-      if (level === 3) return <h3 key={blockIndex} className={`mt-2 ${headingClass}`}>{parseInline(content)}</h3>;
-      return <h4 key={blockIndex} className={`mt-2 ${headingClass}`}>{parseInline(content)}</h4>;
+      const content = lines[0].replace(/^#{1,4}\s+/, "");
+      // "# Título" usa <h2> (no <h2>, no un segundo <h1> — la página ya tiene
+      // el suyo propio arriba), solo que más grande que "## " para que se
+      // note la jerarquía.
+      if (level === 1) {
+        return (
+          <h2 key={blockIndex} className="mt-2 font-heading text-2xl font-bold text-slate-900">
+            {parseInline(content)}
+          </h2>
+        );
+      }
+      if (level === 2) {
+        return (
+          <h2 key={blockIndex} className="mt-2 font-heading text-xl font-bold text-slate-900">
+            {parseInline(content)}
+          </h2>
+        );
+      }
+      if (level === 3) {
+        return (
+          <h3 key={blockIndex} className="mt-2 font-heading text-lg font-bold text-slate-900">
+            {parseInline(content)}
+          </h3>
+        );
+      }
+      return (
+        <h4 key={blockIndex} className="mt-2 font-heading text-base font-bold text-slate-900">
+          {parseInline(content)}
+        </h4>
+      );
     }
 
     if (lines.every(isListLine)) {
