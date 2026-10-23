@@ -106,15 +106,20 @@ export function AdminDashboard({ sections, name }: { sections: AdminSection[]; n
 
   return (
     <div className="space-y-6">
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 via-brand-700 to-brand-950 p-6 text-white shadow-lg shadow-brand-900/20 sm:p-8">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: "radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px)",
-            backgroundSize: "22px 22px",
-          }}
-        />
+      {/* Sin overflow-hidden en este contenedor a propósito: el buscador de
+          abajo abre un desplegable de resultados que necesita salirse de esta
+          tarjeta — el fondo de puntos se recorta solo (ver su propio
+          envoltorio), sin tener que recortar la tarjeta entera. */}
+      <div className="relative rounded-3xl bg-gradient-to-br from-brand-600 via-brand-700 to-brand-950 p-6 text-white shadow-lg shadow-brand-900/20 sm:p-8">
+        <div className="absolute inset-0 overflow-hidden rounded-3xl" aria-hidden="true">
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: "radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px)",
+              backgroundSize: "22px 22px",
+            }}
+          />
+        </div>
         <div className="relative">
           <p className="text-sm text-white/70">
             {greeting}, {firstName(name)} 👋 · {capitalizedToday}
