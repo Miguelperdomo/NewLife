@@ -35,16 +35,20 @@ export function ConfiguracionDashboard() {
 
   return (
     <div className="space-y-6">
-      {saved && (
-        <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
-          <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
-          Configuración guardada correctamente.
-        </div>
-      )}
-
-      {saveError && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-          {saveError}
+      {/* Flotante y fijo a la pantalla a propósito: el botón "Guardar cambios"
+          queda al final de un formulario largo, así que un aviso arriba del
+          todo (donde estaba antes) quedaba fuera de vista — esto se ve sin
+          importar qué tan abajo estés desplazado. */}
+      {(saved || saveError) && (
+        <div className="fixed bottom-6 right-6 z-50 animate-page-fade-in">
+          <div
+            className={`flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium shadow-lg ${
+              saved ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-red-200 bg-red-50 text-red-700"
+            }`}
+          >
+            {saved && <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />}
+            {saved ? "Configuración guardada correctamente." : saveError}
+          </div>
         </div>
       )}
 

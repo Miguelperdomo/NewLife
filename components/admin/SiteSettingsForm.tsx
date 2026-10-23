@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, type Control } from "react-hook-form";
-import { AlertTriangle, MessageCircle } from "lucide-react";
+import { AlertTriangle, Loader2, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { siteSettingsFormSchema, type SiteSettingsFormValues } from "@/lib/admin/schemas";
 import { useUnsavedChangesWarning } from "@/lib/admin/useUnsavedChangesWarning";
@@ -559,7 +559,8 @@ export function SiteSettingsForm({
 
       <div className="flex justify-end">
         <Button type="submit" variant="primary" disabled={isSubmitting}>
-          Guardar cambios
+          {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+          {isSubmitting ? "Guardando…" : "Guardar cambios"}
         </Button>
       </div>
     </form>
