@@ -52,12 +52,12 @@ async function loadLastSignIns(): Promise<Record<string, string | null>> {
 /** Cambia qué secciones puede ver un administrador y/o su fecha límite de acceso — no toca su cuenta de acceso (correo/contraseña). */
 export async function updateAdminAccess(
   id: string,
-  input: { sections: AdminSection[]; accessUntil: string | null }
+  input: { name: string; sections: AdminSection[]; accessUntil: string | null }
 ): Promise<void> {
   const supabase = createClient();
   const { error } = await supabase
     .from("admins")
-    .update({ sections: input.sections, access_until: input.accessUntil })
+    .update({ name: input.name, sections: input.sections, access_until: input.accessUntil })
     .eq("id", id);
   if (error) throw new Error(error.message);
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarPlus, LayoutDashboard, MapPinPlus, Pin, PinOff, Settings, UsersRound } from "lucide-react";
+import { CalendarPlus, History, LayoutDashboard, MapPinPlus, Pin, PinOff, Settings, UserCog, UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import type { AdminSection } from "@/lib/admin/types";
@@ -21,6 +21,8 @@ const ACTIONS: ActionDef[] = [
   { id: "sede", section: "campuses", href: "/admin/sedes/nueva", label: "Crear sede", icon: MapPinPlus },
   { id: "contenido", section: "content", href: "/admin/contenido", label: "Ver contenido", icon: LayoutDashboard },
   { id: "evento", section: "content", href: "/admin/contenido/nuevo?type=event", label: "Crear evento", icon: CalendarPlus },
+  { id: "usuario", section: "full", href: "/admin/usuarios", label: "Crear usuario", icon: UserCog },
+  { id: "actividad", section: "full", href: "/admin/actividad", label: "Ver actividad", icon: History },
 ];
 
 /**

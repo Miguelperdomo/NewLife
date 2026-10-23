@@ -48,7 +48,7 @@ export function useAdminUsers() {
   );
 
   const updateAccess = useCallback(
-    async (id: string, input: { sections: AdminSection[]; accessUntil: string | null }) => {
+    async (id: string, input: { name: string; sections: AdminSection[]; accessUntil: string | null }) => {
       await updateAdminAccessRequest(id, input);
       await refresh();
     },

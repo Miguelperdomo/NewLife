@@ -197,6 +197,7 @@ export function UsersDashboard({ currentUserId }: { currentUserId: string }) {
   const { users, isReady, createUser, updateAccess, removeUser } = useAdminUsers();
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<AdminUser | null>(null);
+  const [editName, setEditName] = useState<string>("");
   const [editSections, setEditSections] = useState<AdminSection[]>([]);
   const [editAccessUntil, setEditAccessUntil] = useState<string>("");
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
@@ -205,15 +206,20 @@ export function UsersDashboard({ currentUserId }: { currentUserId: string }) {
 
   function openEdit(user: AdminUser) {
     setEditTarget(user);
+    setEditName(user.name);
     setEditSections(user.sections);
     setEditAccessUntil(user.accessUntil ?? "");
   }
 
   async function saveEdit() {
     if (!editTarget) return;
+    if (!editName.trim()) {
+      setError("El nombre no puede quedar vacío.");
+      return;
+    }
     setError(null);
     try {
-      await updateAccess(editTarget.id, { sections: editSections, accessUntil: editAccessUntil || null });
+      await updateAccess(editTarget.id, { name: editName.trim(), sections: editSections, accessUntil: editAccessUntil || null });
       setEditTarget(null);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
@@ -321,6 +327,14 @@ export function UsersDashboard({ currentUserId }: { currentUserId: string }) {
 
       <Modal open={editTarget !== null} onClose={() => setEditTarget(null)} title={`Permisos de ${editTarget?.name ?? ""}`}>
         <div className="space-y-4">
+          <FormField label="Nombre" htmlFor="editUserName" required>
+            <input
+              id="editUserName"
+              className={inputClass}
+              value={editName}
+              onChange={(event) => setEditName(event.target.value)}
+            />
+          </FormField>
           <SectionCheckboxes value={editSections} onChange={setEditSections} allowNone />
           <FormField
             label="Acceso hasta (opcional)"
@@ -335,6 +349,9 @@ export function UsersDashboard({ currentUserId }: { currentUserId: string }) {
               onChange={(event) => setEditAccessUntil(event.target.value)}
             />
           </FormField>
+          {error && (
+            <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>
+          )}
           <div className="flex justify-end gap-3">
             <Button type="button" variant="ghost" className="border border-slate-200" onClick={() => setEditTarget(null)}>
               Cancelar
