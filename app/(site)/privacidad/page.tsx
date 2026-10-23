@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { siteConfig } from "@/data/site";
+import { renderMarkdownLite } from "@/lib/markdownLite";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 
@@ -26,7 +27,6 @@ Tus derechos: puedes escribirnos en cualquier momento si tienes preguntas sobre 
 export default async function PrivacidadPage() {
   const settings = await getPublicSiteSettings();
   const text = settings?.privacyPolicy || FALLBACK_TEXT;
-  const paragraphs = text.split("\n\n").filter(Boolean);
 
   return (
     <>
@@ -36,9 +36,7 @@ export default async function PrivacidadPage() {
         <Container className="mx-auto max-w-3xl">
           <h1 className="font-heading text-3xl font-bold text-slate-900 sm:text-4xl">Política de privacidad</h1>
           <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-600">
-            {paragraphs.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
+            {renderMarkdownLite(text)}
           </div>
         </Container>
       </section>

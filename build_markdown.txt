@@ -1,0 +1,9 @@
+
+> proyect-newlife@0.1.0 build
+> next build
+
+▲ Next.js 16.4.2 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 56ms
+
+  Creating an optimized production build ...

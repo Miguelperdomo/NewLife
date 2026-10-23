@@ -437,14 +437,14 @@ export function SiteSettingsForm({
         <FormField
           label="Política de privacidad"
           htmlFor="privacyPolicy"
-          hint="Si lo dejas vacío, se usa un texto genérico básico."
+          hint='Si lo dejas vacío, se usa un texto genérico básico. Admite formato simple: "## Título" para un encabezado, "**texto**" para negrilla, y líneas que empiecen con "- " o "1. " para listas — separa párrafos con una línea en blanco.'
         >
           <textarea id="privacyPolicy" rows={8} className={textareaClass} {...register("privacyPolicy")} />
         </FormField>
         <FormField
           label="Términos y condiciones"
           htmlFor="termsOfService"
-          hint="Si lo dejas vacío, se usa un texto genérico básico."
+          hint='Si lo dejas vacío, se usa un texto genérico básico. Admite formato simple: "## Título" para un encabezado, "**texto**" para negrilla, y líneas que empiecen con "- " o "1. " para listas — separa párrafos con una línea en blanco.'
         >
           <textarea id="termsOfService" rows={8} className={textareaClass} {...register("termsOfService")} />
         </FormField>
