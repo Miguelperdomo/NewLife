@@ -5,7 +5,6 @@ import { CheckCircle2 } from "lucide-react";
 import { siteSettingsFormValuesToInput, siteSettingsToFormValues } from "@/lib/admin/mappers";
 import { useAdminSiteSettings } from "@/lib/admin/useAdminSiteSettings";
 import type { SiteSettingsFormValues } from "@/lib/admin/schemas";
-import { CreditsPanel } from "./CreditsPanel";
 import { FirstTimeCardsPanel } from "./FirstTimeCardsPanel";
 import { HelpOptionsPanel } from "./HelpOptionsPanel";
 import { HeroPhotosPanel } from "./HeroPhotosPanel";
@@ -74,8 +73,6 @@ export function ConfiguracionDashboard() {
           <PastorProfileForm />
 
           <SystemPanel settings={settings} onResetDemo={resetToDemo} onImport={replaceSettings} />
-
-          <CreditsPanel />
         </>
       ) : (
         <p className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">

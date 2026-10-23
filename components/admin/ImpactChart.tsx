@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { loadBaptismRequests } from "@/lib/admin/baptismRequests";
 import { loadPrayerRequests } from "@/lib/admin/prayerRequests";
 import { loadVisitCheckins } from "@/lib/admin/visitCheckins";
+import { cn } from "@/lib/utils";
 import type { AdminSection } from "@/lib/admin/types";
 
 const WEEKS = 4;
@@ -52,6 +54,10 @@ export function ImpactChart({ sections }: { sections: AdminSection[] }) {
   const [visitWeeks, setVisitWeeks] = useState<number[]>(new Array(WEEKS).fill(0));
   const [labels, setLabels] = useState<string[]>(new Array(WEEKS).fill(""));
   const [year, setYear] = useState<number | null>(null);
+  // Colapsada por defecto — es un cuadro chiquito con el total, y se expande
+  // a la gráfica completa solo si alguien la toca, para no ocupar tanto
+  // espacio de entrada en un Dashboard que ya tiene bastante.
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!showPrayer && !showBaptism && !showVisits) return;
@@ -80,14 +86,41 @@ export function ImpactChart({ sections }: { sections: AdminSection[] }) {
   if (!showPrayer && !showBaptism && !showVisits) return null;
 
   const max = Math.max(1, ...prayerWeeks, ...baptismWeeks, ...visitWeeks);
+  const totalPrayer = prayerWeeks.reduce((sum, value) => sum + value, 0);
+  const totalBaptism = baptismWeeks.reduce((sum, value) => sum + value, 0);
+  const totalVisits = visitWeeks.reduce((sum, value) => sum + value, 0);
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5">
-      <h3 className="font-heading text-sm font-bold text-slate-900">
-        Últimas 4 semanas{year && <span className="font-normal text-slate-400"> · {year}</span>}
-      </h3>
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="flex w-full items-center justify-between gap-3 text-left"
+        aria-expanded={open}
+      >
+        <div className="min-w-0">
+          <h3 className="font-heading text-sm font-bold text-slate-900">
+            Últimas 4 semanas{year && <span className="font-normal text-slate-400"> · {year}</span>}
+          </h3>
+          {!open && !loading && (
+            <p className="mt-1 truncate text-xs text-slate-500">
+              {[
+                showPrayer && `${totalPrayer} oraciones`,
+                showBaptism && `${totalBaptism} bautismos`,
+                showVisits && `${totalVisits} visitas`,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          )}
+        </div>
+        <ChevronDown
+          className={cn("h-4 w-4 shrink-0 text-slate-400 transition-transform", open && "rotate-180")}
+          aria-hidden="true"
+        />
+      </button>
 
-      {loading ? (
+      {open && (loading ? (
         <p className="mt-3 text-sm text-slate-400">Cargando…</p>
       ) : (
         <>
@@ -147,7 +180,7 @@ export function ImpactChart({ sections }: { sections: AdminSection[] }) {
             )}
           </div>
         </>
-      )}
+      ))}
     </div>
   );
 }

@@ -35,5 +35,5 @@ export default async function AdminDashboardPage() {
     );
   }
 
-  return <AdminDashboard sections={session.sections} />;
+  return <AdminDashboard sections={session.sections} name={session.name} />;
 }

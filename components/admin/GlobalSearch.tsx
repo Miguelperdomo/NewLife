@@ -1,21 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, MapPin, Newspaper, Search, Users } from "lucide-react";
-import { useAdminCampuses } from "@/lib/admin/useAdminCampuses";
-import { useAdminContent } from "@/lib/admin/useAdminContent";
-import { useAdminMinistries } from "@/lib/admin/useAdminMinistries";
-
-interface SearchResult {
-  id: string;
-  title: string;
-  subtitle: string;
-  href: string;
-  icon: typeof Users;
-}
-
-const MAX_RESULTS = 8;
+import { Search } from "lucide-react";
+import { useGlobalSearchResults } from "@/lib/admin/useGlobalSearchResults";
 
 /**
  * Buscador global del panel — un solo campo para encontrar cualquier
@@ -25,53 +13,9 @@ const MAX_RESULTS = 8;
  */
 export function GlobalSearch() {
   const router = useRouter();
-  const { ministries } = useAdminMinistries();
-  const { campuses } = useAdminCampuses();
-  const { events, news } = useAdminContent();
-
-  const [query, setQuery] = useState("");
+  const { query, setQuery, results } = useGlobalSearchResults();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const allResults = useMemo<SearchResult[]>(
-    () => [
-      ...ministries.map((ministry) => ({
-        id: `ministerio-${ministry.id}`,
-        title: ministry.name,
-        subtitle: "Ministerio",
-        href: `/admin/ministerios/${ministry.id}/editar`,
-        icon: Users,
-      })),
-      ...campuses.map((campus) => ({
-        id: `sede-${campus.id}`,
-        title: campus.name,
-        subtitle: "Sede",
-        href: `/admin/sedes/${campus.id}/editar`,
-        icon: MapPin,
-      })),
-      ...events.map((event) => ({
-        id: `evento-${event.id}`,
-        title: event.title,
-        subtitle: "Evento",
-        href: `/admin/contenido/${event.id}/editar?type=event`,
-        icon: Calendar,
-      })),
-      ...news.map((article) => ({
-        id: `noticia-${article.id}`,
-        title: article.title,
-        subtitle: "Noticia",
-        href: `/admin/contenido/${article.id}/editar?type=news`,
-        icon: Newspaper,
-      })),
-    ],
-    [ministries, campuses, events, news]
-  );
-
-  const results = useMemo(() => {
-    const trimmed = query.trim().toLowerCase();
-    if (!trimmed) return [];
-    return allResults.filter((item) => item.title.toLowerCase().includes(trimmed)).slice(0, MAX_RESULTS);
-  }, [allResults, query]);
 
   useEffect(() => {
     if (!open) return;

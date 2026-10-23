@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarCheck } from "lucide-react";
+import Link from "next/link";
+import { CalendarCheck, ChevronRight } from "lucide-react";
 import { loadBaptismRequests } from "@/lib/admin/baptismRequests";
 import { loadPrayerRequests } from "@/lib/admin/prayerRequests";
 import { loadVisitCheckins } from "@/lib/admin/visitCheckins";
@@ -61,27 +62,36 @@ export function TodaySummaryCard({ sections }: { sections: AdminSection[] }) {
   const todayLabel = dayFormatter.format(new Date());
   const capitalizedToday = todayLabel.charAt(0).toUpperCase() + todayLabel.slice(1);
 
-  const lines: string[] = [];
+  const lines: { text: string; href: string; pending: boolean }[] = [];
   if (showVisits) {
-    lines.push(
-      visitsToday > 0
-        ? `${visitsToday} persona${visitsToday === 1 ? "" : "s"} avisaron que vienen hoy`
-        : "Nadie ha avisado que viene hoy"
-    );
+    lines.push({
+      href: "/admin/visitas",
+      pending: visitsToday > 0,
+      text:
+        visitsToday > 0
+          ? `${visitsToday} persona${visitsToday === 1 ? "" : "s"} avisaron que vienen hoy`
+          : "Nadie ha avisado que viene hoy",
+    });
   }
   if (showPrayer) {
-    lines.push(
-      pendingPrayers > 0
-        ? `${pendingPrayers} pedido${pendingPrayers === 1 ? "" : "s"} de oración sin atender`
-        : "No hay pedidos de oración pendientes"
-    );
+    lines.push({
+      href: "/admin/oracion",
+      pending: pendingPrayers > 0,
+      text:
+        pendingPrayers > 0
+          ? `${pendingPrayers} pedido${pendingPrayers === 1 ? "" : "s"} de oración sin atender`
+          : "No hay pedidos de oración pendientes",
+    });
   }
   if (showBaptism) {
-    lines.push(
-      pendingBaptisms > 0
-        ? `${pendingBaptisms} solicitud${pendingBaptisms === 1 ? "" : "es"} de bautismo pendiente${pendingBaptisms === 1 ? "" : "s"}`
-        : "No hay solicitudes de bautismo pendientes"
-    );
+    lines.push({
+      href: "/admin/bautismo",
+      pending: pendingBaptisms > 0,
+      text:
+        pendingBaptisms > 0
+          ? `${pendingBaptisms} solicitud${pendingBaptisms === 1 ? "" : "es"} de bautismo pendiente${pendingBaptisms === 1 ? "" : "s"}`
+          : "No hay solicitudes de bautismo pendientes",
+    });
   }
 
   return (
@@ -93,9 +103,20 @@ export function TodaySummaryCard({ sections }: { sections: AdminSection[] }) {
       {loading ? (
         <p className="mt-2 text-sm text-slate-400">Cargando…</p>
       ) : (
-        <ul className="mt-2 space-y-1 text-sm text-slate-600">
+        <ul className="mt-2 space-y-1">
           {lines.map((line) => (
-            <li key={line}>• {line}</li>
+            <li key={line.href}>
+              <Link
+                href={line.href}
+                className="group flex items-center justify-between gap-2 rounded-lg px-2 py-1 -mx-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+              >
+                <span className="flex items-center gap-2">
+                  {line.pending && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" aria-hidden="true" />}
+                  {line.text}
+                </span>
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+              </Link>
+            </li>
           ))}
         </ul>
       )}
