@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/publicClient";
 
 /**
  * Configuración leída desde Supabase para el sitio PÚBLICO (Footer, colores
@@ -9,6 +9,15 @@ import { createClient } from "@/lib/supabase/server";
  * Footer, Navbar...) la usen. Devuelve `null` si todavía no se ha guardado
  * nada en Configuración — quien la use debe tener un buen valor de respaldo
  * para ese caso.
+ *
+ * Usa el cliente SIN cookies a propósito (createPublicClient, igual que
+ * lib/content.ts) — esta es una lectura pública, sin sesión de por medio.
+ * El cliente CON cookies (lib/supabase/server.ts) obliga a Next.js a tratar
+ * cualquier página que lo use como "dinámica" en cada visita, sin importar
+ * qué tan corto o largo pongas `revalidate` ahí — como esta función la usa
+ * prácticamente TODA página pública (Footer, Navbar, cada page.tsx...), ese
+ * único detalle bastaba para que ninguna página pública se pudiera cachear,
+ * ni siquiera agregando `export const revalidate`.
  */
 export interface PublicSiteSettings {
   churchName: string;
@@ -170,7 +179,7 @@ const SETTINGS_COLUMNS =
   "church_name, description, phone, whatsapp_number, whatsapp_default_message, email, address, city, hero_tagline, founding_year, logo_url, favicon_url, primary_color, accent_color, facebook_url, facebook_enabled, instagram_url, instagram_enabled, youtube_url, youtube_enabled, tiktok_url, tiktok_enabled, whatsapp_social_url, whatsapp_social_enabled, show_ministries, show_live, show_events, show_news, show_agenda, show_campuses, show_help, seo_title, seo_description, seo_image_url, about_image_url, about_quienes_somos, about_mision, about_vision, about_valores, help_title, help_description, help_cta_label, help_options_title, first_time_eyebrow, first_time_title, first_time_description, first_time_cta_label, ministries_eyebrow, ministries_title, ministries_description, campuses_eyebrow, campuses_title, campuses_description, events_eyebrow, events_title, events_description, news_eyebrow, news_title, news_description, pastors_eyebrow, pastors_title, pastors_description, live_thumbnail_url, live_thumbnail_alt, privacy_policy, terms_of_service, maintenance_mode, donations_enabled, donation_title, donation_teaser, donation_description, bank_name, bank_account_type, bank_account_number, bank_account_holder, nequi_number, daviplata_number";
 
 export const getPublicSiteSettings = cache(async (): Promise<PublicSiteSettings | null> => {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("site_settings")
     .select(SETTINGS_COLUMNS)

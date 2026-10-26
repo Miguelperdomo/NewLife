@@ -55,7 +55,7 @@ export function AgendaDayDetails({ date, items }: { date: string; items: AgendaI
         </div>
       ) : (
         <div className="mt-6 space-y-6">
-          <AgendaGroup title="Cultos del día" icon={Church} items={cultos} />
+          <AgendaGroup title="Servicios del día" icon={Church} items={cultos} />
           <AgendaGroup title="Eventos del día" icon={CalendarDays} items={eventos} />
           <AgendaGroup title="Noticias destacadas" icon={Newspaper} items={noticias} />
         </div>

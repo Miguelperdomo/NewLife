@@ -50,6 +50,12 @@ export async function generateMetadata(): Promise<Metadata> {
     // ver app/manifest.ts) — sin esto, Safari abre como una pestaña más, no a
     // pantalla completa con el nombre de la iglesia.
     appleWebApp: { capable: true, statusBarStyle: "default", title: churchName },
+    // Código de verificación de Google Search Console (search.google.com/search-console):
+    // se pega en .env.local / Vercel como GOOGLE_SITE_VERIFICATION, nada de código
+    // que tocar cada vez — si no está puesta, simplemente no aparece la etiqueta.
+    verification: process.env.GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+      : undefined,
     ...buildOpenGraphMetadata({ title, description, imageSrc: settings?.seoImageUrl }),
   };
 }

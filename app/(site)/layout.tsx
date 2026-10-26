@@ -11,6 +11,14 @@ import { ScrollToTopButton } from "@/components/ui/ScrollToTopButton";
 import { siteConfig } from "@/data/site";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 
+// Cachea cada página pública por 60 segundos — durante una ráfaga de
+// muchas visitas al mismo tiempo (ej. el día de la presentación), Supabase
+// solo recibe UNA consulta por página cada 60 segundos, sin importar cuánta
+// gente entre en ese rato; el resto recibe la versión guardada al instante.
+// No aplica al panel admin (vive fuera de este layout, en app/admin/...),
+// que siempre necesita datos al momento.
+export const revalidate = 60;
+
 /**
  * Pantalla mostrada cuando Configuración > Modo mantenimiento está activo.
  * Solo afecta al sitio público — el panel admin vive fuera de este layout

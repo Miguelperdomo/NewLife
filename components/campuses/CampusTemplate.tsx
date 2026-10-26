@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Clock, MapPin, MessageCircle, Navigation, Star } from "lucide-react";
+import { CampusJsonLd } from "@/components/campuses/CampusJsonLd";
 import { VisitCheckinWidget } from "@/components/sections/VisitCheckinWidget";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
@@ -64,6 +65,7 @@ export async function CampusTemplate({ campus }: { campus: Campus }) {
 
   return (
     <>
+      <CampusJsonLd campus={campus} />
       <Breadcrumbs items={[{ label: "Campus", href: "/sedes" }, { label: campus.fullName }]} />
 
       <section className="relative overflow-hidden bg-slate-950">

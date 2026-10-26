@@ -44,19 +44,25 @@ export function AgendaSection({
     () => getAgendaItemsForDate(selectedDate, ministries, campuses, events, news),
     [selectedDate, ministries, campuses, events, news]
   );
-  // Solo los cultos dominicales de todas las sedes, para el panel de abajo
-  // ("Todos los domingos") — el resto de horarios (si hay entre semana)
-  // igual aparecen en el calendario, solo no se resumen aquí.
-  const sundayPills = useMemo(
+  // Cultos dominicales agrupados POR SEDE para el panel de abajo ("Todos los
+  // domingos") — antes era una bolsa de pastillas solo con la hora, mezclando
+  // todas las sedes sin decir de cuál era cada una (y repitiendo la misma
+  // hora una vez por cada sede que la comparte). El resto de horarios (si
+  // hay entre semana) igual aparecen en el calendario, solo no se resumen
+  // aquí.
+  const sundaysByCampus = useMemo(
     () =>
-      campuses.flatMap((campus) =>
-        (campus.schedules ?? [])
-          .filter((schedule) => schedule.dayOfWeek === 0)
-          .map((schedule) => ({
-            key: `${campus.slug}-${schedule.time}-${schedule.title}`,
-            label: formatEventTime(schedule.time) ?? schedule.time,
-          }))
-      ),
+      campuses
+        .map((campus) => ({
+          slug: campus.slug,
+          name: campus.name,
+          city: campus.city,
+          times: (campus.schedules ?? [])
+            .filter((schedule) => schedule.dayOfWeek === 0)
+            .sort((a, b) => a.time.localeCompare(b.time))
+            .map((schedule) => formatEventTime(schedule.time) ?? schedule.time),
+        }))
+        .filter((entry) => entry.times.length > 0),
     [campuses]
   );
 
@@ -88,7 +94,7 @@ export function AgendaSection({
           <SectionHeading
             eyebrow="Agenda New Life"
             title="Mantente al día con todo lo que Dios está haciendo"
-            description="Revisa nuestro calendario de cultos, eventos y actividades especiales. Siempre hay algo preparado para ti y tu familia."
+            description="Revisa nuestro calendario de servicios, eventos y actividades especiales. Siempre hay algo preparado para ti y tu familia."
           />
 
           <div className="mt-12 grid gap-6 lg:grid-cols-2 lg:items-start">
@@ -119,9 +125,9 @@ export function AgendaSection({
             </div>
           </div>
 
-          {sundayPills.length > 0 && (
+          {sundaysByCampus.length > 0 && (
             <div className="mt-8 overflow-hidden rounded-3xl bg-brand-700 px-6 py-8 text-white sm:px-10 sm:py-10">
-              <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-start gap-4">
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-accent-300">
                     <CalendarDays className="h-6 w-6" aria-hidden="true" />
@@ -131,20 +137,25 @@ export function AgendaSection({
                       Todos los domingos
                     </p>
                     <h3 className="mt-1 font-heading text-xl font-bold sm:text-2xl">
-                      Cultos en todos nuestros horarios
+                      Servicios en cada uno de nuestros campus
                     </h3>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {sundayPills.map((pill) => (
-                        <span key={pill.key} className="rounded-full bg-white/10 px-3 py-1 text-sm font-semibold">
-                          {pill.label}
-                        </span>
-                      ))}
-                    </div>
                   </div>
                 </div>
                 <Button href="/sedes" variant="secondary" size="lg" className="shrink-0">
                   Planifica tu visita
                 </Button>
+              </div>
+
+              <div className="mt-6 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                {sundaysByCampus.map((campus) => (
+                  <div
+                    key={campus.slug}
+                    className="flex items-center justify-between gap-3 rounded-xl bg-white/10 px-4 py-2.5"
+                  >
+                    <span className="truncate text-sm font-semibold">{campus.name}</span>
+                    <span className="shrink-0 text-sm font-bold text-accent-300">{campus.times.join(" · ")}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
