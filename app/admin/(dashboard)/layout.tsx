@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { AdminMobileSidebar } from "@/components/admin/AdminMobileSidebar";
 import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
 import { AdminUserMenu } from "@/components/admin/AdminUserMenu";
@@ -8,7 +8,9 @@ import { getAdminSession } from "@/lib/admin/auth";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getAdminSession();
-  if (!session) redirect("/admin/login");
+  // 404, no redirect: redirigir a la URL secreta de login la revelaría a
+  // cualquiera que visite /admin sin sesión. Un 404 no da ninguna pista.
+  if (!session) notFound();
 
   return (
     <div className="min-h-screen bg-slate-100">

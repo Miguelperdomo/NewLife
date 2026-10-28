@@ -36,7 +36,7 @@ export function AdminUserMenu({ name }: { name: string }) {
     setLoggingOut(true);
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/admin/login");
+    router.push("/admin/e7d4b04a1d4d0e7a7d9e7f4e4d7a1a8b");
     router.refresh();
   }
 

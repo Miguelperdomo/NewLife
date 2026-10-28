@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { Droplet, HandHeart } from "lucide-react";
 import { AnimatedCheck } from "@/components/ui/AnimatedCheck";
 import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
+import { MoodPrayerJar } from "@/components/sections/MoodPrayerJar";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Modal } from "@/components/ui/Modal";
@@ -268,6 +269,8 @@ export function PersonalStepsSection() {
               >
                 {content.cta}
               </Button>
+
+              {tab === "prayer" && <MoodPrayerJar onRequestPrayer={() => setPrayerOpen(true)} />}
             </div>
           </div>
         </ScrollReveal>

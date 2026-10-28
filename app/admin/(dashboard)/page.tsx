@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ShieldOff } from "lucide-react";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { getAdminSession } from "@/lib/admin/auth";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function AdminDashboardPage() {
   const session = await getAdminSession();
-  if (!session) redirect("/admin/login");
+  if (!session) notFound();
 
   if (session.sections.length === 0) {
     return (
