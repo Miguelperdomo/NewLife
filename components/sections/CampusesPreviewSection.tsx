@@ -13,6 +13,8 @@ export async function CampusesPreviewSection() {
     return null;
   }
 
+  const preview = campuses.slice(0, 2);
+
   return (
     <section className="bg-slate-50 bg-dot-texture py-20 sm:py-28">
       <Container>
@@ -27,7 +29,7 @@ export async function CampusesPreviewSection() {
           />
 
           <div className="mx-auto mt-12 grid max-w-3xl gap-6 sm:grid-cols-2">
-            {campuses.map((campus, index) => (
+            {preview.map((campus, index) => (
               <CampusCard key={campus.slug} campus={campus} tone={index % 2 === 0 ? "brand" : "accent"} />
             ))}
           </div>

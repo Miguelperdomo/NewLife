@@ -9,6 +9,12 @@ import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 export async function MinistriesSection() {
   const [ministries, settings] = await Promise.all([getMinistries(), getPublicSiteSettings()]);
 
+  if (ministries.length === 0) {
+    return null;
+  }
+
+  const preview = ministries.slice(0, 3);
+
   return (
     <section className="bg-slate-50 bg-dot-texture py-20 sm:py-28">
       <Container>
@@ -23,7 +29,7 @@ export async function MinistriesSection() {
           />
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {ministries.map((ministry, index) => (
+            {preview.map((ministry, index) => (
               <MinistryCard key={ministry.slug} ministry={ministry} index={index} />
             ))}
           </div>

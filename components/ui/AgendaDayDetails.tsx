@@ -1,8 +1,9 @@
 import { CalendarDays, Church, Newspaper } from "lucide-react";
+import { AgendaCultoGroupItem } from "@/components/ui/AgendaCultoGroupItem";
 import { AgendaEventItem } from "@/components/ui/AgendaEventItem";
 import { Button } from "@/components/ui/Button";
-import { formatAgendaDayLabel } from "@/lib/agenda";
-import type { AgendaItem } from "@/lib/agenda";
+import { formatAgendaDayLabel, groupCultosByServicio } from "@/lib/agenda";
+import type { AgendaCultoGroup, AgendaItem } from "@/lib/agenda";
 
 function AgendaGroup({
   title,
@@ -30,9 +31,27 @@ function AgendaGroup({
   );
 }
 
+function AgendaCultosGroupSection({ title, icon: Icon, groups }: { title: string; icon: typeof Church; groups: AgendaCultoGroup[] }) {
+  if (groups.length === 0) return null;
+
+  return (
+    <div>
+      <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-400">
+        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+        {title}
+      </h4>
+      <div className="mt-3 space-y-2.5">
+        {groups.map((group) => (
+          <AgendaCultoGroupItem key={group.id} group={group} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function AgendaDayDetails({ date, items }: { date: string; items: AgendaItem[] }) {
   const dayNumber = Number(date.slice(-2));
-  const cultos = items.filter((item) => item.type === "culto");
+  const cultos = groupCultosByServicio(items.filter((item) => item.type === "culto"));
   const eventos = items.filter((item) => item.type === "evento" || item.type === "ministerio");
   const noticias = items.filter((item) => item.type === "noticia");
 
@@ -55,7 +74,7 @@ export function AgendaDayDetails({ date, items }: { date: string; items: AgendaI
         </div>
       ) : (
         <div className="mt-6 space-y-6">
-          <AgendaGroup title="Servicios del día" icon={Church} items={cultos} />
+          <AgendaCultosGroupSection title="Servicios del día" icon={Church} groups={cultos} />
           <AgendaGroup title="Eventos del día" icon={CalendarDays} items={eventos} />
           <AgendaGroup title="Noticias destacadas" icon={Newspaper} items={noticias} />
         </div>

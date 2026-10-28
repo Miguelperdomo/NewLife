@@ -21,12 +21,65 @@ export interface AgendaItem {
   /** Minutos desde medianoche, solo para ordenar los ítems de un mismo día. */
   sortMinutes: number;
   location?: string;
+  /** Link a la página de la sede (ej. /sedes/arena) — distinto de `href`, que es del evento/noticia. */
+  locationHref?: string;
   ministryLabel?: string;
   href?: string;
   imageSrc?: string;
   imageLabel?: string;
   isMultiDay?: boolean;
   dateRangeLabel?: string;
+}
+
+export interface AgendaCultoEntry {
+  location: string;
+  locationHref?: string;
+  time?: string;
+  sortMinutes: number;
+}
+
+export interface AgendaCultoGroup {
+  id: string;
+  title: string;
+  subtitle?: string;
+  sortMinutes: number;
+  entries: AgendaCultoEntry[];
+}
+
+/**
+ * Un mismo culto (mismo título, como "Reunión Juvenil") suele repetirse en
+ * varias sedes el mismo día, pero no siempre a la misma hora — sin agrupar,
+ * "Servicios del día" terminaba mostrando una tarjeta casi idéntica por
+ * cada sede. Se agrupan por título en una sola tarjeta, con cada sede y su
+ * propio horario como etiqueta.
+ */
+export function groupCultosByServicio(items: AgendaItem[]): AgendaCultoGroup[] {
+  const groups = new Map<string, AgendaCultoGroup>();
+  for (const item of items) {
+    const entry: AgendaCultoEntry = {
+      location: item.location ?? "",
+      locationHref: item.locationHref,
+      time: item.time,
+      sortMinutes: item.sortMinutes,
+    };
+    const existing = groups.get(item.title);
+    if (existing) {
+      existing.entries.push(entry);
+      existing.sortMinutes = Math.min(existing.sortMinutes, item.sortMinutes);
+    } else {
+      groups.set(item.title, {
+        id: item.id,
+        title: item.title,
+        subtitle: item.subtitle,
+        sortMinutes: item.sortMinutes,
+        entries: [entry],
+      });
+    }
+  }
+  for (const group of groups.values()) {
+    group.entries.sort((a, b) => a.sortMinutes - b.sortMinutes);
+  }
+  return Array.from(groups.values()).sort((a, b) => a.sortMinutes - b.sortMinutes);
 }
 
 export function toISODate(date: Date): string {
@@ -91,6 +144,7 @@ function recurringServiceItems(date: string, campuses: Campus[]): AgendaItem[] {
         time: formatEventTime(schedule.time),
         sortMinutes: hhmmToMinutes(schedule.time),
         location: campus.name,
+        locationHref: `/sedes/${campus.slug}`,
       }))
   );
 }
