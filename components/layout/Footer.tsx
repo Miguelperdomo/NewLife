@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
 import { SocialIcon } from "@/components/ui/SocialIcon";
@@ -149,19 +150,17 @@ export async function Footer() {
             </Link>
           </p>
         </Container>
-        <Container className="mt-3 text-center text-xs text-slate-600">
-          <p>
-            Diseñado y desarrollado por{" "}
-            <a
-              href="https://providentiatech.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-slate-400 transition-colors hover:text-white"
-            >
-              Providentia Tech
-            </a>{" "}
-            · Ibagué, Colombia
-          </p>
+        <Container className="mt-4 flex justify-center">
+          <a
+            href="https://providentiatech.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-2xl border border-accent-400/30 bg-accent-400/10 px-4 py-2.5 text-center text-xs text-slate-300 transition-colors hover:border-accent-400/60 hover:bg-accent-400/15 hover:text-white"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-accent-400" aria-hidden="true" />
+            Diseñado y desarrollado por <span className="font-semibold text-white">Providentia Tech</span>
+            <span className="text-slate-500">· Ibagué, Colombia</span>
+          </a>
         </Container>
       </div>
     </footer>
