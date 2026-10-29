@@ -29,6 +29,14 @@ export interface DonationInfo {
   daviplataNumber?: string;
 }
 
+// Nequi/Daviplata solo aceptan el número local de 10 dígitos — si en
+// Configuración lo guardaron con +57 o espacios, igual se muestra y se
+// copia limpio para que no falle al pegarlo en la app
+function localMobileNumber(raw: string): string {
+  const digits = raw.replace(/\D/g, "");
+  return digits.startsWith("57") && digits.length === 12 ? digits.slice(2) : digits;
+}
+
 type Visibility = "open" | "minimized" | "compact";
 type WidgetView = "main" | "options" | "donation";
 
@@ -330,8 +338,12 @@ function DonationView({
   ].filter((row): row is { label: string; value: string; copyable: boolean } => Boolean(row));
 
   const walletRows = [
-    donationInfo?.nequiNumber && { label: "Nequi", value: donationInfo.nequiNumber, copyable: true },
-    donationInfo?.daviplataNumber && { label: "Daviplata", value: donationInfo.daviplataNumber, copyable: true },
+    donationInfo?.nequiNumber && { label: "Nequi", value: localMobileNumber(donationInfo.nequiNumber), copyable: true },
+    donationInfo?.daviplataNumber && {
+      label: "Daviplata",
+      value: localMobileNumber(donationInfo.daviplataNumber),
+      copyable: true,
+    },
   ].filter((row): row is { label: string; value: string; copyable: boolean } => Boolean(row));
 
   return (

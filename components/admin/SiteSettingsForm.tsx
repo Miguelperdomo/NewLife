@@ -529,10 +529,10 @@ export function SiteSettingsForm({
           <p className="mt-0.5 text-xs text-slate-500">Solo el número de celular asociado a cada una.</p>
 
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
-            <FormField label="Nequi" htmlFor="nequiNumber" hint="Déjalo vacío si no tienes.">
+            <FormField label="Nequi" htmlFor="nequiNumber" hint="Solo los 10 dígitos, sin +57. Déjalo vacío si no tienes.">
               <input id="nequiNumber" className={inputClass} {...register("nequiNumber")} />
             </FormField>
-            <FormField label="Daviplata" htmlFor="daviplataNumber" hint="Déjalo vacío si no tienes.">
+            <FormField label="Daviplata" htmlFor="daviplataNumber" hint="Solo los 10 dígitos, sin +57. Déjalo vacío si no tienes.">
               <input id="daviplataNumber" className={inputClass} {...register("daviplataNumber")} />
             </FormField>
           </div>
