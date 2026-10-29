@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,19 @@ export function Modal({
   children: React.ReactNode;
   className?: string;
 }) {
+  // Se monta en document.body (vía portal) en vez de quedarse donde el JSX lo
+  // puso — si no, un ancestro con transform (ej. MagneticButton, que mueve el
+  // botón con el cursor) se convierte sin querer en el "contenedor" de este
+  // `fixed`, y el modal queda atrapado en esa cajita chica en vez de cubrir
+  // toda la pantalla. `mounted` evita el portal en el primer render de
+  // servidor, donde `document` no existe.
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     function onKeyDown(event: KeyboardEvent) {
@@ -26,9 +40,9 @@ export function Modal({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
+  return createPortal(
     // En celular ocupa toda la pantalla (nada de fondo borroso visible detrás,
     // como una pantalla nueva) — en pantallas grandes (sm:) vuelve a ser un
     // diálogo centrado y angosto, con el fondo borroso alrededor.
@@ -57,6 +71,7 @@ export function Modal({
         </div>
         <div className="mt-4">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

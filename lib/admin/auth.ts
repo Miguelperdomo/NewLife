@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { AdminSection } from "@/lib/admin/types";
 
@@ -70,4 +71,20 @@ export async function getAdminSession(): Promise<AdminSession | null> {
 
 export function hasSection(session: AdminSession, section: AdminSection): boolean {
   return session.sections.includes("full") || session.sections.includes(section);
+}
+
+/**
+ * Título de cada página del panel, usado vía `generateMetadata` (nunca un
+ * `export const metadata` fijo) — Next.js resuelve el <title> de la página
+ * antes de que layout.tsx/page.tsx alcancen a llamar notFound(), así que un
+ * título fijo como "Dashboard — Panel administrativo New Life" se filtraba en
+ * la pestaña del navegador incluso sin sesión, delatando que la URL sí existe.
+ * Con esto, sin sesión siempre se devuelve el mismo título genérico del 404.
+ */
+export async function adminMetadata(title: string): Promise<Metadata> {
+  const session = await getAdminSession();
+  if (!session) {
+    return { title: "Página no encontrada", robots: { index: false, follow: false } };
+  }
+  return { title: `${title} — Panel administrativo New Life`, robots: { index: false, follow: false } };
 }

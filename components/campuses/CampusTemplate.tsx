@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Clock, MapPin, MessageCircle, Navigation, Star } from "lucide-react";
 import { CampusJsonLd } from "@/components/campuses/CampusJsonLd";
+import { EventCard } from "@/components/events/EventCard";
 import { VisitCheckinWidget } from "@/components/sections/VisitCheckinWidget";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
@@ -10,7 +11,7 @@ import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/data/site";
 import { activeCampusAmenities } from "@/lib/campusAmenities";
-import { getCampuses, getMinistries, getPastorBySlug } from "@/lib/content";
+import { getCampuses, getMinistries, getPastorBySlug, getUpcomingEventsByCampus } from "@/lib/content";
 import { formatEventTime } from "@/lib/events";
 import { googleMapsDirectionsUrl, googleMapsEmbedUrl, googleMapsSearchUrl } from "@/lib/maps";
 import { dayOfWeekLabel, findNextService } from "@/lib/schedule";
@@ -42,11 +43,12 @@ function groupServicesByDay(services: ServiceSchedule[]): [number, ServiceSchedu
  */
 export async function CampusTemplate({ campus }: { campus: Campus }) {
   const services = campus.schedules ?? [];
-  const [pastor, settings, ministries, allCampuses] = await Promise.all([
+  const [pastor, settings, ministries, allCampuses, upcomingEvents] = await Promise.all([
     campus.leadPastorSlug ? getPastorBySlug(campus.leadPastorSlug) : Promise.resolve(undefined),
     getPublicSiteSettings(),
     getMinistries(),
     getCampuses(),
+    getUpcomingEventsByCampus(campus.slug),
   ]);
   const whatsappHref = buildWhatsAppLink(
     campus.whatsappNumber ?? settings?.whatsappNumber ?? siteConfig.whatsappNumber,
@@ -192,6 +194,23 @@ export async function CampusTemplate({ campus }: { campus: Campus }) {
                 </p>
               )}
             </div>
+
+            {upcomingEvents.length > 0 && (
+              <div>
+                <h2 className="font-heading text-2xl font-bold text-slate-900">Próximos eventos en este campus</h2>
+                <div className="mt-4 grid gap-6 sm:grid-cols-2">
+                  {upcomingEvents.map((event, index) => (
+                    <EventCard
+                      key={event.slug}
+                      event={event}
+                      ministries={ministries}
+                      campuses={allCampuses}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
             {campus.gallery && campus.gallery.length > 0 && (
               <div>

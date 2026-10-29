@@ -1,11 +1,10 @@
-import type { Metadata } from "next";
 import { SedesDashboard } from "@/components/admin/SedesDashboard";
+import { adminMetadata } from "@/lib/admin/auth";
 import { requireSection } from "@/lib/admin/requireSection";
 
-export const metadata: Metadata = {
-  title: "Sedes — Panel administrativo New Life",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  return adminMetadata("Sedes");
+}
 
 export default async function AdminSedesPage() {
   await requireSection("campuses");

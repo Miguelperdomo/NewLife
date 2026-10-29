@@ -1,11 +1,10 @@
-import type { Metadata } from "next";
 import { CampusEditFlow } from "@/components/admin/CampusEditFlow";
+import { adminMetadata } from "@/lib/admin/auth";
 import { requireSection } from "@/lib/admin/requireSection";
 
-export const metadata: Metadata = {
-  title: "Editar sede — Panel administrativo New Life",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  return adminMetadata("Editar sede");
+}
 
 export default async function EditCampusPage() {
   await requireSection("campuses");

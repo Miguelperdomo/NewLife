@@ -26,8 +26,10 @@ export interface Ministry {
   location: string;
   leader: string;
   imageLabel: string;
-  /** Ruta local de la foto/logo real, si ya se subió (ver /public/img). */
+  /** Ruta local de la foto/logo real, si ya se subió (ver /public/img). Se usa en la tarjeta de /ministerios. */
   imageSrc?: string;
+  /** Foto grande de la cabecera en /ministerios/[slug]. Si no se define, se cae a `imageSrc`. */
+  headerImageSrc?: string;
   social?: SocialLink[];
   /** WhatsApp propio de este ministerio — si se define, se usa en vez del WhatsApp general de la iglesia. */
   whatsapp?: string;
@@ -159,6 +161,8 @@ export interface ChurchEvent {
   registrationByWhatsApp?: boolean;
   /** Marcado como "Destacado" en el panel admin — lo usa, por ejemplo, la cuenta regresiva del Home. */
   featured?: boolean;
+  /** Distinto de `featured`: controla solo si aparece como anuncio grande en el Hero del Inicio. */
+  highlightHome?: boolean;
   /** Link externo de inscripción (ej. Google Forms) — si se define, el botón de inscripción lleva ahí en vez de abrir WhatsApp. */
   registrationUrl?: string;
   /** WhatsApp propio de este evento — si se define, el botón de inscripción lo usa en vez del WhatsApp general de la iglesia. */

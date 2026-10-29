@@ -42,6 +42,7 @@ export interface PublicSiteSettings {
   whatsappSocialEnabled: boolean;
   showMinistries: boolean;
   showLive: boolean;
+  isLiveManual: boolean;
   showEvents: boolean;
   showNews: boolean;
   showAgenda: boolean;
@@ -122,6 +123,7 @@ interface SettingsRow {
   whatsapp_social_enabled: boolean;
   show_ministries: boolean;
   show_live: boolean;
+  is_live_manual: boolean;
   show_events: boolean;
   show_news: boolean;
   show_agenda: boolean;
@@ -176,7 +178,7 @@ interface SettingsRow {
 }
 
 const SETTINGS_COLUMNS =
-  "church_name, description, phone, whatsapp_number, whatsapp_default_message, email, address, city, hero_tagline, founding_year, logo_url, favicon_url, primary_color, accent_color, facebook_url, facebook_enabled, instagram_url, instagram_enabled, youtube_url, youtube_enabled, tiktok_url, tiktok_enabled, whatsapp_social_url, whatsapp_social_enabled, show_ministries, show_live, show_events, show_news, show_agenda, show_campuses, show_help, seo_title, seo_description, seo_image_url, about_image_url, about_quienes_somos, about_mision, about_vision, about_valores, help_title, help_description, help_cta_label, help_options_title, first_time_eyebrow, first_time_title, first_time_description, first_time_cta_label, ministries_eyebrow, ministries_title, ministries_description, campuses_eyebrow, campuses_title, campuses_description, events_eyebrow, events_title, events_description, news_eyebrow, news_title, news_description, pastors_eyebrow, pastors_title, pastors_description, live_thumbnail_url, live_thumbnail_alt, privacy_policy, terms_of_service, maintenance_mode, donations_enabled, donation_title, donation_teaser, donation_description, bank_name, bank_account_type, bank_account_number, bank_account_holder, nequi_number, daviplata_number";
+  "church_name, description, phone, whatsapp_number, whatsapp_default_message, email, address, city, hero_tagline, founding_year, logo_url, favicon_url, primary_color, accent_color, facebook_url, facebook_enabled, instagram_url, instagram_enabled, youtube_url, youtube_enabled, tiktok_url, tiktok_enabled, whatsapp_social_url, whatsapp_social_enabled, show_ministries, show_live, is_live_manual, show_events, show_news, show_agenda, show_campuses, show_help, seo_title, seo_description, seo_image_url, about_image_url, about_quienes_somos, about_mision, about_vision, about_valores, help_title, help_description, help_cta_label, help_options_title, first_time_eyebrow, first_time_title, first_time_description, first_time_cta_label, ministries_eyebrow, ministries_title, ministries_description, campuses_eyebrow, campuses_title, campuses_description, events_eyebrow, events_title, events_description, news_eyebrow, news_title, news_description, pastors_eyebrow, pastors_title, pastors_description, live_thumbnail_url, live_thumbnail_alt, privacy_policy, terms_of_service, maintenance_mode, donations_enabled, donation_title, donation_teaser, donation_description, bank_name, bank_account_type, bank_account_number, bank_account_holder, nequi_number, daviplata_number";
 
 export const getPublicSiteSettings = cache(async (): Promise<PublicSiteSettings | null> => {
   const supabase = createPublicClient();
@@ -212,6 +214,7 @@ export const getPublicSiteSettings = cache(async (): Promise<PublicSiteSettings 
     whatsappSocialEnabled: row.whatsapp_social_enabled,
     showMinistries: row.show_ministries,
     showLive: row.show_live,
+    isLiveManual: row.is_live_manual,
     showEvents: row.show_events,
     showNews: row.show_news,
     showAgenda: row.show_agenda,

@@ -1,11 +1,10 @@
-import type { Metadata } from "next";
 import { ContentEditFlow } from "@/components/admin/ContentEditFlow";
+import { adminMetadata } from "@/lib/admin/auth";
 import { requireSection } from "@/lib/admin/requireSection";
 
-export const metadata: Metadata = {
-  title: "Editar contenido — Panel administrativo New Life",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  return adminMetadata("Editar contenido");
+}
 
 export default async function EditContentPage() {
   await requireSection("content");

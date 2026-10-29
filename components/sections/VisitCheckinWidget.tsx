@@ -7,6 +7,7 @@ import { Gift } from "lucide-react";
 import { AnimatedCheck } from "@/components/ui/AnimatedCheck";
 import { Button } from "@/components/ui/Button";
 import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
+import { HoneypotField } from "@/components/ui/HoneypotField";
 import { Modal } from "@/components/ui/Modal";
 import { nextSundayISO, submitVisitCheckin } from "@/lib/visitCheckins";
 import { visitCheckinFormSchema, type VisitCheckinFormValues } from "@/lib/schemas";
@@ -60,6 +61,7 @@ export function VisitCheckinWidget({ campuses }: { campuses: { slug: string; nam
       campus: campuses[0]?.name ?? "",
       visitDate: nextSundayISO(),
       isPastor: false,
+      website: "",
     },
   });
 
@@ -70,10 +72,24 @@ export function VisitCheckinWidget({ campuses }: { campuses: { slug: string; nam
 
   async function onSubmit(values: VisitCheckinFormValues) {
     setServerError(null);
+    const resetValues = {
+      name: "",
+      phone: "",
+      peopleCount: "1",
+      campus: campuses[0]?.name ?? "",
+      visitDate: nextSundayISO(),
+      isPastor: false,
+      website: "",
+    };
+    if (values.website) {
+      setSent(true);
+      reset(resetValues);
+      return;
+    }
     try {
       await submitVisitCheckin({ ...values, peopleCount: Number(values.peopleCount) });
       setSent(true);
-      reset({ name: "", phone: "", peopleCount: "1", campus: campuses[0]?.name ?? "", visitDate: nextSundayISO(), isPastor: false });
+      reset(resetValues);
     } catch {
       setServerError("No se pudo enviar. Intenta de nuevo en un momento.");
     }
@@ -103,6 +119,7 @@ export function VisitCheckinWidget({ campuses }: { campuses: { slug: string; nam
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <HoneypotField register={register} />
             <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
               <Gift className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               Si nos avisas, te tendremos en cuenta — te vamos a dar un obsequio al finalizar el servicio.

@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   LayoutGrid,
   MapPin,
+  Radio,
   Settings,
   UserPlus,
   Users,
@@ -31,6 +32,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: "Dashboard", href: "/admin", icon: LayoutGrid, exact: true, section: null, color: "text-slate-300", activeBg: "bg-white/10" },
   { label: "Contenido", href: "/admin/contenido", icon: LayoutDashboard, exact: false, section: "content", color: "text-amber-400", activeBg: "bg-amber-400/10" },
+  { label: "En vivo", href: "/admin/en-vivo", icon: Radio, exact: false, section: "settings", color: "text-red-400", activeBg: "bg-red-400/10" },
   { label: "Ministerios", href: "/admin/ministerios", icon: Users, exact: false, section: "ministries", color: "text-violet-400", activeBg: "bg-violet-400/10" },
   { label: "Sedes", href: "/admin/sedes", icon: MapPin, exact: false, section: "campuses", color: "text-teal-400", activeBg: "bg-teal-400/10" },
   { label: "Oración", href: "/admin/oracion", icon: HandHeart, exact: false, section: "prayer", color: "text-rose-400", activeBg: "bg-rose-400/10" },

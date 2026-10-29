@@ -16,6 +16,7 @@ export const ministryFormDefaults: MinistryFormValues = {
   shortDescription: "",
   description: "",
   imageSrc: "",
+  headerImageSrc: "",
   leader: "",
   whatsapp: "",
   registrationUrl: "",
@@ -109,8 +110,20 @@ export function MinistryForm({
       </FormSection>
 
       <FormSection title="Imagen" description="Opcional. Si no subes ninguna, se usa un color de marca.">
-        <FormField label="Imagen del ministerio" htmlFor="imageSrc">
+        <FormField
+          label="Imagen del ministerio"
+          htmlFor="imageSrc"
+          hint="Se usa en la tarjeta de /ministerios."
+        >
           <ImageUploadField control={control} name="imageSrc" folder="ministries" />
+        </FormField>
+
+        <FormField
+          label="Imagen grande (página del ministerio)"
+          htmlFor="headerImageSrc"
+          hint="Esta es la que se ve cuando abres el ministerio. Si no subes nada, se usa la misma foto de la tarjeta."
+        >
+          <ImageUploadField control={control} name="headerImageSrc" folder="ministries" />
         </FormField>
       </FormSection>
 

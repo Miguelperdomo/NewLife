@@ -20,6 +20,7 @@ interface MinistryRow {
   short_description: string;
   description: string;
   image_url: string | null;
+  header_image_url: string | null;
   leader: string | null;
   whatsapp: string | null;
   registration_url: string | null;
@@ -34,7 +35,7 @@ interface MinistryRow {
 }
 
 const SELECT_COLUMNS =
-  "id, slug, name, short_description, description, image_url, leader, whatsapp, registration_url, social, meeting_schedule, meeting_location, status, display_order, show_publicly, created_at, updated_at";
+  "id, slug, name, short_description, description, image_url, header_image_url, leader, whatsapp, registration_url, social, meeting_schedule, meeting_location, status, display_order, show_publicly, created_at, updated_at";
 
 /** `instagramUrl` del formulario admin <-> entrada "instagram" dentro del array `social` (jsonb). */
 function socialFromInstagramUrl(instagramUrl: string | undefined): SocialLink[] {
@@ -49,6 +50,7 @@ function rowToMinistry(row: MinistryRow): AdminMinistry {
     shortDescription: row.short_description,
     description: row.description,
     imageSrc: row.image_url ?? undefined,
+    headerImageSrc: row.header_image_url ?? undefined,
     leader: row.leader ?? undefined,
     whatsapp: row.whatsapp ?? undefined,
     registrationUrl: row.registration_url ?? undefined,
@@ -64,11 +66,12 @@ function rowToMinistry(row: MinistryRow): AdminMinistry {
 }
 
 /** Campos legibles para el informe de Actividad — mismos datos que guarda el formulario, con nombres en español. */
-function ministryDetails(input: { name?: string; shortDescription?: string; description?: string; leader?: string; whatsapp?: string; registrationUrl?: string; instagramUrl?: string; meetingSchedule?: string; meetingLocation?: string; status?: string; displayOrder?: number; showPublicly?: boolean }): Record<string, string | undefined> {
+function ministryDetails(input: { name?: string; shortDescription?: string; description?: string; headerImageSrc?: string; leader?: string; whatsapp?: string; registrationUrl?: string; instagramUrl?: string; meetingSchedule?: string; meetingLocation?: string; status?: string; displayOrder?: number; showPublicly?: boolean }): Record<string, string | undefined> {
   return {
     Nombre: input.name,
     "Descripción corta": input.shortDescription,
     "Descripción completa": input.description,
+    "Imagen grande": input.headerImageSrc ? "Sí" : undefined,
     Líder: input.leader,
     WhatsApp: input.whatsapp,
     "Enlace de inscripción": input.registrationUrl,
@@ -109,6 +112,7 @@ export async function createMinistry(
       short_description: input.shortDescription,
       description: input.description,
       image_url: input.imageSrc || null,
+      header_image_url: input.headerImageSrc || null,
       leader: input.leader || null,
       whatsapp: input.whatsapp || null,
       registration_url: input.registrationUrl || null,
@@ -147,6 +151,7 @@ export async function updateMinistry(
     short_description: input.shortDescription,
     description: input.description,
     image_url: input.imageSrc || null,
+    header_image_url: input.headerImageSrc || null,
     leader: input.leader || null,
     whatsapp: input.whatsapp || null,
     registration_url: input.registrationUrl || null,
@@ -188,6 +193,7 @@ export async function duplicateMinistry(
       short_description: ministry.shortDescription,
       description: ministry.description,
       image_url: ministry.imageSrc || null,
+      header_image_url: ministry.headerImageSrc || null,
       leader: ministry.leader || null,
       whatsapp: ministry.whatsapp || null,
       registration_url: ministry.registrationUrl || null,

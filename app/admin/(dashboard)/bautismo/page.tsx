@@ -1,11 +1,10 @@
-import type { Metadata } from "next";
 import { BaptismRequestsDashboard } from "@/components/admin/BaptismRequestsDashboard";
+import { adminMetadata } from "@/lib/admin/auth";
 import { requireSection } from "@/lib/admin/requireSection";
 
-export const metadata: Metadata = {
-  title: "Quiero bautizarme — Panel administrativo New Life",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  return adminMetadata("Quiero bautizarme");
+}
 
 export default async function AdminBaptismPage() {
   await requireSection("baptism");

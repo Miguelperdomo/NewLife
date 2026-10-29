@@ -49,14 +49,14 @@ export function MinistryTemplate({
       <section className="relative overflow-hidden bg-slate-950">
         <PlaceholderImage
           label={ministry.imageLabel}
-          src={ministry.imageSrc}
+          src={ministry.headerImageSrc || ministry.imageSrc}
           fit="contain"
           tone="dark"
           className="absolute inset-0 h-full w-full"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/50" />
 
-        <Container className="relative flex min-h-[45vh] flex-col items-center justify-center gap-4 py-24 text-center text-white">
+        <Container className="relative flex min-h-[50vh] flex-col items-center justify-center gap-4 py-24 text-center text-white sm:min-h-[55vh]">
           <Link
             href="/ministerios"
             className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-white/70 hover:text-white"

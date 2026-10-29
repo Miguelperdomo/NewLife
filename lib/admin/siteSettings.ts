@@ -39,6 +39,7 @@ interface SiteSettingsRow {
   whatsapp_social_enabled: boolean;
   show_ministries: boolean;
   show_live: boolean;
+  is_live_manual: boolean;
   show_events: boolean;
   show_news: boolean;
   show_agenda: boolean;
@@ -124,6 +125,7 @@ function rowToSettings(row: SiteSettingsRow): AdminSiteSettings {
     whatsappSocialEnabled: row.whatsapp_social_enabled,
     showMinistries: row.show_ministries,
     showLive: row.show_live,
+    isLiveManual: row.is_live_manual,
     showEvents: row.show_events,
     showNews: row.show_news,
     showAgenda: row.show_agenda,
@@ -211,6 +213,7 @@ function settingsToRow(settings: AdminSiteSettings) {
     whatsapp_social_enabled: settings.whatsappSocialEnabled,
     show_ministries: settings.showMinistries,
     show_live: settings.showLive,
+    is_live_manual: settings.isLiveManual,
     show_events: settings.showEvents,
     show_news: settings.showNews,
     show_agenda: settings.showAgenda,
@@ -309,6 +312,7 @@ function defaultSiteSettings(): AdminSiteSettings {
 
     showMinistries: true,
     showLive: true,
+    isLiveManual: false,
     showEvents: true,
     showNews: true,
     showAgenda: true,

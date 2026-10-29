@@ -119,6 +119,8 @@ export interface AdminEvent extends AdminContentBase {
   registrationUrl?: string;
   whatsappNumber?: string;
   capacity?: number;
+  /** Distinto de `featured`: controla solo si aparece como anuncio grande en el Hero del Inicio. */
+  highlightHome?: boolean;
 }
 
 export interface AdminNews extends AdminContentBase {
@@ -175,7 +177,10 @@ export interface AdminMinistry {
   name: string;
   shortDescription: string;
   description: string;
+  /** Foto de la tarjeta en /ministerios. */
   imageSrc?: string;
+  /** Foto grande de la cabecera en /ministerios/[slug]. Si no se define, la capa pública cae a `imageSrc`. */
+  headerImageSrc?: string;
   /**
    * Texto libre por ahora. data/pastors.ts modela la cabeza de liderazgo de
    * la iglesia (pastores/tiers), no a los responsables de cada ministerio —
@@ -249,6 +254,8 @@ export interface AdminSiteSettings {
   // Qué secciones se muestran en el Home.
   showMinistries: boolean;
   showLive: boolean;
+  /** Interruptor manual: "sí estamos transmitiendo ahora" — se combina con la detección automática de YouTube (ver lib/youtubeLive.ts); cualquiera de los dos en true adelanta el Hero a modo "en vivo". */
+  isLiveManual: boolean;
   showEvents: boolean;
   showNews: boolean;
   showAgenda: boolean;

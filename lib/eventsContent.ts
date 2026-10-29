@@ -26,6 +26,7 @@ interface EventRow {
   location: string | null;
   applies_to_all_ministries: boolean;
   featured: boolean | null;
+  highlight_home: boolean | null;
   registration_url: string | null;
   whatsapp_number: string | null;
   created_at: string;
@@ -34,7 +35,7 @@ interface EventRow {
 }
 
 const EVENT_COLUMNS =
-  "slug, title, short_description, description, category, image_url, start_date, end_date, start_time, end_time, location, applies_to_all_ministries, featured, registration_url, whatsapp_number, created_at, campus:campuses(slug), event_ministries(ministry:ministries(slug))";
+  "slug, title, short_description, description, category, image_url, start_date, end_date, start_time, end_time, location, applies_to_all_ministries, featured, highlight_home, registration_url, whatsapp_number, created_at, campus:campuses(slug), event_ministries(ministry:ministries(slug))";
 
 function rowToEvent(row: EventRow): ChurchEvent {
   const ministrySlugs = (row.event_ministries ?? [])
@@ -63,6 +64,7 @@ function rowToEvent(row: EventRow): ChurchEvent {
     campus: row.campus?.slug,
     location: row.location ?? undefined,
     featured: row.featured ?? false,
+    highlightHome: row.highlight_home ?? false,
     registrationUrl: row.registration_url ?? undefined,
     whatsappNumber: row.whatsapp_number ?? undefined,
     createdAt: row.created_at,
@@ -108,6 +110,13 @@ export async function getUpcomingEvents(limit?: number): Promise<ChurchEvent[]> 
 export async function getUpcomingEventsByMinistry(ministrySlug: string, limit?: number): Promise<ChurchEvent[]> {
   const upcoming = await getUpcomingEvents();
   const filtered = upcoming.filter((event) => event.ministry === ministrySlug);
+  return limit ? filtered.slice(0, limit) : filtered;
+}
+
+/** Eventos próximos en una sede específica (la que se eligió como "Sede" al crear el evento). */
+export async function getUpcomingEventsByCampus(campusSlug: string, limit?: number): Promise<ChurchEvent[]> {
+  const upcoming = await getUpcomingEvents();
+  const filtered = upcoming.filter((event) => event.campus === campusSlug);
   return limit ? filtered.slice(0, limit) : filtered;
 }
 

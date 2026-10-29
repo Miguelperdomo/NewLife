@@ -6,6 +6,11 @@ export interface LiveStatus {
   checkedAt: number;
 }
 
+/** Miniatura real del video en vivo detectado — mismo patrón de URL que usa YouTube en todos lados, no hace falta otra llamada a la API. */
+export function youtubeThumbnailUrl(videoId: string): string {
+  return `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+}
+
 let cache: LiveStatus | null = null;
 
 /**

@@ -1,11 +1,10 @@
-import type { Metadata } from "next";
 import { UsersDashboard } from "@/components/admin/UsersDashboard";
+import { adminMetadata } from "@/lib/admin/auth";
 import { requireSection } from "@/lib/admin/requireSection";
 
-export const metadata: Metadata = {
-  title: "Usuarios — Panel administrativo New Life",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  return adminMetadata("Usuarios");
+}
 
 export default async function AdminUsersPage() {
   const session = await requireSection("full");

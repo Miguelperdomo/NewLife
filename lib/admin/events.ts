@@ -36,6 +36,7 @@ interface EventRow {
   whatsapp_number: string | null;
   capacity: number | null;
   featured: boolean;
+  highlight_home: boolean;
   created_at: string;
   updated_at: string;
   campus: { slug: string } | null;
@@ -43,7 +44,7 @@ interface EventRow {
 }
 
 const SELECT_COLUMNS =
-  "id, slug, title, short_description, description, category, image_url, status, publish_at, start_date, end_date, start_time, end_time, location, applies_to_all_ministries, registration_url, whatsapp_number, capacity, featured, created_at, updated_at, campus:campuses(slug), event_ministries(ministry:ministries(slug))";
+  "id, slug, title, short_description, description, category, image_url, status, publish_at, start_date, end_date, start_time, end_time, location, applies_to_all_ministries, registration_url, whatsapp_number, capacity, featured, highlight_home, created_at, updated_at, campus:campuses(slug), event_ministries(ministry:ministries(slug))";
 
 function rowToEvent(row: EventRow): AdminEvent {
   const ministrySlugs = (row.event_ministries ?? [])
@@ -77,6 +78,7 @@ function rowToEvent(row: EventRow): AdminEvent {
     whatsappNumber: row.whatsapp_number ?? undefined,
     capacity: row.capacity ?? undefined,
     featured: row.featured,
+    highlightHome: row.highlight_home,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -128,6 +130,7 @@ function eventDetails(input: {
   whatsappNumber?: string;
   capacity?: number;
   featured?: boolean;
+  highlightHome?: boolean;
 }): Record<string, string | undefined> {
   const audienceLabel =
     input.audience?.mode === "all"
@@ -154,6 +157,7 @@ function eventDetails(input: {
     WhatsApp: input.whatsappNumber,
     Cupos: input.capacity !== undefined ? String(input.capacity) : undefined,
     Destacado: input.featured !== undefined ? (input.featured ? "Sí" : "No") : undefined,
+    "Mostrar en el Inicio": input.highlightHome !== undefined ? (input.highlightHome ? "Sí" : "No") : undefined,
   };
 }
 
@@ -205,6 +209,7 @@ export async function createEvent(input: NewEventInput, existingSlugs: string[])
       whatsapp_number: input.whatsappNumber || null,
       capacity: input.capacity ?? null,
       featured: input.featured ?? false,
+      highlight_home: input.highlightHome ?? false,
     })
     .select("id")
     .single();
@@ -241,6 +246,7 @@ export async function updateEvent(id: string, input: Partial<AdminEvent>): Promi
     whatsapp_number: input.whatsappNumber || null,
     capacity: input.capacity ?? null,
     featured: input.featured ?? false,
+    highlight_home: input.highlightHome ?? false,
     registration_url: input.registrationUrl || null,
     registration_mode: input.registrationUrl ? "url" : "whatsapp",
     campus_id: await resolveCampusId(input.campus),
@@ -288,6 +294,10 @@ export async function duplicateEvent(event: AdminEvent, existingSlugs: string[])
       whatsapp_number: event.whatsappNumber || null,
       capacity: event.capacity ?? null,
       featured: event.featured ?? false,
+      // Una copia arranca sin destacar en el Hero a propósito — evita que de
+      // repente aparezcan dos anuncios del "mismo" evento mientras alguien
+      // termina de editar la copia.
+      highlight_home: false,
     })
     .select("id")
     .single();

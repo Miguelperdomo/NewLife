@@ -42,6 +42,7 @@ export const eventFormSchema = z
       .optional()
       .refine((value) => !value || /^\d+$/.test(value), "Debe ser un número entero positivo."),
     featured: z.boolean().optional(),
+    highlightHome: z.boolean().optional(),
   })
   .refine((data) => !data.endDate || data.endDate >= data.startDate, {
     message: "La fecha de finalización debe ser igual o posterior a la de inicio.",
@@ -121,6 +122,7 @@ export const ministryFormSchema = z.object({
     .max(160, "Máximo 160 caracteres."),
   description: z.string().trim().min(20, "La descripción completa es obligatoria."),
   imageSrc: z.string().trim().optional(),
+  headerImageSrc: z.string().trim().optional(),
   leader: z.string().trim().optional(),
   whatsapp: z.string().trim().optional(),
   registrationUrl: z.string().trim().optional(),
@@ -185,6 +187,7 @@ export const siteSettingsFormSchema = z.object({
 
   showMinistries: z.boolean(),
   showLive: z.boolean(),
+  isLiveManual: z.boolean(),
   showEvents: z.boolean(),
   showNews: z.boolean(),
   showAgenda: z.boolean(),
@@ -297,6 +300,7 @@ export const adminSiteSettingsSchema = z.object({
 
   showMinistries: z.boolean(),
   showLive: z.boolean(),
+  isLiveManual: z.boolean(),
   showEvents: z.boolean(),
   showNews: z.boolean(),
   showAgenda: z.boolean(),
@@ -430,3 +434,11 @@ export const createAdminUserFormSchema = z.object({
 });
 
 export type CreateAdminUserFormValues = z.infer<typeof createAdminUserFormSchema>;
+
+export const liveSettingsFormSchema = z.object({
+  isLiveManual: z.boolean(),
+  liveThumbnailUrl: z.string().trim().optional(),
+  liveThumbnailAlt: z.string().trim().optional(),
+});
+
+export type LiveSettingsFormValues = z.infer<typeof liveSettingsFormSchema>;

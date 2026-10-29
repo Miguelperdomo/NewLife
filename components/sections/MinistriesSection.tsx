@@ -28,7 +28,10 @@ export async function MinistriesSection() {
             }
           />
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Sin sm:grid-cols-2 a propósito: con exactamente 3 tarjetas, 2
+              columnas dejaba la tercera sola en una fila a medias — mejor
+              pasar directo de 1 columna a 3 en lg:. */}
+          <div className="mt-12 grid gap-6 lg:grid-cols-3">
             {preview.map((ministry, index) => (
               <MinistryCard key={ministry.slug} ministry={ministry} index={index} />
             ))}

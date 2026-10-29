@@ -1,14 +1,12 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ShieldOff } from "lucide-react";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
-import { getAdminSession } from "@/lib/admin/auth";
+import { adminMetadata, getAdminSession } from "@/lib/admin/auth";
 
-export const metadata: Metadata = {
-  title: "Dashboard — Panel administrativo New Life",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  return adminMetadata("Dashboard");
+}
 
 export default async function AdminDashboardPage() {
   const session = await getAdminSession();

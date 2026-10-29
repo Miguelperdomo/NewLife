@@ -1,12 +1,11 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ContentDashboard } from "@/components/admin/ContentDashboard";
+import { adminMetadata } from "@/lib/admin/auth";
 import { requireSection } from "@/lib/admin/requireSection";
 
-export const metadata: Metadata = {
-  title: "Contenido — Panel administrativo New Life",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  return adminMetadata("Contenido");
+}
 
 export default async function AdminContentPage() {
   await requireSection("content");

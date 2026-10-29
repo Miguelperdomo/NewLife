@@ -15,6 +15,11 @@ export function eventInscriptionMessage(eventName: string, ministryName?: string
   return ministryName ? `${base} Ministerio: ${ministryName}.` : base;
 }
 
+/** Como eventInscriptionMessage, pero con el nombre de la persona y la sede que eligió — usado por el formulario "Quiero asistir" del Hero. */
+export function eventAttendanceMessage(eventName: string, name: string, campusName: string) {
+  return `Hola New Life, soy ${name} y quiero asistir al evento "${eventName}" en ${campusName}.`;
+}
+
 export function campusInquiryMessage(campusName: string) {
   return `Hola New Life, tengo una pregunta sobre la ${campusName}.`;
 }

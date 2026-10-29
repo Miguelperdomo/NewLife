@@ -19,13 +19,14 @@ interface MinistryRow {
   meeting_location: string | null;
   leader: string | null;
   image_url: string | null;
+  header_image_url: string | null;
   social: SocialLink[] | null;
   whatsapp: string | null;
   registration_url: string | null;
 }
 
 const MINISTRY_COLUMNS =
-  "slug, name, short_description, description, audience, meeting_schedule, meeting_location, leader, image_url, social, whatsapp, registration_url";
+  "slug, name, short_description, description, audience, meeting_schedule, meeting_location, leader, image_url, header_image_url, social, whatsapp, registration_url";
 
 function rowToMinistry(row: MinistryRow): Ministry {
   return {
@@ -39,6 +40,7 @@ function rowToMinistry(row: MinistryRow): Ministry {
     leader: row.leader ?? "",
     imageLabel: row.name,
     imageSrc: row.image_url ?? undefined,
+    headerImageSrc: row.header_image_url ?? undefined,
     social: row.social && row.social.length > 0 ? row.social : undefined,
     whatsapp: row.whatsapp ?? undefined,
     registrationUrl: row.registration_url ?? undefined,
@@ -307,6 +309,7 @@ export {
   getEventBySlug,
   getUpcomingEvents,
   getUpcomingEventsByMinistry,
+  getUpcomingEventsByCampus,
   getRelatedEvents,
 } from "@/lib/eventsContent";
 export { getNews, getNewsBySlug, getFeaturedNews, getRelatedNews } from "@/lib/newsContent";

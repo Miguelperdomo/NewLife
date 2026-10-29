@@ -417,19 +417,6 @@ export function SiteSettingsForm({
       */}
 
       <FormSection
-        title="Bloque «En vivo» — miniatura"
-        description="La imagen que se muestra en el Home junto al botón para ver la transmisión."
-        defaultOpen={false}
-      >
-        <FormField label="Imagen" htmlFor="liveThumbnailUrl">
-          <ImageUploadField control={control} name="liveThumbnailUrl" folder="settings" />
-        </FormField>
-        <FormField label="Texto alternativo" htmlFor="liveThumbnailAlt" hint="Describe la imagen, para accesibilidad.">
-          <input id="liveThumbnailAlt" className={inputClass} {...register("liveThumbnailAlt")} />
-        </FormField>
-      </FormSection>
-
-      <FormSection
         title="Legal"
         description="Se publican en /privacidad y /terminos, con link automático en el pie de página."
         defaultOpen={false}

@@ -16,6 +16,7 @@ function toPreviewMinistry(ministry: AdminMinistry): Ministry {
     leader: ministry.leader || "Por definir",
     imageLabel: ministry.name || "Ministerio",
     imageSrc: ministry.imageSrc,
+    headerImageSrc: ministry.headerImageSrc,
   };
 }
 

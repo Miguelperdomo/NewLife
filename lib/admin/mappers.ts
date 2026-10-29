@@ -48,6 +48,7 @@ export function eventFormValuesToInput(values: EventFormValues): NewEventInput {
     whatsappNumber: orUndefined(values.whatsappNumber),
     capacity: values.capacity ? Number(values.capacity) : undefined,
     featured: values.featured,
+    highlightHome: values.highlightHome,
   };
 }
 
@@ -72,6 +73,7 @@ export function eventToFormValues(event: AdminEvent): EventFormValues {
     whatsappNumber: event.whatsappNumber ?? "",
     capacity: event.capacity ? String(event.capacity) : "",
     featured: event.featured,
+    highlightHome: event.highlightHome,
   };
 }
 
@@ -161,6 +163,7 @@ export function ministryFormValuesToInput(values: MinistryFormValues): NewMinist
     shortDescription: values.shortDescription,
     description: values.description,
     imageSrc: orUndefined(values.imageSrc),
+    headerImageSrc: orUndefined(values.headerImageSrc),
     leader: orUndefined(values.leader),
     whatsapp: orUndefined(values.whatsapp),
     registrationUrl: orUndefined(values.registrationUrl),
@@ -181,6 +184,7 @@ export function ministryToFormValues(ministry: AdminMinistry): MinistryFormValue
     shortDescription: ministry.shortDescription,
     description: ministry.description,
     imageSrc: ministry.imageSrc ?? "",
+    headerImageSrc: ministry.headerImageSrc ?? "",
     leader: ministry.leader ?? "",
     whatsapp: ministry.whatsapp ?? "",
     registrationUrl: ministry.registrationUrl ?? "",
@@ -225,6 +229,7 @@ export function siteSettingsFormValuesToInput(values: SiteSettingsFormValues): S
 
     showMinistries: values.showMinistries,
     showLive: values.showLive,
+    isLiveManual: values.isLiveManual,
     showEvents: values.showEvents,
     showNews: values.showNews,
     showAgenda: values.showAgenda,
@@ -325,6 +330,7 @@ export function siteSettingsToFormValues(settings: AdminSiteSettings): SiteSetti
 
     showMinistries: settings.showMinistries,
     showLive: settings.showLive,
+    isLiveManual: settings.isLiveManual,
     showEvents: settings.showEvents,
     showNews: settings.showNews,
     showAgenda: settings.showAgenda,

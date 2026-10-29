@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { Droplet, HandHeart } from "lucide-react";
 import { AnimatedCheck } from "@/components/ui/AnimatedCheck";
 import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
+import { HoneypotField } from "@/components/ui/HoneypotField";
 import { MoodPrayerJar } from "@/components/sections/MoodPrayerJar";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -59,11 +60,18 @@ function PrayerModalBody({ onClose }: { onClose: () => void }) {
     formState: { errors, isSubmitting },
   } = useForm<PrayerRequestFormValues>({
     resolver: zodResolver(prayerRequestFormSchema),
-    defaultValues: { name: "", message: "", contact: "" },
+    defaultValues: { name: "", message: "", contact: "", website: "" },
   });
 
   async function onSubmit(values: PrayerRequestFormValues) {
     setServerError(null);
+    // Honeypot: si un bot llenó este campo invisible, fingimos éxito sin
+    // enviar nada de verdad.
+    if (values.website) {
+      setSent(true);
+      reset();
+      return;
+    }
     try {
       await submitPrayerRequest(values);
       setSent(true);
@@ -89,6 +97,7 @@ function PrayerModalBody({ onClose }: { onClose: () => void }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <HoneypotField register={register} />
       <p className="text-sm text-slate-500">Cuéntanos qué necesitas — es privado, solo lo lee nuestro equipo pastoral.</p>
 
       <div>
@@ -144,11 +153,16 @@ function BaptismModalBody({ onClose }: { onClose: () => void }) {
     formState: { errors, isSubmitting },
   } = useForm<BaptismRequestFormValues>({
     resolver: zodResolver(baptismRequestFormSchema),
-    defaultValues: { name: "", phone: "" },
+    defaultValues: { name: "", phone: "", website: "" },
   });
 
   async function onSubmit(values: BaptismRequestFormValues) {
     setServerError(null);
+    if (values.website) {
+      setSent(true);
+      reset();
+      return;
+    }
     try {
       await submitBaptismRequest(values);
       setSent(true);
@@ -174,6 +188,7 @@ function BaptismModalBody({ onClose }: { onClose: () => void }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <HoneypotField register={register} />
       <p className="text-sm text-slate-500">Déjanos tus datos y alguien de nuestro equipo te va a escribir para contarte cómo sigue.</p>
 
       <div>

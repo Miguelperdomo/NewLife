@@ -1,11 +1,10 @@
-import type { Metadata } from "next";
 import { ConfiguracionDashboard } from "@/components/admin/ConfiguracionDashboard";
+import { adminMetadata } from "@/lib/admin/auth";
 import { requireSection } from "@/lib/admin/requireSection";
 
-export const metadata: Metadata = {
-  title: "Configuración — Panel administrativo New Life",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  return adminMetadata("Configuración");
+}
 
 export default async function AdminConfiguracionPage() {
   await requireSection("settings");

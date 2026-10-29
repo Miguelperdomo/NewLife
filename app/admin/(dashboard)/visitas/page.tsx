@@ -1,11 +1,10 @@
-import type { Metadata } from "next";
 import { VisitCheckinsDashboard } from "@/components/admin/VisitCheckinsDashboard";
+import { adminMetadata } from "@/lib/admin/auth";
 import { requireSection } from "@/lib/admin/requireSection";
 
-export const metadata: Metadata = {
-  title: "Primera visita — Panel administrativo New Life",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  return adminMetadata("Primera visita");
+}
 
 export default async function AdminVisitsPage() {
   await requireSection("visits");

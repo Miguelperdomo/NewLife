@@ -32,6 +32,7 @@ export const eventFormDefaults: EventFormValues = {
   whatsappNumber: "",
   capacity: undefined,
   featured: false,
+  highlightHome: false,
 };
 
 export function EventForm({
@@ -135,10 +136,25 @@ export function EventForm({
             </FormField>
           )}
 
-          <FormField label="Evento destacado" htmlFor="featured">
+          <FormField
+            label="Evento destacado"
+            htmlFor="featured"
+            hint="Aparece en la cuenta regresiva grande de 'Próximos eventos'."
+          >
             <label className="mt-1.5 flex items-center gap-2 text-sm text-slate-600">
               <input id="featured" type="checkbox" className="h-4 w-4 rounded" {...register("featured")} />
               Mostrar como destacado
+            </label>
+          </FormField>
+
+          <FormField
+            label="Mostrar en el Inicio"
+            htmlFor="highlightHome"
+            hint="Aparece como anuncio grande en el Hero, antes que el resto de la página — independiente de 'Evento destacado'."
+          >
+            <label className="mt-1.5 flex items-center gap-2 text-sm text-slate-600">
+              <input id="highlightHome" type="checkbox" className="h-4 w-4 rounded" {...register("highlightHome")} />
+              Sí, mostrar en el Inicio
             </label>
           </FormField>
         </div>

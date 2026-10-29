@@ -15,21 +15,19 @@ import { getCampuses, getHelpOptions, getMinistries } from "@/lib/content";
 import { getEvents } from "@/lib/eventsContent";
 import { getNews } from "@/lib/newsContent";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
-import { getLiveStatus } from "@/lib/youtubeLive";
 
 export default async function Home() {
   // AgendaSection es interactiva ("use client") y no puede pedirle datos a
   // Supabase ella misma en medio del render — se los resuelve el Home (de
   // servidor) y se los pasa. El resto de secciones se piden sus propios
   // datos por su cuenta (son componentes de servidor async).
-  const [ministries, campuses, settings, events, news, helpOptions, liveStatus] = await Promise.all([
+  const [ministries, campuses, settings, events, news, helpOptions] = await Promise.all([
     getMinistries(),
     getCampuses(),
     getPublicSiteSettings(),
     getEvents(),
     getNews(),
     getHelpOptions(),
-    getLiveStatus(),
   ]);
 
   // Interruptores de Configuración > Página principal. Si todavía no se ha
@@ -44,15 +42,11 @@ export default async function Home() {
     help: settings?.showHelp ?? true,
   };
 
-  // Si está transmitiendo en vivo ahora mismo, "En vivo" se adelanta a ser lo
-  // primero que se ve al entrar (antes incluso del Hero) — nadie tiene que
-  // bajar para encontrarlo. Fuera de ese momento, queda en su lugar de
-  // siempre, más abajo.
-  const showLiveFirst = show.live && liveStatus.isLive;
-
   return (
     <>
-      {showLiveFirst && <LiveSection />}
+      {/* El Hero decide solo si toca mostrar "en vivo", un evento destacado,
+          o el Hero normal (ver components/sections/Hero.tsx) — ya no hace
+          falta adelantar LiveSection por fuera. */}
       <Hero />
       <WaveDivider className="bg-slate-50" fillClassName="text-slate-950" />
       <FirstTimeSection />
@@ -60,7 +54,7 @@ export default async function Home() {
       <DailyVerseCard />
       <PersonalStepsSection />
       {show.ministries && <MinistriesSection />}
-      {show.live && !showLiveFirst && (
+      {show.live && (
         <>
           <WaveDivider className="bg-slate-950" fillClassName="text-slate-50" />
           <LiveSection />
