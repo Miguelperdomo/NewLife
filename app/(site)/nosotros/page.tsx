@@ -12,10 +12,9 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { siteConfig, socialLinks } from "@/data/site";
 import { activeCampusAmenities } from "@/lib/campusAmenities";
-import { getCampuses } from "@/lib/content";
+import { getCampuses, getPastors } from "@/lib/content";
 import { formatEventTime } from "@/lib/events";
 import { googleMapsDirectionsUrl } from "@/lib/maps";
-import { getPastors } from "@/lib/pastors";
 import { buildOpenGraphMetadata } from "@/lib/seo";
 import { dayOfWeekLabel, findNextService } from "@/lib/schedule";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
@@ -41,8 +40,8 @@ const FALLBACK_TEXT: Record<"quienesSomos" | "mision" | "vision" | "valores", st
 };
 
 export default async function NosotrosPage() {
-  const [settings, campuses] = await Promise.all([getPublicSiteSettings(), getCampuses()]);
-  const apostle = getPastors()[0];
+  const [settings, campuses, pastors] = await Promise.all([getPublicSiteSettings(), getCampuses(), getPastors()]);
+  const apostle = pastors[0];
 
   // "Visítanos" usa la sede marcada como principal; si no hay ninguna, cae a
   // la dirección de Configuración para no dejar la sección vacía.
