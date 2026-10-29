@@ -4,18 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-/**
- * Barra delgada de progreso al navegar entre páginas (como YouTube/Notion) —
- * puramente de percepción, no mide el avance real de la carga. Arranca al
- * detectar un click en un link interno (captura en el documento, para no
- * tener que tocar cada <Link> del sitio) y se completa cuando cambia la ruta
- * (usePathname), que es el único momento en que el App Router confirma que
- * la navegación terminó.
- */
-// Tope de seguridad: si por lo que sea nunca llega la confirmación de que la
-// ruta cambió (ej. un link a la misma página con distinto query string, que
-// no dispara usePathname()), la barra igual se completa sola en vez de
-// quedarse pegada a medio camino para siempre.
+// barra de progreso al navegar (como YouTube/Notion) — es solo percepción,
+// no mide carga real. Arranca al detectar click en un link interno (captura
+// en el documento) y se completa cuando cambia la ruta.
+// tope de seguridad por si nunca llega la confirmación del cambio de ruta
 const MAX_DURATION_MS = 4000;
 
 export function RouteProgressBar() {

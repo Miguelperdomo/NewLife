@@ -1,6 +1,6 @@
 import { createPublicClient } from "@/lib/supabase/publicClient";
 
-/** El próximo domingo (hoy mismo si hoy ya es domingo) — valor por defecto del formulario. */
+/** próximo domingo (hoy si ya es domingo), default del formulario */
 export function nextSundayISO(): string {
   const today = new Date();
   const daysUntilSunday = (7 - today.getDay()) % 7;
@@ -9,10 +9,7 @@ export function nextSundayISO(): string {
   return sunday.toISOString().slice(0, 10);
 }
 
-/**
- * Envía un "Avísanos que vienes" desde el sitio público — sin sesión. RLS en
- * `visit_checkins` solo deja insertar (nunca leer).
- */
+// "Avísanos que vienes", sin sesión. RLS solo deja insertar, no leer.
 export async function submitVisitCheckin(input: {
   name: string;
   phone: string;

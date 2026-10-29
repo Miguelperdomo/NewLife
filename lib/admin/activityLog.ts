@@ -1,22 +1,11 @@
 import { createClient } from "@/lib/supabase/client";
 import type { AdminActivityLogEntry } from "@/lib/admin/types";
 
-/**
- * Deja constancia de una acción (crear/editar/archivar/eliminar...) en
- * `admin_activity_log` — pensado sobre todo para cuando un administrador con
- * permisos limitados (ej. solo Ministerios) hace un cambio: quien tiene
- * "Todo" puede ver qué se hizo, sin tener que confiar a ciegas. Se llama al
- * final de cada función que guarda algo en lib/admin/*.ts.
- *
- * `details` es opcional a propósito — no todas las acciones tienen campos
- * que valga la pena detallar (ej. archivar no cambia ningún dato, solo el
- * estado, que ya va en el resumen). Cuando se pasa, cada entrada se muestra
- * en el informe completo al hacer clic sobre el registro.
- *
- * Silencioso a propósito: si falla (ej. sin conexión), NO debe tumbar la
- * acción real que el administrador sí alcanzó a hacer — perder el registro
- * es mejor que fingir que la acción en sí también falló.
- */
+// Registra la acción en admin_activity_log para que un admin con "Todo"
+// pueda ver qué hicieron los que tienen permisos limitados. Se llama al
+// final de cada función que guarda algo en lib/admin/*.ts.
+// Si falla (sin conexión, etc) no tumba la acción real — mejor perder el
+// registro que hacerle creer al admin que su cambio no se guardó.
 export async function logActivity(summary: string, details?: Record<string, string | undefined>): Promise<void> {
   try {
     const supabase = createClient();
@@ -28,8 +17,7 @@ export async function logActivity(summary: string, details?: Record<string, stri
     const { data: row } = await supabase.from("admins").select("name").eq("id", user.id).maybeSingle();
     const adminName = (row as { name: string | null } | null)?.name || user.email || "Administrador";
 
-    // Se descartan los campos vacíos/sin valor — un informe con "Resumen: —"
-    // en cada fila no le dice nada a quien lo está leyendo.
+    // quitamos los vacíos, si no el informe queda lleno de "—"
     const cleanDetails = details
       ? Object.fromEntries(
           Object.entries(details).filter(([, value]) => value !== undefined && value !== null && value !== "")
@@ -43,7 +31,7 @@ export async function logActivity(summary: string, details?: Record<string, stri
       details: cleanDetails && Object.keys(cleanDetails).length > 0 ? cleanDetails : null,
     });
   } catch {
-    // Silencioso — ver comentario de arriba.
+    // silencioso a propósito, ver arriba
   }
 }
 
@@ -75,7 +63,7 @@ export async function loadActivityLog(): Promise<AdminActivityLogEntry[]> {
   }));
 }
 
-/** Borra uno o varios registros de Actividad — solo puede hacerlo quien tiene "Todo" (RLS). */
+/** Solo puede borrar quien tiene "Todo" (lo filtra RLS). */
 export async function removeActivityLogEntries(ids: number[]): Promise<void> {
   if (ids.length === 0) return;
   const supabase = createClient();
@@ -85,12 +73,8 @@ export async function removeActivityLogEntries(ids: number[]): Promise<void> {
 
 const EXPORT_MAX_ENTRIES = 2000;
 
-/**
- * Igual que loadActivityLog(), pero para exportar: sin el límite de 50 de la
- * vista en pantalla (hasta 2000, de sobra para el historial de una iglesia) y
- * con filtros de fecha/administrador aplicados en la consulta misma, no en
- * el navegador.
- */
+// Para exportar: sin el límite de 50 de la vista en pantalla (hasta 2000),
+// y los filtros van en la consulta, no en el navegador.
 export async function loadActivityLogForExport(filters: {
   from?: string;
   to?: string;

@@ -3,12 +3,9 @@ import { Container } from "@/components/ui/Container";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 
-/**
- * Banner del Hero "en vivo" — texto a la izquierda, foto con marca de agua y
- * texto vertical a la derecha. El Hero de "evento destacado" usa su propio
- * diseño de anuncio de imagen completa (ver EventAnnouncementBanner). El
- * Hero normal (sin nada que destacar) no usa esto, sigue como siempre.
- */
+// banner "en vivo": texto a la izquierda, foto a la derecha. el evento
+// destacado usa su propio diseño (EventAnnouncementBanner); el Hero normal
+// no usa nada de esto
 export function PromoHeroBanner({
   imageSrc,
   imageLabel,

@@ -3,10 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { getDailyVerse } from "@/lib/content";
 
-/**
- * Pequeña pausa espiritual dentro del Home: el versículo del día. Contenido
- * en data/verses.ts vía getDailyVerse() — este componente solo presenta.
- */
+// solo presenta — el versículo sale de getDailyVerse() (data/verses.ts)
 export function DailyVerseCard() {
   const verse = getDailyVerse();
 

@@ -9,12 +9,7 @@ interface SiteSettingsState {
   isReady: boolean;
 }
 
-/**
- * Único punto de acceso a Configuración — ahora respaldado por la tabla
- * `site_settings` de Supabase (singleton) en vez de localStorage. Mismo
- * patrón que antes (nada más toca la capa de datos directamente), solo que
- * cargar/guardar ahora es asíncrono.
- */
+// Único punto de acceso a Configuración (singleton en site_settings).
 export function useAdminSiteSettings() {
   const [{ settings, isReady }, setState] = useState<SiteSettingsState>({ settings: null, isReady: false });
 

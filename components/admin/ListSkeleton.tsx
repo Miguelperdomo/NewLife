@@ -1,4 +1,4 @@
-/** Reemplaza el "Cargando…" plano mientras una lista del panel trae sus datos — cajas grises con el pulso de carga, con la forma aproximada de una fila real. */
+// skeleton de carga para listas del panel, en vez del "Cargando..." plano
 export function ListSkeleton({ rows = 4 }: { rows?: number }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">

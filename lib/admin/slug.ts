@@ -1,8 +1,5 @@
-/**
- * Utilidades de slug compartidas por los hooks del admin (Contenido, Sedes,
- * Ministerios...). Antes vivían duplicadas dentro de cada hook; al sumar un
- * tercer módulo que las necesita, se extraen aquí una sola vez.
- */
+// Utilidades de slug compartidas (Contenido, Sedes, Ministerios...). Antes
+// estaban duplicadas en cada hook, las sacamos de una vez para acá.
 export function slugify(text: string) {
   return text
     .toLowerCase()

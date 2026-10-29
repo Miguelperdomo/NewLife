@@ -14,12 +14,8 @@ interface ImpactCountsRow {
   visit_count: number | string;
 }
 
-/**
- * Totales de Oración/Bautismo/Primera visita para mostrar en el Home — solo
- * el número, nunca las filas (nombres, mensajes, teléfonos siguen privados).
- * Usa get_impact_counts(), una función de base de datos que sí puede contar
- * esas tablas aunque su RLS no deje leerlas directo desde el sitio público.
- */
+// Solo el número para el Home (nombres/teléfonos siguen privados). Usa la
+// función de BD get_impact_counts(), que puede contar aunque RLS no deje leer directo.
 export async function getImpactStats(): Promise<ImpactStats> {
   const supabase = createPublicClient();
   const { data, error } = await supabase.rpc("get_impact_counts").maybeSingle();

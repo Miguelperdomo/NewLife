@@ -1,4 +1,4 @@
-/** Check que se dibuja solo (círculo, luego el palomazo) en vez de aparecer de golpe — para confirmaciones de "guardado con éxito". */
+// Check animado: primero el círculo, luego el palomazo. Lo uso en los "guardado con éxito".
 export function AnimatedCheck({ className = "h-10 w-10 text-emerald-500" }: { className?: string }) {
   return (
     <svg viewBox="0 0 52 52" className={className} fill="none" aria-hidden="true">

@@ -10,9 +10,8 @@ import { getHelpOptionIcon } from "@/lib/helpOptionIcons";
 import type { HelpOption } from "@/lib/types";
 import { buildWhatsAppLink, helpInquiryMessage } from "@/lib/whatsapp";
 
-// Respaldo mientras Configuración no tenga ninguna opción guardada — la
-// donación queda aparte (ver hasDonationInfo más abajo, tiene su propia
-// vista dedicada), así que aquí solo van las otras 5 formas de ayudar.
+// fallback mientras Configuración no tenga opciones guardadas — la donación
+// tiene su propia vista (ver hasDonationInfo abajo), acá van las otras 5
 const FALLBACK_OPTIONS: HelpOption[] = fallbackHelpOptions
   .filter((option) => option.slug !== "donacion")
   .map((option) => ({
@@ -37,22 +36,20 @@ const CROSSFADE_MS = 150;
 const AUTO_MINIMIZE_MS = 4000;
 
 function defaultVisibility(): Visibility {
-  // En móvil arranca minimizado para no tapar botones importantes del Hero;
-  // en pantallas más grandes abre directo. No se persiste entre recargas.
+  // en móvil arranca minimizado para no tapar el Hero; en desktop abre directo
   return window.innerWidth < 640 ? "minimized" : "open";
 }
 
-/** Pequeño crossfade genérico: mantiene el valor anterior visible mientras
- * se desvanece, luego cambia al nuevo y lo desvanece de vuelta a la vista. */
+// crossfade genérico: deja el valor viejo visible mientras se desvanece,
+// cambia al nuevo, y lo trae de vuelta
 function useCrossfade<T>(value: T) {
   const [displayed, setDisplayed] = useState(value);
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     if (value === displayed) return;
-    // Excepción deliberada: iniciar el fade-out es justamente "reaccionar a
-    // un cambio externo con un efecto en el tiempo", el caso de uso real de
-    // un efecto — no hay forma de derivarlo durante el render.
+    // esto sí es "reaccionar a un cambio externo con un efecto" de verdad,
+    // no se puede derivar en el render
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setVisible(false);
     const timeout = setTimeout(() => {
@@ -238,7 +235,7 @@ function CopyRow({ label, value }: { label: string; value: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Silencioso: si el navegador bloquea el portapapeles, la persona igual ve el dato y puede copiarlo a mano.
+      // si el navegador bloquea el portapapeles, igual se ve el dato para copiarlo a mano
     }
   }
 
@@ -260,7 +257,7 @@ function CopyRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-/** Solo muestra el dato, sin botón de copiar — para lo que se lee, no se pega en otra app (banco, tipo de cuenta, titular). */
+// solo muestra el dato, sin botón de copiar (banco, tipo de cuenta, titular — no se pegan en otra app)
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
@@ -315,9 +312,8 @@ function DonationView({
   donationTitle: string;
   donationDescription: string;
 }) {
-  // Agrupadas a propósito: cuenta bancaria y billeteras digitales son cosas
-  // distintas para quien va a donar, así que se muestran en bloques
-  // separados en vez de una sola lista plana donde se confunden entre sí.
+  // separadas a propósito: cuenta bancaria y billeteras digitales no son lo
+  // mismo para quien va a donar
   const bankRows = [
     donationInfo?.bankName && { label: "Banco", value: donationInfo.bankName, copyable: false },
     donationInfo?.bankAccountType && {
@@ -376,16 +372,11 @@ function DonationView({
   );
 }
 
-/**
- * Widget flotante de ayuda/donaciones del Home. Cada opción abre WhatsApp con
- * un mensaje ya escrito — nada de pagos ni formularios propios todavía
- * (salvo la donación, con su propia vista de datos bancarios). Todo el
- * texto y las opciones vienen de Configuración; si todavía no se ha
- * guardado nada ahí, cae al contenido de ejemplo de data/help.ts. El estado
- * (abierto/minimizado/compacto) no se persiste: siempre arranca con el
- * valor por defecto según el ancho de pantalla, y siempre tiene una forma
- * visible de reabrirse (nunca desaparece del todo).
- */
+// widget flotante de ayuda/donaciones. cada opción abre WhatsApp con un
+// mensaje ya armado (menos donación, que tiene su propia vista). texto y
+// opciones vienen de Configuración, si no hay nada cae al ejemplo de
+// data/help.ts. el estado no se guarda entre recargas, pero siempre hay
+// forma de reabrir el widget
 export function HelpWidget({
   whatsappNumber,
   donationInfo,
@@ -427,9 +418,8 @@ export function HelpWidget({
   const { displayed: displayedVisibility, visible: visibilityVisible } = useCrossfade(visibility);
   const { displayed: displayedView, visible: viewVisible } = useCrossfade(view);
 
-  // En cuanto la persona toca los controles (minimizar/cerrar/reabrir/Escape)
-  // se desactiva para siempre el auto-minimizado: es solo una "vitrina" para
-  // quien no interactúa, nunca debe pelearse con una acción manual.
+  // si la persona toca cualquier control (minimizar/cerrar/Escape) se apaga
+  // el auto-minimizado para siempre — es solo una vitrina para quien no interactúa
   const userInteractedRef = useRef(false);
 
   function setVisibilityFromUser(next: Visibility) {
@@ -438,9 +428,8 @@ export function HelpWidget({
   }
 
   useEffect(() => {
-    // Excepción deliberada, igual que en useAdminContent: window.innerWidth
-    // no existe en el render de servidor, así que se lee una sola vez tras
-    // el montaje para no romper la hidratación.
+    // window.innerWidth no existe en el servidor, se lee una vez montado
+    // para no romper la hidratación (mismo caso que useAdminContent)
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setVisibility(defaultVisibility());
     setReady(true);
@@ -464,11 +453,9 @@ export function HelpWidget({
   }, [visibility]);
 
   useEffect(() => {
-    // Se programa una sola vez, justo tras montar (depende únicamente de
-    // `ready`): muestra el panel grande unos segundos como "vitrina" y luego
-    // se minimiza solo — igual que si alguien presionara "Minimizar". Si para
-    // entonces ya no sigue "open", o la persona ya tocó los controles
-    // (userInteractedRef), el updater funcional no hace nada.
+    // se programa una sola vez al montar: muestra el panel unos segundos
+    // y luego se minimiza solo, salvo que ya no esté "open" o la persona
+    // ya haya tocado algo
     if (!ready) return;
     const timeout = setTimeout(() => {
       setVisibility((current) =>

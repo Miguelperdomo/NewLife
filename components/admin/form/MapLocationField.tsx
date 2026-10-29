@@ -45,15 +45,13 @@ function MapQueryInput({ field }: { field: ControllerRenderProps<CampusFormValue
     }
   }
 
-  // Se resuelve automáticamente poco después de pegar (debounce), sin
-  // esperar a que la persona haga clic afuera del campo — antes solo pasaba
-  // al perder el foco (onBlur), lo que se sentía más lento de lo necesario.
+  // resuelve con debounce al pegar, sin esperar a que pierda el foco (antes era onBlur y se sentía lento)
   useEffect(() => {
     const value = field.value?.trim();
     if (!value || !looksLikeGoogleMapsUrl(value)) return;
     const timeout = setTimeout(() => resolveValue(value), AUTO_RESOLVE_DELAY_MS);
     return () => clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo debe re-disparar cuando cambia el texto pegado, no por identidad de `resolveValue`/`field` en cada render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo debe correr cuando cambia el texto pegado
   }, [field.value]);
 
   const previewQuery = field.value?.trim();
@@ -104,15 +102,9 @@ function MapQueryInput({ field }: { field: ControllerRenderProps<CampusFormValue
   );
 }
 
-/**
- * Campo de ubicación con minimapa en vivo. Si lo que se pega es un link de
- * Google Maps (largo o corto — los cortos como maps.app.goo.gl se expanden
- * vía app/api/resolve-maps-link), se le sacan las coordenadas y esas quedan
- * como el valor real guardado (más confiable para el mapa público que el
- * link entero). Si es una dirección escrita a mano, se deja tal cual — ya
- * funcionaba antes. El mapa de abajo se actualiza solo, para que la persona
- * confirme visualmente ANTES de guardar que el punto es el correcto.
- */
+// campo de ubicación con minimapa en vivo. Si pegan un link de Google Maps (corto o
+// largo) se le sacan las coordenadas y eso es lo que se guarda; si es una dirección
+// escrita a mano se deja tal cual. El mapa se actualiza solo para confirmar antes de guardar.
 export function MapLocationField({ control }: { control: Control<CampusFormValues> }) {
   return <Controller control={control} name="mapQuery" render={({ field }) => <MapQueryInput field={field} />} />;
 }

@@ -1,7 +1,5 @@
-/**
- * Enlaces para "compartir esta página" a cualquier contacto/red — distinto de
- * lib/whatsapp.ts, que construye mensajes dirigidos al WhatsApp de New Life.
- */
+// Links de "compartir esta página" — distinto de lib/whatsapp.ts, que arma
+// mensajes dirigidos al WhatsApp de New Life.
 export function buildWhatsAppShareLink(message: string) {
   return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }

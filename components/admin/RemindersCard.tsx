@@ -18,13 +18,7 @@ function daysBetween(fromISO: string, toISO: string): number {
   return Math.round((to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000));
 }
 
-/**
- * Avisos automáticos de cosas que se pueden quedar olvidadas por descuido —
- * no son errores, solo detalles que conviene revisar antes de que se vuelvan
- * un problema (un evento sin foto a días de ser, un borrador que lleva
- * semanas sin publicarse). Se calculan solo con lo que ya cargó el Dashboard,
- * sin pedir nada nuevo a Supabase.
- */
+// avisos de cosas que se pueden quedar olvidadas (evento sin foto, borrador viejo), calculado con lo que ya cargó el Dashboard
 export function RemindersCard({ events, news }: { events: AdminEvent[]; news: AdminNews[] }) {
   const todayISO = new Date().toISOString().slice(0, 10);
 

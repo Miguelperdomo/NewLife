@@ -5,12 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { useGlobalSearchResults } from "@/lib/admin/useGlobalSearchResults";
 
-/**
- * Buscador global del panel — un solo campo para encontrar cualquier
- * ministerio, sede, evento o noticia por su nombre, sin tener que entrar
- * módulo por módulo. Junta lo que ya cargaron los hooks de cada módulo (no
- * pide nada nuevo a Supabase) y filtra en el navegador.
- */
+// busca en lo que ya cargaron los hooks de cada módulo, no pide nada nuevo a Supabase
 export function GlobalSearch() {
   const router = useRouter();
   const { query, setQuery, results } = useGlobalSearchResults();

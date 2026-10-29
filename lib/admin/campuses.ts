@@ -3,16 +3,11 @@ import { logActivity } from "@/lib/admin/activityLog";
 import { slugify, uniqueSlug } from "@/lib/admin/slug";
 import type { AdminCampus, AdminServiceSchedule } from "@/lib/admin/types";
 
-/**
- * Capa de datos de Sedes contra Supabase (tabla `campuses`). `leadPastorSlug`
- * es solo la forma que usa el formulario (dropdown por slug, igual que
- * antes) — en la base de datos la relación real es `lead_pastor_id` (FK a
- * `pastors.id`), así que aquí se resuelve slug -> id al guardar y se trae
- * de vuelta vía el embed `pastor:pastors(slug)` al leer. Mientras el módulo
- * de Pastores no esté migrado a Supabase (próximo paso), esa resolución no
- * encuentra ningún pastor y el campo queda vacío — no rompe nada, empieza a
- * funcionar solo en cuanto Pastores tenga sus propias filas.
- */
+// Capa de datos de Sedes (tabla `campuses`). leadPastorSlug es solo lo que
+// usa el formulario (dropdown por slug) — en la BD la relación real es
+// lead_pastor_id (FK a pastors.id), se resuelve slug -> id al guardar y se
+// trae de vuelta con el embed pastor:pastors(slug) al leer. Mientras
+// Pastores no esté en Supabase esto no encuentra nada y queda vacío, no rompe.
 interface ScheduleRow {
   day_of_week: number;
   service_time: string;
@@ -66,8 +61,8 @@ function rowToCampus(row: CampusRow): AdminCampus {
       .slice()
       .sort((a, b) => a.display_order - b.display_order)
       .map((schedule) => ({
-        // service_time viene de Postgres como "HH:MM:SS" — se recorta a "HH:MM" para que calce con <input type="time">.
         dayOfWeek: schedule.day_of_week,
+        // postgres devuelve "HH:MM:SS", lo recortamos para el <input type="time">
         time: schedule.service_time.slice(0, 5),
         title: schedule.title,
         description: schedule.description ?? undefined,
@@ -78,7 +73,7 @@ function rowToCampus(row: CampusRow): AdminCampus {
   };
 }
 
-/** slug -> id de ministerios, solo para los slugs pedidos — mismo patrón que resolveMinistryIds en lib/admin/events.ts. */
+/** slug -> id de ministerios pedidos (mismo patrón que resolveMinistryIds en events.ts). */
 async function resolveMinistryIdsBySlug(slugs: string[]): Promise<Map<string, string>> {
   if (slugs.length === 0) return new Map();
   const supabase = createClient();
@@ -86,7 +81,7 @@ async function resolveMinistryIdsBySlug(slugs: string[]): Promise<Map<string, st
   return new Map(((data as { id: string; slug: string }[] | null) ?? []).map((row) => [row.slug, row.id]));
 }
 
-/** Reemplaza por completo los horarios de una sede — mismo patrón que syncEventMinistries. */
+/** Reemplaza todos los horarios de la sede (mismo patrón que syncEventMinistries). */
 async function syncCampusSchedules(campusId: string, schedules: AdminServiceSchedule[]) {
   const supabase = createClient();
   await supabase.from("campus_service_schedules").delete().eq("campus_id", campusId);
@@ -116,7 +111,7 @@ async function resolvePastorId(slug: string | undefined) {
   return (data as { id: string } | null)?.id ?? null;
 }
 
-/** Campos legibles para el informe de Actividad. */
+/** Para el informe de Actividad. */
 function campusDetails(input: { name?: string; fullName?: string; address?: string; city?: string; mapQuery?: string; isMain?: boolean; whatsappNumber?: string; schedules?: AdminServiceSchedule[] }): Record<string, string | undefined> {
   return {
     "Nombre corto": input.name,
@@ -155,9 +150,8 @@ export async function createCampus(input: NewCampusInput, existingSlugs: string[
   const slug = uniqueSlug(input.slug || slugify(input.name), existingSlugs, "sede");
   const leadPastorId = await resolvePastorId(input.leadPastorSlug);
 
-  // Solo puede haber una sede principal — se desmarca cualquier otra ANTES
-  // de insertar esta, porque el índice único de la base de datos no permite
-  // dos filas con is_main = true al mismo tiempo, ni un instante.
+  // solo puede haber una sede principal, desmarcamos la otra ANTES de
+  // insertar porque el índice único no permite dos is_main=true a la vez
   if (input.isMain) {
     await supabase.from("campuses").update({ is_main: false }).eq("is_main", true);
   }
@@ -195,13 +189,10 @@ export async function updateCampus(id: string, input: Partial<AdminCampus>): Pro
     await supabase.from("campuses").update({ is_main: false }).eq("is_main", true).neq("id", id);
   }
 
-  // Sin condicionales "si viene definido": en la práctica este método
-  // siempre se llama con el formulario completo (ver CampusEditFlow), así
-  // que usar `!== undefined` como filtro tenía un bug real — un campo
-  // opcional que el usuario deja vacío se convierte en `undefined` en
-  // lib/admin/mappers.ts (orUndefined), y con el filtro antiguo eso hacía
-  // que ese campo NUNCA se borrara en la base de datos, aunque en pantalla
-  // se viera vacío. Escribir siempre todos los campos es lo correcto aquí.
+  // no filtramos por "si viene definido": este método siempre recibe el
+  // formulario completo, y filtrar por !== undefined tenía un bug real — un
+  // campo que el usuario deja vacío llega como undefined (orUndefined en
+  // mappers.ts) y con ese filtro nunca se borraba en la BD
   const patch: Record<string, unknown> = {
     name: input.name,
     full_name: input.fullName,

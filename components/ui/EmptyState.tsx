@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import { cn } from "@/lib/utils";
 
-/** Estado vacío reutilizable — un ícono + texto en vez de solo un párrafo en una caja punteada. */
+// estado vacío genérico: ícono + texto en una caja punteada
 export function EmptyState({
   icon: Icon,
   title,

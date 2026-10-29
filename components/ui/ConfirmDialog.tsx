@@ -3,10 +3,7 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "./Button";
 import { Modal } from "./Modal";
 
-/**
- * Reemplazo visual de window.confirm() — mismo lenguaje que el resto del
- * panel admin en vez del diálogo nativo del navegador.
- */
+// reemplazo de window.confirm() con el mismo look del panel admin
 export function ConfirmDialog({
   open,
   onCancel,

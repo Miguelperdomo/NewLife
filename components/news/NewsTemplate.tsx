@@ -11,11 +11,8 @@ import { formatNewsDate, formatReadingTime } from "@/lib/news";
 import type { NewsArticle } from "@/lib/types";
 import { FeaturedBadge } from "./FeaturedBadge";
 
-/**
- * Plantilla de /noticias/[slug]. A propósito NO copia la estructura de
- * EventTemplate/MinistryTemplate (sin sidebar ni botón de WhatsApp) — una
- * noticia es un artículo de lectura, no una ficha con logística.
- */
+// a propósito no copia EventTemplate/MinistryTemplate (sin sidebar ni
+// WhatsApp) — una noticia se lee, no tiene logística que mostrar
 export async function NewsTemplate({ article }: { article: NewsArticle }) {
   const related = await getRelatedNews(article, 3);
   const paragraphs = article.content.split("\n\n");

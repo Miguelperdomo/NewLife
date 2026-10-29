@@ -8,8 +8,7 @@ import { getAdminSession } from "@/lib/admin/auth";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getAdminSession();
-  // 404, no redirect: redirigir a la URL secreta de login la revelaría a
-  // cualquiera que visite /admin sin sesión. Un 404 no da ninguna pista.
+  // 404 y no redirect, para no delatar la URL de login a quien entre sin sesión
   if (!session) notFound();
 
   return (

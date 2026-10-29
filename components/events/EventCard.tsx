@@ -13,13 +13,9 @@ const NEW_WITHIN_DAYS = 3;
 
 const tones = ["brand", "accent", "dark"] as const;
 
-/**
- * Ministerios y Sedes se cargan aparte (Supabase, async) y se buscan aquí
- * por slug — EventCard se usa dentro de componentes "use client" (EventList,
- * EventCalendarView), que no pueden pedirle datos a Supabase en medio del
- * render, así que quien SÍ puede (un ancestro de servidor) los resuelve una
- * sola vez y los pasa hacia abajo.
- */
+// ministries/campuses llegan ya resueltos y se buscan por slug acá — EventCard vive
+// dentro de "use client" (EventList, EventCalendarView) que no puede pedirle nada
+// a Supabase en medio del render, así que lo resuelve un ancestro de servidor
 export function EventCard({
   event,
   ministries = [],

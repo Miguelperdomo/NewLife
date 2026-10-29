@@ -3,14 +3,10 @@ import { logActivity } from "@/lib/admin/activityLog";
 import { slugify, uniqueSlug } from "@/lib/admin/slug";
 import type { AdminNews } from "@/lib/admin/types";
 
-/**
- * Capa de datos de Noticias contra Supabase (tabla `news`). La categoría es
- * texto libre en el formulario (igual que siempre), pero en la base de datos
- * es una relación real con `news_categories` — al guardar, si la categoría
- * escrita no existe todavía, se crea sola (sin que haya que ir a otra
- * pantalla a crearla primero). Mismo patrón de "resolver por nombre/slug"
- * que ya se usa para el pastor responsable de una sede.
- */
+// Capa de datos de Noticias (tabla news). La categoría es texto libre en el
+// formulario pero en la BD es una relación con news_categories — si al
+// guardar la categoría no existe, se crea sola. Mismo patrón que el pastor
+// responsable de una sede.
 interface NewsRow {
   id: string;
   slug: string;
@@ -70,8 +66,7 @@ async function resolveCategoryId(categoryName?: string): Promise<string | null> 
     .single();
 
   if (error || !created) {
-    // Posible carrera (otra pestaña creó la misma categoría justo antes) —
-    // se reintenta la búsqueda una vez antes de rendirse.
+    // puede que otra pestaña haya creado la misma categoría justo antes, reintentamos una vez
     const { data: retry } = await supabase
       .from("news_categories")
       .select("id")
@@ -83,7 +78,7 @@ async function resolveCategoryId(categoryName?: string): Promise<string | null> 
   return (created as { id: string }).id;
 }
 
-/** Campos legibles para el informe de Actividad. */
+/** Para el informe de Actividad. */
 function newsDetails(input: {
   title?: string;
   summary?: string;
@@ -135,9 +130,7 @@ export async function createNews(input: NewNewsInput, existingSlugs: string[]): 
     .insert({
       slug,
       title: input.title,
-      // La base de datos exige un resumen — si el formulario lo deja vacío
-      // (es opcional ahí), se usa el inicio del contenido, igual que ya
-      // hacía la vista previa (ver components/admin/ContentPreview.tsx).
+      // la BD exige resumen; si el formulario lo deja vacío usamos el inicio del contenido
       summary: input.summary?.trim() || input.content.slice(0, 140),
       content: input.content,
       image_url: input.imageSrc || null,
@@ -159,10 +152,7 @@ export async function createNews(input: NewNewsInput, existingSlugs: string[]): 
 export async function updateNews(id: string, input: Partial<AdminNews>): Promise<AdminNews> {
   const supabase = createClient();
 
-  // Sin condicionales "si viene definido": mismo motivo que en
-  // events/campuses/ministries — este método siempre se llama con el
-  // formulario completo, y saltarse campos "vacíos" impedía borrarlos de
-  // verdad en la base de datos.
+  // mismo motivo que en events/campuses/ministries, sin filtro "si viene definido"
   const patch: Record<string, unknown> = {
     title: input.title,
     summary: input.summary?.trim() || (input.content ? input.content.slice(0, 140) : undefined),

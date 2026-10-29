@@ -11,7 +11,7 @@ interface PrayerRequestRow {
   created_at: string;
 }
 
-/** RLS solo deja ver esto a quien tenga el permiso "prayer" (o "full"). */
+/** Solo lo ve quien tenga el permiso "prayer" (o "full"), por RLS. */
 export async function loadPrayerRequests(): Promise<AdminPrayerRequest[]> {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -37,7 +37,7 @@ export async function setPrayerRequestStatus(id: number, status: "nueva" | "aten
   await logActivity(status === "atendida" ? "marcó un pedido de oración como atendido" : "marcó un pedido de oración como nuevo otra vez");
 }
 
-/** Borra uno o varios pedidos de oración ya atendidos. */
+/** Borra pedidos de oración ya atendidos. */
 export async function removePrayerRequests(ids: number[]): Promise<void> {
   if (ids.length === 0) return;
   const supabase = createClient();

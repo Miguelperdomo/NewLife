@@ -20,7 +20,7 @@ export function DashboardStats({
   totalNews: number;
   totalDrafts: number;
   totalScheduled: number;
-  /** Opcionales: solo se agrega su tarjeta si se pasan (no cambia el layout de quien no las use). */
+  /** opcionales, solo agregan su tarjeta si vienen */
   totalMinistries?: number;
   totalCampuses?: number;
 }) {

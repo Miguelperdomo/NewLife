@@ -20,7 +20,7 @@ function SectionCheckboxes({
 }: {
   value: AdminSection[];
   onChange: (next: AdminSection[]) => void;
-  /** Muestra la casilla extra "Sin permisos" — solo tiene sentido al EDITAR a alguien que ya existe, no al crear uno nuevo. */
+  /** casilla "Sin permisos", solo tiene sentido al editar, no al crear */
   allowNone?: boolean;
 }) {
   function toggle(section: AdminSection) {

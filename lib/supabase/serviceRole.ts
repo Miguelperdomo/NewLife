@@ -1,16 +1,11 @@
 import "server-only";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-/**
- * Cliente con la llave de servicio de Supabase — se salta RLS por completo y
- * puede crear/borrar cuentas de verdad (auth.admin.*). Por eso:
- * - `import "server-only"` hace que el build truene si algo intenta meter
- *   este archivo en el paquete del navegador, aunque sea sin querer.
- * - Solo se usa desde Route Handlers (app/api/admin/...), nunca desde un
- *   Server Component ni un Client Component.
- * - La llave vive en `SUPABASE_SERVICE_ROLE_KEY` (sin prefijo NEXT_PUBLIC_,
- *   así que Next.js nunca la incluye en el código que llega al navegador).
- */
+// Cliente con la llave de servicio — se salta RLS por completo y puede
+// crear/borrar cuentas de verdad (auth.admin.*). CUIDADO con esto:
+// - "server-only" hace tronar el build si esto se cuela al bundle del navegador.
+// - Solo se usa desde Route Handlers (app/api/admin/...).
+// - La llave no tiene prefijo NEXT_PUBLIC_, así que nunca llega al navegador.
 export function createServiceRoleClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

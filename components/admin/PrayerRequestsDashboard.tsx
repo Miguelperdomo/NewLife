@@ -14,8 +14,7 @@ import { buildWhatsAppLink, normalizeWhatsAppNumber, prayerRequestFollowUpMessag
 
 const dateFormatter = new Intl.DateTimeFormat("es-CO", { dateStyle: "medium", timeStyle: "short" });
 
-// A partir de este largo, el mensaje se recorta en la lista (3 líneas) y se
-// agrega "Ver más" — mensajes cortos se muestran completos, sin botón de más.
+// a partir de este largo se recorta a 3 líneas y aparece "Ver más"
 const TRUNCATE_LENGTH = 220;
 
 function PrayerDetailModal({ entry, onClose }: { entry: AdminPrayerRequest | null; onClose: () => void }) {
@@ -84,9 +83,7 @@ export function PrayerRequestsDashboard() {
   async function toggleStatus(entry: AdminPrayerRequest) {
     const nextStatus = entry.status === "nueva" ? "atendida" : "nueva";
 
-    // Se abre ANTES de esperar la respuesta de la base de datos — si se abre
-    // después de un await, varios navegadores bloquean el pop-up por no
-    // reconocerlo como reacción directa al clic.
+    // se abre antes del await o el navegador bloquea el pop-up
     if (nextStatus === "atendida" && entry.contact) {
       const whatsappNumber = normalizeWhatsAppNumber(entry.contact);
       if (whatsappNumber) {

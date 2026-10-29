@@ -14,14 +14,7 @@ function hasAccess(sections: AdminSection[], section: AdminSection): boolean {
   return sections.includes("full") || sections.includes(section);
 }
 
-/**
- * Junta en una sola mirada lo que hoy está repartido en 3 pestañas distintas
- * (Oración/Bautismo/Primera visita) — para que el equipo sepa qué hacer
- * apenas entra al panel, sin tener que revisar pestaña por pestaña. Cada
- * línea solo se muestra si la cuenta tiene ese permiso — si no, ni se pide
- * el dato (RLS lo bloquearía igual, pero así no hay parpadeo de "cargando"
- * para algo a lo que de todos modos no tiene acceso).
- */
+// resume lo de Oración/Bautismo/Primera visita en una sola tarjeta. Solo pide lo que la cuenta puede ver
 export function TodaySummaryCard({ sections }: { sections: AdminSection[] }) {
   const showVisits = hasAccess(sections, "visits");
   const showPrayer = hasAccess(sections, "prayer");
@@ -33,8 +26,6 @@ export function TodaySummaryCard({ sections }: { sections: AdminSection[] }) {
   const [pendingBaptisms, setPendingBaptisms] = useState(0);
 
   useEffect(() => {
-    // Si no tiene ninguno de los 3 permisos, el componente ni siquiera se
-    // renderiza (ver el `return null` más abajo) — no hay nada que cargar.
     if (!showVisits && !showPrayer && !showBaptism) return;
 
     let cancelled = false;

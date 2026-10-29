@@ -5,7 +5,7 @@ export interface NewsFilterOption {
   value: string;
 }
 
-/** Mismo patrón visual que EventFilters — pastillas de categoría. */
+// pastillas de categoría, igual que EventFilters
 export function NewsFilters({
   options,
   active,

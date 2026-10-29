@@ -4,15 +4,9 @@ import { slugify, uniqueSlug } from "@/lib/admin/slug";
 import type { AdminMinistry } from "@/lib/admin/types";
 import type { SocialLink } from "@/lib/types";
 
-/**
- * Capa de datos de Ministerios contra Supabase (tabla `ministries`). La
- * tabla también tiene una columna `audience` que el formulario admin todavía
- * no expone — queda sin tocar hasta que se agregue esa parte del formulario,
- * igual que la galería/horarios de Sedes. `social` (jsonb) sí se expone, pero
- * solo para Instagram por ahora (ver `instagramUrl` abajo) — es un array
- * genérico de SocialLink pensado para más adelante agregar otras redes sin
- * otra migración.
- */
+// Capa de datos de Ministerios (tabla ministries). Hay una columna
+// `audience` que el formulario todavía no expone, queda así por ahora.
+// `social` (jsonb) sí se usa, pero solo para Instagram (ver instagramUrl).
 interface MinistryRow {
   id: string;
   slug: string;
@@ -37,7 +31,7 @@ interface MinistryRow {
 const SELECT_COLUMNS =
   "id, slug, name, short_description, description, image_url, header_image_url, leader, whatsapp, registration_url, social, meeting_schedule, meeting_location, status, display_order, show_publicly, created_at, updated_at";
 
-/** `instagramUrl` del formulario admin <-> entrada "instagram" dentro del array `social` (jsonb). */
+/** instagramUrl del formulario <-> entrada "instagram" dentro de `social` (jsonb). */
 function socialFromInstagramUrl(instagramUrl: string | undefined): SocialLink[] {
   return instagramUrl ? [{ platform: "instagram", label: "Instagram", url: instagramUrl }] : [];
 }
@@ -65,7 +59,7 @@ function rowToMinistry(row: MinistryRow): AdminMinistry {
   };
 }
 
-/** Campos legibles para el informe de Actividad — mismos datos que guarda el formulario, con nombres en español. */
+/** Lo que guarda el formulario, con nombres en español, para el informe de Actividad. */
 function ministryDetails(input: { name?: string; shortDescription?: string; description?: string; headerImageSrc?: string; leader?: string; whatsapp?: string; registrationUrl?: string; instagramUrl?: string; meetingSchedule?: string; meetingLocation?: string; status?: string; displayOrder?: number; showPublicly?: boolean }): Record<string, string | undefined> {
   return {
     Nombre: input.name,
@@ -139,13 +133,9 @@ export async function updateMinistry(
 ): Promise<AdminMinistry> {
   const supabase = createClient();
 
-  // Sin condicionales "si viene definido" para los campos de texto opcionales:
-  // en la práctica este método siempre se llama con el formulario completo
-  // (ver MinistryEditFlow), y un campo que el usuario deja vacío se convierte
-  // en `undefined` en lib/admin/mappers.ts (orUndefined) — con un filtro
-  // `!== undefined` eso nunca se borraba en la base de datos aunque en
-  // pantalla se viera vacío. El slug es la única excepción real: si no
-  // cambió, no se toca (evita pisarlo con un sufijo "-2" innecesario).
+  // mismo motivo que en campuses.ts/events.ts: sin filtro "si viene
+  // definido". El slug es la excepción, si no cambió no se toca (para no
+  // pisarlo con un "-2" de más)
   const patch: Record<string, unknown> = {
     name: input.name,
     short_description: input.shortDescription,
@@ -200,9 +190,7 @@ export async function duplicateMinistry(
       social: socialFromInstagramUrl(ministry.instagramUrl),
       meeting_schedule: ministry.meetingSchedule || null,
       meeting_location: ministry.meetingLocation || null,
-      // Sin estado "draft" en este módulo (solo active/archived) — una copia
-      // recién creada arranca archivada.
-      status: "archived",
+      status: "archived", // acá no hay "draft" (solo active/archived), la copia arranca archivada
       display_order: ministry.displayOrder,
       show_publicly: ministry.showPublicly,
     })
@@ -233,9 +221,8 @@ export async function setMinistryStatus(
 
 export async function removeMinistry(id: string, name?: string): Promise<void> {
   const supabase = createClient();
-  // event_ministries referencia ministerios — se limpia primero por la misma
-  // razón que al borrar un evento: sin esto, el borrado fallaría si el
-  // ministerio quedó enlazado a algún evento con audiencia "específica".
+  // se limpia event_ministries primero, si no falla cuando el ministerio
+  // quedó enlazado a algún evento con audiencia "específica"
   await supabase.from("event_ministries").delete().eq("ministry_id", id);
   const { error } = await supabase.from("ministries").delete().eq("id", id);
   if (error) throw new Error(error.message);

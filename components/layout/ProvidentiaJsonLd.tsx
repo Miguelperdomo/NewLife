@@ -1,11 +1,6 @@
 import { siteConfig } from "@/data/site";
 
-/**
- * Datos estructurados (schema.org) que le dicen a Google/buscadores quién
- * construyó el sitio — invisible al navegar, pero legible para herramientas
- * SEO. Mismo patrón de escape que Breadcrumbs.tsx (JSON.stringify no escapa
- * "<", así que se reemplaza por su escape unicode antes de inyectarlo).
- */
+// schema.org diciendo quién construyó el sitio, invisible al navegar pero legible para SEO
 export function ProvidentiaJsonLd() {
   const jsonLd = {
     "@context": "https://schema.org",

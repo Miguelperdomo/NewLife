@@ -9,9 +9,8 @@ import { getCampuses, getFirstTimeCards } from "@/lib/content";
 import { getFirstTimeIcon } from "@/lib/firstTimeIcons";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 
-// Respaldo mientras Configuración no tenga ninguna tarjeta guardada — mismo
-// mapeo de íconos que antes tenía FirstTimeSection, para que el Home nunca
-// se vea vacío desde el primer despliegue.
+// fallback mientras Configuración no tenga tarjetas guardadas, para que el
+// Home no se vea vacío apenas se despliega
 const FALLBACK_ICON_BY_SLUG: Record<string, string> = { expect: "sparkles", kids: "baby", parking: "car" };
 const FALLBACK_CARDS = firstTimeInfo.map((info) => ({
   icon: FALLBACK_ICON_BY_SLUG[info.slug] ?? "sparkles",

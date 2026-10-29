@@ -10,13 +10,7 @@ import { loginFormSchema, type LoginFormValues } from "@/lib/admin/schemas";
 import { createClient } from "@/lib/supabase/client";
 import { FormField, inputClass } from "./form/FormField";
 
-/**
- * Le pide al navegador que ofrezca guardar la contraseña justo después de un
- * login exitoso (API estándar de gestión de credenciales — la usan Chrome y
- * Edge; en navegadores sin soporte simplemente no hace nada, sin romper
- * nada). No hay ningún botón de "guardar": es el propio navegador el que
- * muestra su cuadro nativo, como en cualquier otro sitio.
- */
+// le pide al navegador su cuadro nativo de "guardar contraseña" (Credential Management API, Chrome/Edge)
 async function offerToSaveCredential(email: string, password: string) {
   if (typeof window === "undefined" || !("PasswordCredential" in window)) return;
   try {
@@ -28,16 +22,11 @@ async function offerToSaveCredential(email: string, password: string) {
     const credential = new PasswordCredentialCtor({ id: email, password, name: email });
     await navigator.credentials.store?.(credential);
   } catch {
-    // Silencioso: si el navegador no lo soporta o la persona lo rechaza, no pasa nada grave.
+    // si el navegador no lo soporta o lo rechazan, no pasa nada
   }
 }
 
-/**
- * Login real contra Supabase Auth. El mensaje de error es siempre el mismo
- * genérico ("Correo o contraseña incorrectos") sin importar si falló por
- * correo inexistente, contraseña incorrecta, o el usuario no está en
- * `admins` — no hay que darle pistas a quien intenta adivinar.
- */
+// el error siempre es el mismo genérico, no importa cuál sea la causa real — no dar pistas
 export function LoginForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -66,9 +55,7 @@ export function LoginForm() {
       return;
     }
 
-    // ¿La cuenta que inició sesión es realmente administradora? (tabla
-    // `admins`, vía la función is_admin() — ver lib/admin/auth.ts). Si no lo
-    // es, se cierra la sesión de inmediato: no debe quedar "medio adentro".
+    // valida contra la tabla admins (is_admin()) — si no está ahí, se cierra la sesión de una
     const { data: isAdmin } = await supabase.rpc("is_admin");
     if (!isAdmin) {
       await supabase.auth.signOut();

@@ -9,12 +9,9 @@ export interface LiveStatus {
 
 const POLL_MS = 2 * 60 * 1000;
 
-/**
- * Consulta /api/live-status (propio del sitio, no directamente YouTube) al
- * montar y cada POLL_MS. El endpoint ya cachea la llamada real a YouTube por
- * su lado, así que este intervalo solo afecta qué tan rápido se entera el
- * navegador de un cambio — no genera consultas extra a la API de YouTube.
- */
+// Consulta /api/live-status (no YouTube directo) al montar y cada POLL_MS.
+// El endpoint ya cachea la llamada real a YouTube, así que este intervalo
+// solo afecta qué tan rápido se entera el navegador, no gasta cuota extra.
 export function useLiveStatus(): LiveStatus {
   const [status, setStatus] = useState<LiveStatus>({ isLive: false });
 
@@ -27,7 +24,7 @@ export function useLiveStatus(): LiveStatus {
         const data = (await response.json()) as LiveStatus;
         if (!cancelled) setStatus(data);
       } catch {
-        // Silencioso: si falla, se queda con el último estado conocido (por defecto, no en vivo).
+        // si falla, se queda con el último estado conocido
       }
     }
 

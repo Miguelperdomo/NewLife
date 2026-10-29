@@ -6,11 +6,8 @@ import { cn } from "@/lib/utils";
 
 const SHOW_AFTER_PX = 480;
 
-/**
- * Botón flotante para volver al inicio de la página en textos largos
- * (Eventos, Noticias...). A la izquierda a propósito — el widget de Ayuda
- * ya ocupa la esquina inferior derecha.
- */
+// botón flotante de "volver arriba" para textos largos. Va a la izquierda
+// porque el widget de Ayuda ya ocupa la esquina derecha.
 export function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);
 

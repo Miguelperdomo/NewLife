@@ -3,10 +3,8 @@ import type { AdminEvent, AdminNews, ContentRow } from "@/lib/admin/types";
 
 type MinistryLike = { slug: string; name: string };
 
-/**
- * Aplana un AdminEvent/AdminNews a la forma común que consumen ContentTable,
- * RecentContent, etc. Un solo lugar para este mapeo — no duplicarlo.
- */
+// Aplana AdminEvent/AdminNews a la forma común que usan ContentTable,
+// RecentContent, etc.
 export function eventToRow(event: AdminEvent, ministries: MinistryLike[]): ContentRow {
   return {
     id: event.id,

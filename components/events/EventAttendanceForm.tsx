@@ -11,13 +11,9 @@ import { buildWhatsAppLink, eventAttendanceMessage } from "@/lib/whatsapp";
 const fieldClass =
   "mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500";
 
-/**
- * Botón "Quiero asistir" del Hero de evento destacado — antes era un link
- * directo a WhatsApp sin saber a cuál sede iba la persona. Ahora pregunta
- * nombre y sede primero (como VisitCheckinWidget), y arma el mensaje de
- * WhatsApp con esos datos. No guarda nada en la base de datos: el mensaje
- * de WhatsApp ES el registro, igual que la inscripción normal de eventos.
- */
+// botón "Quiero asistir" del hero de evento destacado. Pregunta nombre y sede
+// (como VisitCheckinWidget) y arma el WhatsApp con eso — no guarda nada en la BD,
+// el mensaje de WhatsApp ES el registro
 export function EventAttendanceForm({
   eventName,
   defaultCampus,
@@ -41,9 +37,7 @@ export function EventAttendanceForm({
     defaultValues: { name: "", phone: "", campus: defaultCampus ?? campuses[0]?.name ?? "" },
   });
 
-  // Si el evento ya tiene una sede fija (defaultCampus), no tiene sentido
-  // preguntarla de nuevo — se muestra como texto, no como selector. Solo se
-  // deja elegir cuando el evento no tiene una sede definida.
+  // si el evento ya tiene sede fija no hay que preguntarla, solo se muestra como texto
   const hasFixedCampus = Boolean(defaultCampus);
 
   function onSubmit(values: EventAttendanceFormValues) {

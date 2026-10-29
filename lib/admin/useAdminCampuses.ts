@@ -16,13 +16,10 @@ interface CampusState {
   isReady: boolean;
 }
 
-/**
- * Único punto de acceso a las sedes del admin — ahora respaldado por la
- * tabla `campuses` de Supabase. Cada mutación vuelve a pedir la lista
- * completa: es la forma más simple de reflejar de inmediato efectos
- * secundarios en OTRAS filas (ej. desmarcar la sede principal anterior al
- * marcar una nueva), sin tener que replicar esa lógica en el cliente.
- */
+// Único punto de acceso a las sedes del admin (tabla campuses). Cada
+// mutación vuelve a pedir la lista completa — así se reflejan efectos en
+// otras filas (ej. desmarcar la sede principal anterior) sin duplicar esa
+// lógica acá.
 export function useAdminCampuses() {
   const [{ campuses, isReady }, setState] = useState<CampusState>({ campuses: [], isReady: false });
 

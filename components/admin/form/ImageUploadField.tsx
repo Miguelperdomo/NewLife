@@ -6,17 +6,12 @@ import { Controller, type Control, type FieldPath, type FieldValues } from "reac
 import { Link2, Loader2, Upload, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-// SVG queda fuera a propósito: puede llevar <script> incrustado (riesgo de
-// XSS si esa imagen se abre directo), y no lo necesitamos aquí.
+// sin SVG: puede traer <script> incrustado, riesgo de XSS
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
-// El plan gratuito de Supabase Storage son solo 1 GB — una foto de cámara/
-// celular sin comprimir pesa fácil 3-8 MB, así que unas pocas decenas lo
-// llenarían. Achicar a un ancho máximo razonable + recomprimir a JPEG de
-// calidad media reduce eso a cientos de KB sin que se note la diferencia en
-// pantalla, estirando el espacio gratuito 10-20x. GIF se deja intacto para
-// no perder animaciones.
+// el plan free de Supabase Storage es de 1GB, así que comprimimos antes de subir
+// (GIF se deja igual para no perder la animación)
 const MAX_DIMENSION_PX = 1920;
 const JPEG_QUALITY = 0.82;
 
@@ -43,12 +38,8 @@ async function compressImage(file: File): Promise<File> {
   return new File([blob], newName, { type: "image/jpeg" });
 }
 
-/**
- * Subida real de imágenes a Supabase Storage (bucket "media", ver
- * lib/admin/../../.. storage_bucket.sql). Controlado (Controller) porque el
- * valor lo pone la subida asíncrona, no lo que la persona escribe — mismo
- * motivo que el <select> de Sede en EventForm.
- */
+// sube a Supabase Storage (bucket "media"). Usa Controller porque el valor
+// lo setea la subida async, no lo que la persona escribe
 export function ImageUploadField<T extends FieldValues>({
   control,
   name,
@@ -88,9 +79,7 @@ export function ImageUploadField<T extends FieldValues>({
           event.target.value = "";
           if (!file) return;
 
-          // `accept="image/*"` en el input es solo una sugerencia del
-          // navegador — se puede saltar fácilmente, así que se revisa de
-          // verdad acá antes de subir nada.
+          // el accept="image/*" del input es solo sugerencia del navegador, se puede saltar
           if (!ALLOWED_TYPES.includes(file.type)) {
             setError("Solo se permiten imágenes JPG, PNG, WEBP o GIF.");
             return;

@@ -3,12 +3,9 @@ import { logActivity } from "@/lib/admin/activityLog";
 import { siteConfig, socialLinks } from "@/data/site";
 import type { AdminSiteSettings } from "@/lib/admin/types";
 
-/**
- * Configuración es un singleton en Supabase (tabla `site_settings`, fila
- * fija id=1 — ver la restricción CHECK creada junto con la tabla). El
- * upsert con onConflict:"id" cubre tanto el primer guardado (INSERT) como
- * los siguientes (UPDATE) sin tener que distinguir los dos casos aquí.
- */
+// Configuración es un singleton (tabla site_settings, fila fija id=1). El
+// upsert con onConflict:"id" cubre el primer guardado y los siguientes sin
+// tener que distinguir los dos casos.
 const SETTINGS_ROW_ID = 1;
 
 interface SiteSettingsRow {
@@ -275,11 +272,9 @@ function findSocialUrl(platform: string) {
   return socialLinks.find((social) => social.platform === platform)?.url;
 }
 
-/**
- * Valores de arranque cuando todavía no existe la fila en Supabase (antes
- * del primer guardado). Nunca se escriben solos — solo se ven en el
- * formulario hasta que el administrador le da "Guardar" o "Restablecer".
- */
+// Valores por defecto mientras no exista la fila (antes del primer
+// guardado). No se escriben solos, solo se ven en el formulario hasta que
+// el admin le da "Guardar" o "Restablecer".
 function defaultSiteSettings(): AdminSiteSettings {
   return {
     churchName: siteConfig.name,
@@ -409,7 +404,7 @@ export async function saveSiteSettings(settings: AdminSiteSettings): Promise<Adm
   return rowToSettings(data as SiteSettingsRow);
 }
 
-/** Vuelve a los valores demo y los guarda en Supabase. */
+/** Vuelve a los valores demo y los guarda. */
 export async function resetSiteSettingsToDemo(): Promise<AdminSiteSettings> {
   return saveSiteSettings(defaultSiteSettings());
 }

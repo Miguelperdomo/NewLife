@@ -8,8 +8,7 @@ function toPreviewMinistry(ministry: AdminMinistry): Ministry {
     name: ministry.name || "Sin nombre",
     shortDescription: ministry.shortDescription || "Sin descripción corta.",
     description: ministry.description || "Sin descripción.",
-    // El formulario del admin no pide "audience" (no estaba en los campos
-    // solicitados) — se usa un valor neutro solo para la vista previa.
+    // el form no pide "audience", valor neutro solo para la preview
     audience: "Todas las edades.",
     schedule: ministry.meetingSchedule || "Por definir",
     location: ministry.meetingLocation || "Por definir",
@@ -20,11 +19,7 @@ function toPreviewMinistry(ministry: AdminMinistry): Ministry {
   };
 }
 
-/**
- * Renderiza literalmente MinistryTemplate (la misma plantilla de
- * /ministerios/[slug]) con los datos del borrador — mismo patrón que
- * ContentPreview.tsx/CampusPreview.tsx: nunca una segunda plantilla visual.
- */
+// usa MinistryTemplate tal cual, mismo patrón que ContentPreview.tsx/CampusPreview.tsx
 export function MinistryPreview({ ministry }: { ministry: AdminMinistry }) {
   return (
     <div className="space-y-4">

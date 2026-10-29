@@ -39,7 +39,7 @@ export function CampusForm({
   submitLabel?: string;
   onSubmit: (values: CampusFormValues) => void | Promise<void>;
   onPreview: (values: CampusFormValues) => void;
-  /** Ciudades que ya usan otras sedes — se sugieren al escribir, para que "Ibagué" no termine escrita de 3 formas distintas por error de dedo. */
+  /** ciudades que ya usan otras sedes, para el autocompletado */
   existingCities?: string[];
 }) {
   const pastors = getPastors();

@@ -42,22 +42,16 @@ export async function Footer() {
   }));
   const mainCampus = campuses.find((campus) => campus.isMain);
 
-  // Configuración real de Supabase — si todavía no se ha guardado nada ahí
-  // (settings === null), se cae a los valores de siempre en data/site.ts
-  // para que el Footer nunca se vea vacío/roto.
+  // si Configuración todavía no tiene nada guardado, cae a los valores de data/site.ts
   const settings = await getPublicSiteSettings();
   const churchName = settings?.churchName || siteConfig.name;
   const description = settings?.description || siteConfig.description;
-  // Sin caer al placeholder de data/site.ts ("[CORREO DE CONTACTO —
-  // PLACEHOLDER]") — mejor no mostrar la línea que mostrar un texto de
-  // relleno con corchetes si todavía no se ha guardado nada en Configuración.
+  // acá NO cae al placeholder de data/site.ts — mejor ocultar la línea que mostrar texto de relleno
   const contactEmail = settings?.email;
   const contactPhone = settings?.phone;
   const address = settings?.address || mainCampus?.address;
 
-  // Si la persona activó el ícono de WhatsApp pero no pegó un link propio,
-  // se arma uno con el número + mensaje predeterminado de Configuración —
-  // así ambos campos sirven para algo real en vez de quedar sueltos.
+  // si activó el ícono de WhatsApp pero no puso link propio, se arma uno con el número + mensaje de Configuración
   const whatsappSocialUrl =
     settings?.whatsappSocialUrl ||
     (settings?.whatsappSocialEnabled
@@ -140,7 +134,7 @@ export async function Footer() {
         </Container>
       </div>
 
-      <div className="border-t border-white/10 py-6">
+      <div className="border-t border-white/10 pb-24 pt-6 sm:pb-6">
         <Container className="flex flex-col items-center justify-between gap-2 text-center text-xs text-slate-500 sm:flex-row sm:text-left">
           <p>
             © {new Date().getFullYear()} {churchName}. Todos los derechos

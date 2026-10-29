@@ -6,10 +6,8 @@ export interface FirstTimeInfo {
   description: string;
 }
 
-// [CONTENIDO TEMPORAL] Textos de la sección "Primera vez aquí" del Home.
-// Separados del componente para que, cuando exista un panel que los
-// administre, solo haya que reemplazar este archivo — ver
-// components/sections/FirstTimeSection.tsx, que no cambiaría.
+// [CONTENIDO TEMPORAL] textos de "Primera vez aquí" del Home — separados
+// del componente para poder moverlos a un panel admin después sin tocar FirstTimeSection.tsx
 export const firstTimeContent = {
   eyebrow: "Primera vez",
   title: "¿Es tu primera vez en New Life?",

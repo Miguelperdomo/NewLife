@@ -8,9 +8,7 @@ const options: { type: AdminContentType; label: string; description: string; ico
     description: "Reuniones, retiros, servicios especiales — con fecha, hora y lugar.",
     icon: CalendarDays,
   },
-  // Noticia — comentada a propósito, Noticias está en pausa por ahora (ver
-  // data/site.ts y components/admin/QuickActions.tsx). Para reactivarla,
-  // descomenta esto y vuelve a importar Newspaper de lucide-react arriba.
+  // Noticias en pausa por ahora — para reactivar, descomentar y volver a importar Newspaper
   // {
   //   type: "news",
   //   label: "Noticia",

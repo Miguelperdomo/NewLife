@@ -21,11 +21,8 @@ function draftNewsForPreview(values: NewsFormValues): AdminNews {
   return { ...newsFormValuesToInput(values), id: "vista-previa", slug: "", createdAt: "", updatedAt: "" };
 }
 
-// Mientras Noticias esté en pausa, "Evento" es la única opción real del
-// selector (ver ContentTypePicker) — así que de una vez arranca ahí en vez
-// de mostrar una pantalla de "elige" con una sola tarjeta sola y solitaria.
-// Cuando Noticias se reactive, cambia este `"event"` de vuelta a `null` para
-// que vuelva a preguntar.
+// Noticias está en pausa, así que de una vez arranca en "event" en vez de mostrar
+// el selector con una sola opción. Cuando se reactive, volver esto a `null`.
 function initialType(value: string | null): AdminContentType | null {
   if (value === "event" || value === "news") return value;
   return "event";

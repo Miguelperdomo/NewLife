@@ -6,13 +6,8 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { EventAttendanceForm } from "@/components/events/EventAttendanceForm";
 
-/**
- * Hero de "evento destacado" — a diferencia del banner de "en vivo" (foto a
- * un lado), este es un anuncio real: la foto del evento ocupa todo el
- * banner, con el texto y los botones encima, como un afiche. Ideado así a
- * propósito, para que se sienta como publicidad de verdad y no como una
- * tarjeta más de la página.
- */
+// a diferencia del banner "en vivo" (foto a un lado), acá la foto ocupa todo
+// el banner, como un afiche real
 export function EventAnnouncementBanner({
   eventName,
   shortDescription,
@@ -38,11 +33,11 @@ export function EventAnnouncementBanner({
   logoAlt: string;
   campuses: { slug: string; name: string }[];
   whatsappNumber: string;
-  /** Si el evento tiene su propio link de inscripción (ej. Google Forms), "Inscribirme" manda ahí en vez de abrir el formulario de WhatsApp. */
+  /** link propio de inscripción (Google Forms, etc.) — si existe, "Inscribirme" manda ahí en vez de WhatsApp */
   registrationUrl?: string;
 }) {
   return (
-    <section className="relative isolate flex min-h-[85vh] items-end overflow-hidden border-b border-white/10 bg-slate-950 sm:min-h-[90vh]">
+    <section className="relative isolate flex min-h-[60vh] items-end overflow-hidden border-b border-white/10 bg-slate-950 sm:min-h-[85vh] lg:min-h-[90vh]">
       <PlaceholderImage label={imageLabel} src={imageSrc} tone="dark" fit="contain" className="absolute inset-0 h-full w-full" />
       <div
         aria-hidden="true"

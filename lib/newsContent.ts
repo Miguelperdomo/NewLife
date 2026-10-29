@@ -1,13 +1,8 @@
 import { createPublicClient } from "@/lib/supabase/publicClient";
 import type { NewsArticle } from "@/lib/types";
 
-/**
- * Acceso a Noticias — Supabase (tabla `news`), mismo cliente sin cookies que
- * Eventos/Ministerios/Sedes (createPublicClient). Aparte de lib/content.ts
- * por la misma razón que lib/eventsContent.ts: lib/agenda.ts lo usan
- * componentes "use client". RLS ya filtra a solo publicadas (o programadas
- * ya vencidas) — no hace falta repetir ese filtro acá.
- */
+// Tabla `news`, mismo cliente que Eventos/Ministerios/Sedes. Separado de
+// lib/content.ts por la misma razón que lib/eventsContent.ts.
 interface NewsRow {
   slug: string;
   title: string;
@@ -64,7 +59,7 @@ export async function getFeaturedNews(limit?: number): Promise<NewsArticle[]> {
   return limit ? featured.slice(0, limit) : featured;
 }
 
-/** Prioriza noticias de la misma categoría; completa con las más recientes si hacen falta. */
+/** Prioriza la misma categoría, completa con las más recientes */
 export async function getRelatedNews(article: NewsArticle, limit = 3): Promise<NewsArticle[]> {
   const news = await getNews();
   const rest = news.filter((candidate) => candidate.slug !== article.slug);

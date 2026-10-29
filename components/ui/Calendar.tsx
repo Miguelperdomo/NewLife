@@ -5,8 +5,7 @@ import { cn } from "@/lib/utils";
 import { formatAgendaMonthLabel, toISODate } from "@/lib/agenda";
 import type { AgendaItemType } from "@/lib/agenda";
 
-/** Un único mapa de color/etiqueta por tipo, reutilizado por el calendario,
- * su leyenda y AgendaEventItem — una sola fuente de verdad visual. */
+// color/etiqueta por tipo, compartido entre el calendario, la leyenda y AgendaEventItem
 export const agendaTypeMeta: Record<AgendaItemType, { label: string; dotClass: string }> = {
   culto: { label: "Cultos", dotClass: "bg-brand-600" },
   evento: { label: "Eventos", dotClass: "bg-blue-500" },
@@ -31,7 +30,7 @@ interface CalendarProps {
   selectedDate: string;
   todayDate: string;
   indicators: Record<string, AgendaItemType[]>;
-  /** Qué tipos mostrar en la leyenda — por defecto los 4, para no cambiar la Agenda del Home. */
+  /** qué tipos mostrar en la leyenda (por defecto los 4) */
   legendTypes?: AgendaItemType[];
   onSelectDate: (date: string) => void;
   onPrevMonth: () => void;

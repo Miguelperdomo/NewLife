@@ -7,10 +7,7 @@ const kindConfig = {
   campus: { label: "Sede", Icon: MapPin },
 } as const;
 
-/**
- * Portada de marca para cuando un Evento, Noticia o Sede no tiene imagen.
- * Pensada para reutilizarse donde haga falta (hoy: panel admin), no solo aquí.
- */
+// portada de marca cuando un Evento/Noticia/Sede no tiene imagen propia
 export function ContentCover({
   kind,
   className,

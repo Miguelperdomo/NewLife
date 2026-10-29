@@ -1,24 +1,16 @@
 import { cache } from "react";
 import { createPublicClient } from "@/lib/supabase/publicClient";
 
-/**
- * Configuración leída desde Supabase para el sitio PÚBLICO (Footer, colores
- * globales, SEO, mantenimiento...) — distinto de lib/admin/siteSettings.ts,
- * que es la versión completa para el panel admin. `cache()` evita pedirla
- * más de una vez por request aunque varios componentes (layout raíz,
- * Footer, Navbar...) la usen. Devuelve `null` si todavía no se ha guardado
- * nada en Configuración — quien la use debe tener un buen valor de respaldo
- * para ese caso.
- *
- * Usa el cliente SIN cookies a propósito (createPublicClient, igual que
- * lib/content.ts) — esta es una lectura pública, sin sesión de por medio.
- * El cliente CON cookies (lib/supabase/server.ts) obliga a Next.js a tratar
- * cualquier página que lo use como "dinámica" en cada visita, sin importar
- * qué tan corto o largo pongas `revalidate` ahí — como esta función la usa
- * prácticamente TODA página pública (Footer, Navbar, cada page.tsx...), ese
- * único detalle bastaba para que ninguna página pública se pudiera cachear,
- * ni siquiera agregando `export const revalidate`.
- */
+// Configuración pública (Footer, colores, SEO, mantenimiento...) — distinto
+// de lib/admin/siteSettings.ts, que es la versión completa para el admin.
+// cache() evita pedirla dos veces por request aunque la usen varios
+// componentes a la vez. null si Configuración está vacía — quien la use
+// necesita un buen valor de respaldo.
+//
+// Usa createPublicClient (sin cookies) a propósito: el cliente con cookies
+// (server.ts) hace que Next.js trate cualquier página que lo use como
+// dinámica, revalidate o no — y esta función la usa casi toda página
+// pública, así que ese detalle bastaba para que nada se pudiera cachear.
 export interface PublicSiteSettings {
   churchName: string;
   description?: string;

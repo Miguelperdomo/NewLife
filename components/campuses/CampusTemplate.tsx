@@ -24,7 +24,7 @@ function scheduleKey(service: ServiceSchedule): string {
   return `${service.dayOfWeek}-${service.time}-${service.title}`;
 }
 
-/** Agrupa los horarios por día (domingo -> sábado) y los ordena por hora dentro de cada día — en vez de la lista plana de siempre. */
+// agrupa horarios por día (domingo -> sábado) y los ordena por hora dentro de cada día
 function groupServicesByDay(services: ServiceSchedule[]): [number, ServiceSchedule[]][] {
   const groups = new Map<number, ServiceSchedule[]>();
   for (const service of services) {
@@ -37,10 +37,7 @@ function groupServicesByDay(services: ServiceSchedule[]): [number, ServiceSchedu
   return [...groups.entries()].sort(([a], [b]) => a - b);
 }
 
-/**
- * Plantilla única reutilizada por todas las páginas /sedes/[slug]. Análoga a
- * EventTemplate/MinistryTemplate: solo cambian los datos, no la estructura.
- */
+// plantilla única para /sedes/[slug], igual patrón que EventTemplate/MinistryTemplate
 export async function CampusTemplate({ campus }: { campus: Campus }) {
   const services = campus.schedules ?? [];
   const [pastor, settings, ministries, allCampuses, upcomingEvents] = await Promise.all([
@@ -58,7 +55,7 @@ export async function CampusTemplate({ campus }: { campus: Campus }) {
   const nextService = findNextService(services, new Date());
   const nextServiceKey = nextService ? scheduleKey(nextService) : undefined;
   const activeAmenities = activeCampusAmenities(campus);
-  // La sede actual va primero — así "Avísanos que vienes" arranca con esta ya seleccionada.
+  // la sede actual va primero, así "Avísanos que vienes" arranca con esta ya seleccionada
   const checkinCampuses = [campus, ...allCampuses.filter((item) => item.slug !== campus.slug)].map((item) => ({
     slug: item.slug,
     name: item.name,

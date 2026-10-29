@@ -1,12 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-/**
- * Refresca el token de sesión de Supabase en cada petición (patrón estándar
- * de @supabase/ssr para Next.js App Router) — sin esto, la sesión podría
- * expirar silenciosamente entre Server Components y Route Handlers.
- * Ver middleware.ts en la raíz, que es quien llama a esto.
- */
+// Refresca el token de sesión en cada petición (patrón estándar de
+// @supabase/ssr) — sin esto la sesión puede expirar en silencio entre
+// Server Components y Route Handlers. Lo llama middleware.ts en la raíz.
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -29,8 +26,7 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // No se descarta el resultado: getUser() es lo que efectivamente dispara
-  // el refresco del token cuando hace falta.
+  // getUser() es el que de verdad dispara el refresco cuando hace falta
   await supabase.auth.getUser();
 
   return response;

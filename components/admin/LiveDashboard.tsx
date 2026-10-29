@@ -12,11 +12,7 @@ import { useLiveStatus } from "@/lib/useLiveStatus";
 import { liveSettingsFormSchema, type LiveSettingsFormValues } from "@/lib/admin/schemas";
 import { cn } from "@/lib/utils";
 
-/**
- * Página propia (en vez de un campo escondido dentro de Configuración) para
- * que quien tenga que activar "en vivo" justo antes de un servicio lo
- * encuentre de una en el menú, sin tener que ir a buscarlo.
- */
+// página propia en vez de un campo escondido en Configuración, para encontrarlo rápido antes de un servicio
 export function LiveDashboard() {
   const { settings, isReady, updateSettings } = useAdminSiteSettings();
   const autoStatus = useLiveStatus();

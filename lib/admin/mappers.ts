@@ -16,10 +16,9 @@ import type {
 type NewEventInput = Omit<AdminEvent, "id" | "slug" | "createdAt" | "updatedAt"> & { slug?: string };
 type NewNewsInput = Omit<AdminNews, "id" | "slug" | "createdAt" | "updatedAt"> & { slug?: string };
 type NewCampusInput = Omit<AdminCampus, "id" | "slug" | "createdAt" | "updatedAt"> & { slug?: string };
-// A diferencia de los otros: el slug SÍ viene del formulario (es editable a
-// mano), así que aquí no se omite — solo id/createdAt/updatedAt los pone el hook.
+// acá el slug sí viene del formulario (es editable), solo id/createdAt/updatedAt los pone el hook
 type NewMinistryInput = Omit<AdminMinistry, "id" | "createdAt" | "updatedAt">;
-// Singleton: sin id/slug — solo updatedAt lo pone el hook al guardar.
+// singleton, sin id/slug — solo updatedAt lo pone el hook
 type SiteSettingsInput = Omit<AdminSiteSettings, "updatedAt">;
 
 function orUndefined(value?: string) {
@@ -27,7 +26,7 @@ function orUndefined(value?: string) {
   return trimmed ? trimmed : undefined;
 }
 
-/** Convierte los valores del formulario (todos strings) a la forma que guarda el store. */
+/** Valores del formulario (todo strings) a la forma que se guarda. */
 export function eventFormValuesToInput(values: EventFormValues): NewEventInput {
   return {
     title: values.title,
@@ -52,7 +51,7 @@ export function eventFormValuesToInput(values: EventFormValues): NewEventInput {
   };
 }
 
-/** Inverso de eventFormValuesToInput: precarga el formulario al editar un evento existente. */
+/** Al revés de eventFormValuesToInput: precarga el formulario al editar. */
 export function eventToFormValues(event: AdminEvent): EventFormValues {
   return {
     title: event.title,
@@ -131,7 +130,7 @@ export function campusFormValuesToInput(values: CampusFormValues): NewCampusInpu
   };
 }
 
-/** Inverso de campusFormValuesToInput: precarga el formulario al editar una sede existente. */
+/** Al revés de campusFormValuesToInput, para precargar al editar. */
 export function campusToFormValues(campus: AdminCampus): CampusFormValues {
   return {
     name: campus.name,
@@ -176,7 +175,7 @@ export function ministryFormValuesToInput(values: MinistryFormValues): NewMinist
   };
 }
 
-/** Inverso de ministryFormValuesToInput: precarga el formulario al editar un ministerio existente. */
+/** Al revés de ministryFormValuesToInput, para precargar al editar. */
 export function ministryToFormValues(ministry: AdminMinistry): MinistryFormValues {
   return {
     name: ministry.name,
@@ -297,7 +296,7 @@ export function siteSettingsFormValuesToInput(values: SiteSettingsFormValues): S
   };
 }
 
-/** Inverso de siteSettingsFormValuesToInput: precarga el formulario con la configuración guardada. */
+/** Al revés de siteSettingsFormValuesToInput, para precargar el formulario. */
 export function siteSettingsToFormValues(settings: AdminSiteSettings): SiteSettingsFormValues {
   return {
     churchName: settings.churchName,

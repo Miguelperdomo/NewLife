@@ -7,11 +7,7 @@ import { EventFilters, type EventFilterOption } from "./EventFilters";
 import { EmptyState } from "@/components/ui/EmptyState";
 import type { Campus, ChurchEvent, Ministry } from "@/lib/types";
 
-/**
- * Único componente con estado del módulo de eventos: guarda el filtro activo
- * y renderiza EventFilters (controlado) + la grilla de EventCard. Ministerios
- * y sedes llegan ya resueltos desde el servidor (ver EventsView/EventCard).
- */
+// único componente con estado del módulo de eventos, guarda el filtro activo
 export function EventList({
   events,
   ministries,

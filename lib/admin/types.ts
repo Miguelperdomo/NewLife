@@ -1,19 +1,14 @@
 export type ContentStatus = "draft" | "published" | "scheduled" | "archived";
 
-/**
- * Secciones del panel que se pueden otorgar por separado a un administrador
- * (ver lib/admin/users.ts) — "full" es el comodín: quien lo tenga, puede
- * todo, sin importar qué más tenga marcado. "content" cubre Eventos y
- * Noticias juntos porque viven en un solo módulo del panel (/admin/contenido).
- */
+// Secciones del panel que se le pueden dar por separado a un admin (ver
+// users.ts). "full" es el comodín, da acceso a todo. "content" cubre
+// Eventos y Noticias juntos porque comparten módulo (/admin/contenido).
 export const ADMIN_SECTIONS = ["full", "ministries", "campuses", "content", "settings", "prayer", "baptism", "visits"] as const;
 export type AdminSection = (typeof ADMIN_SECTIONS)[number];
 
-// "content" se sigue llamando así por dentro (cubre Eventos y Noticias en la
-// base de datos), pero mientras Noticias esté en pausa, se muestra solo como
-// "Eventos" para no confundir a quien esté creando un usuario. Si Noticias
-// se reactiva, basta con volver esta etiqueta a "Eventos y Noticias" — el
-// permiso de quien ya tenga "content" sigue aplicando a ambos sin tocar nada más.
+// "content" sigue llamándose así por dentro (Eventos + Noticias), pero
+// mientras Noticias esté en pausa se muestra solo como "Eventos" para no
+// confundir al crear un usuario. Si se reactiva, basta con cambiar la etiqueta.
 export const ADMIN_SECTION_LABELS: Record<AdminSection, string> = {
   full: "Todo",
   ministries: "Ministerios",
@@ -30,26 +25,26 @@ export interface AdminUser {
   name: string;
   email: string;
   sections: AdminSection[];
-  /** "YYYY-MM-DD" o null = acceso indefinido. Pasada esta fecha, la sesión se trata como "Sin permisos" sin borrar los permisos guardados (ver lib/admin/auth.ts). */
+  /** null = acceso indefinido. Pasada la fecha, la sesión queda "sin permisos" sin borrar sections (ver auth.ts). */
   accessUntil: string | null;
-  /** Último inicio de sesión real (Supabase Auth) — null si nunca ha entrado. Viene de auth.admin.listUsers(), no de la tabla `admins`. */
+  /** null si nunca ha entrado. Viene de auth.admin.listUsers(), no de la tabla admins. */
   lastSignInAt: string | null;
   createdAt: string;
 }
 
-/** Un pedido de oración enviado desde el sitio público — privado, solo lo ve quien tenga el permiso "prayer". */
+/** Pedido de oración del sitio público — solo lo ve quien tenga el permiso "prayer". */
 export interface AdminPrayerRequest {
   id: number;
-  /** null = la persona lo dejó anónimo a propósito. */
+  /** null = lo dejó anónimo. */
   name: string | null;
   message: string;
-  /** WhatsApp o correo, opcional — solo si la persona quiere que la contacten. */
+  /** WhatsApp o correo, opcional. */
   contact: string | null;
   status: "nueva" | "atendida";
   createdAt: string;
 }
 
-/** "Quiero bautizarme" enviado desde el sitio público — solo lo ve quien tenga el permiso "baptism". */
+/** "Quiero bautizarme" del sitio público — solo lo ve quien tenga el permiso "baptism". */
 export interface AdminBaptismRequest {
   id: number;
   name: string;
@@ -58,18 +53,18 @@ export interface AdminBaptismRequest {
   createdAt: string;
 }
 
-/** Check-in anticipado ("Avísanos que vienes") enviado desde el Home — solo lo ve quien tenga el permiso "visits". */
+/** "Avísanos que vienes" del Home — solo lo ve quien tenga el permiso "visits". */
 export interface AdminVisitCheckin {
   id: number;
   name: string;
-  /** Opcional solo por avisos viejos (antes de agregar este campo) — el formulario público ya lo exige. */
+  /** Opcional solo por avisos viejos, el formulario público ya lo exige. */
   phone?: string;
   peopleCount: number;
-  /** Nombre de la sede tal como se mostró en el formulario (texto libre, no FK — evita que un cambio de nombre de sede rompa check-ins viejos). */
+  /** Texto libre, no FK — así un cambio de nombre de sede no rompe check-ins viejos. */
   campus: string;
-  /** "YYYY-MM-DD" — el domingo (u otro día) que la persona dijo que vendría. */
+  /** "YYYY-MM-DD", el día que dijo que vendría. */
   visitDate: string;
-  /** Marcado desde el formulario público — visita de un pastor, se gestiona aparte de una visita normal. */
+  /** Visita de un pastor, se gestiona aparte de una normal. */
   isPastor: boolean;
   status: "nueva" | "atendida";
   createdAt: string;
@@ -80,7 +75,7 @@ export interface AdminActivityLogEntry {
   adminName: string;
   summary: string;
   createdAt: string;
-  /** Campos y valores de lo que se guardó en esa acción — se muestra al hacer clic en el registro. Clave = nombre legible ("Nombre", "Estado"...), valor = lo que quedó guardado. */
+  /** Lo que se guardó en esa acción, se muestra al hacer clic en el registro. */
   details?: Record<string, string>;
 }
 
@@ -119,7 +114,7 @@ export interface AdminEvent extends AdminContentBase {
   registrationUrl?: string;
   whatsappNumber?: string;
   capacity?: number;
-  /** Distinto de `featured`: controla solo si aparece como anuncio grande en el Hero del Inicio. */
+  /** No es lo mismo que `featured`: este controla si sale como anuncio grande en el Hero del Inicio. */
   highlightHome?: boolean;
 }
 
@@ -132,15 +127,15 @@ export interface AdminNews extends AdminContentBase {
   category?: string;
 }
 
-/** Un horario recurrente de servicio (ej. "Domingo 9:00 a.m. — Culto principal"). */
+/** Horario recurrente de servicio (ej. "Domingo 9:00 a.m. — Culto principal"). */
 export interface AdminServiceSchedule {
-  /** 0 = domingo, igual que Date.getDay(). */
+  /** 0 = domingo, como Date.getDay(). */
   dayOfWeek: number;
-  /** "HH:MM" en 24 horas (lo que da <input type="time">). */
+  /** "HH:MM" 24h, lo que da <input type="time">. */
   time: string;
   title: string;
   description?: string;
-  /** Si este horario es de un ministerio en particular, enlaza a su página en el sitio público. */
+  /** Si es de un ministerio en particular, enlaza a su página pública. */
   ministrySlug?: string;
 }
 
@@ -150,18 +145,18 @@ export interface AdminCampus {
   name: string;
   fullName: string;
   address: string;
-  /** Ciudad de esta sede — separada de `address` a propósito, para poder agrupar/filtrar sedes por ciudad (ej. el mapa conjunto de /sedes) sin tener que adivinarla del texto de la dirección. */
+  /** Separada de `address` para poder agrupar/filtrar sedes por ciudad (mapa de /sedes). */
   city?: string;
-  /** Texto usado para buscar la ubicación en Google Maps (dirección o plus code). */
+  /** Texto para buscar la ubicación en Google Maps (dirección o plus code). */
   mapQuery: string;
   imageSrc?: string;
   isMain?: boolean;
   /** Slug de data/pastors.ts. */
   leadPastorSlug?: string;
-  /** Si se define, se usa en vez del WhatsApp general de New Life para esta sede. */
+  /** Si se define, reemplaza el WhatsApp general de New Life para esta sede. */
   whatsappNumber?: string;
   schedules: AdminServiceSchedule[];
-  /** Comodidades de esta sede — se muestran como íconos en su página pública. */
+  /** Se muestran como íconos en la página pública de la sede. */
   hasParking?: boolean;
   isWheelchairAccessible?: boolean;
   hasChildcare?: boolean;
@@ -179,40 +174,32 @@ export interface AdminMinistry {
   description: string;
   /** Foto de la tarjeta en /ministerios. */
   imageSrc?: string;
-  /** Foto grande de la cabecera en /ministerios/[slug]. Si no se define, la capa pública cae a `imageSrc`. */
+  /** Foto grande de la cabecera en /ministerios/[slug]. Sin definir, cae a imageSrc. */
   headerImageSrc?: string;
-  /**
-   * Texto libre por ahora. data/pastors.ts modela la cabeza de liderazgo de
-   * la iglesia (pastores/tiers), no a los responsables de cada ministerio —
-   * son personas distintas, así que forzar una relación ahí sería la
-   * "relación innecesaria" de la que hay que cuidarse. Si en el futuro existe
-   * un directorio real de personas (`people`), este campo es el candidato
-   * natural a convertirse en `leaderPersonId` (FK).
-   */
+  // texto libre por ahora — data/pastors.ts modela la cabeza de liderazgo de
+  // la iglesia, no a los responsables de cada ministerio, son personas
+  // distintas. Si algún día hay un directorio de personas, este campo
+  // debería volverse leaderPersonId (FK)
   leader?: string;
-  /** Número de WhatsApp propio del ministerio; si no se define, la capa pública usa el general de New Life. */
+  /** WhatsApp propio del ministerio, si no está se usa el general de New Life. */
   whatsapp?: string;
-  /** Link externo de inscripción (ej. Google Forms) — si se define, el botón "Quiero inscribirme" lleva ahí en vez de abrir WhatsApp. */
+  /** Link externo de inscripción (Google Forms, etc), si está el botón lleva ahí en vez de abrir WhatsApp. */
   registrationUrl?: string;
-  /** Se guarda en la columna `social` (jsonb) como un SocialLink de plataforma "instagram" — ver lib/admin/ministries.ts. */
+  /** Se guarda en la columna `social` (jsonb) como plataforma "instagram" — ver ministries.ts. */
   instagramUrl?: string;
   meetingSchedule?: string;
   meetingLocation?: string;
   status: MinistryStatus;
-  /** Orden de aparición en /ministerios (menor = primero). */
+  /** Orden en /ministerios, menor = primero. */
   displayOrder: number;
-  /** Independiente de `status`: permite ocultar un ministerio activo sin archivarlo. */
+  /** Independiente de `status`, para ocultar un ministerio activo sin archivarlo. */
   showPublicly: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-/**
- * Ajustes generales del sitio — un único registro (singleton), no una lista
- * como Eventos/Noticias/Sedes/Ministerios. Pensado desde ya para que, cuando
- * exista backend multi-tenant, esta forma se vuelva una fila de una tabla
- * `churches`/`tenants` en vez de tener que rediseñarla.
- */
+// Ajustes generales del sitio, un único registro, no una lista como
+// Eventos/Noticias/Sedes/Ministerios.
 export interface AdminSiteSettings {
   // Información general
   churchName: string;
@@ -225,21 +212,17 @@ export interface AdminSiteSettings {
   address?: string;
   city?: string;
 
-  // Portada (Hero) del Home — el título grande. El texto debajo reutiliza
-  // "description" de arriba, para no duplicar el mismo dato dos veces.
+  // título grande de la portada; el texto de abajo reutiliza "description" de arriba
   heroTagline?: string;
-  // Año de fundación — si se define, la portada muestra "X años sirviendo"
-  // junto al conteo de sedes/ministerios. Si se deja vacío, ese dato no se muestra.
+  // si se define, la portada muestra "X años sirviendo" junto al conteo de sedes/ministerios
   foundingYear?: number;
 
-  // Apariencia — hex "#rrggbb". Sí cambian el sitio público: ver
-  // lib/color.ts + app/layout.tsx, que generan las variables CSS a partir
-  // de estos dos colores.
+  // hex "#rrggbb", sí cambian el sitio público (ver lib/color.ts + app/layout.tsx)
   primaryColor: string;
   accentColor: string;
   coverImageUrl?: string;
 
-  // Redes sociales — URL + interruptor independiente por red.
+  // URL + interruptor independiente por red
   facebookUrl?: string;
   facebookEnabled: boolean;
   instagramUrl?: string;
@@ -251,10 +234,10 @@ export interface AdminSiteSettings {
   whatsappSocialUrl?: string;
   whatsappSocialEnabled: boolean;
 
-  // Qué secciones se muestran en el Home.
+  // qué secciones se muestran en el Home
   showMinistries: boolean;
   showLive: boolean;
-  /** Interruptor manual: "sí estamos transmitiendo ahora" — se combina con la detección automática de YouTube (ver lib/youtubeLive.ts); cualquiera de los dos en true adelanta el Hero a modo "en vivo". */
+  /** Interruptor manual "estamos transmitiendo ahora", se combina con la detección automática de YouTube (lib/youtubeLive.ts) — cualquiera en true activa el modo "en vivo" del Hero. */
   isLiveManual: boolean;
   showEvents: boolean;
   showNews: boolean;
@@ -262,45 +245,36 @@ export interface AdminSiteSettings {
   showCampuses: boolean;
   showHelp: boolean;
 
-  // Contacto y WhatsApp — distinto de "WhatsApp principal" de arriba: este
-  // mensaje es el que se usaría como texto predeterminado en los enlaces de
-  // WhatsApp del sitio; teléfono/correo aquí son un canal secundario opcional.
+  // mensaje predeterminado en los enlaces de WhatsApp del sitio; teléfono/correo son un canal secundario
   whatsappDefaultMessage: string;
   supportPhone?: string;
   contactEmail?: string;
 
-  // SEO / vista previa al compartir — título, descripción e imagen que
-  // aparecen cuando alguien comparte el link del sitio en WhatsApp/redes.
-  // Si quedan vacíos, el sitio usa el nombre/descripción/logo de siempre.
+  // título/descripción/imagen al compartir el link en WhatsApp/redes; vacíos = usa el logo/nombre de siempre
   seoTitle?: string;
   seoDescription?: string;
   seoImageUrl?: string;
 
-  // Página "Conócenos" — reemplaza el texto de ejemplo de app/(site)/nosotros.
+  // página "Conócenos", reemplaza el texto de ejemplo de app/(site)/nosotros
   aboutImageUrl?: string;
   aboutQuienesSomos?: string;
   aboutMision?: string;
   aboutVision?: string;
   aboutValores?: string;
 
-  // Widget flotante de Ayuda y donaciones — las 6 opciones (con íconos) viven
-  // en su propia tabla (ver lib/admin/helpOptions.ts), esto es solo el texto
-  // fijo de encabezado del widget.
+  // las 6 opciones del widget de Ayuda viven en su propia tabla (helpOptions.ts), esto es solo el encabezado
   helpTitle?: string;
   helpDescription?: string;
   helpCtaLabel?: string;
   helpOptionsTitle?: string;
 
-  // Sección "¿Es tu primera vez?" del Home — las tarjetas viven en su propia
-  // tabla (ver lib/admin/firstTimeCards.ts), esto es el encabezado.
+  // las tarjetas de "¿Es tu primera vez?" viven en firstTimeCards.ts, esto es el encabezado
   firstTimeEyebrow?: string;
   firstTimeTitle?: string;
   firstTimeDescription?: string;
   firstTimeCtaLabel?: string;
 
-  // Encabezados de sección — se reutilizan tal cual tanto en el resumen del
-  // Home como en el título de la página completa (/ministerios, /sedes...),
-  // así que es un solo juego de campos por tema, no uno por lugar.
+  // se reutilizan igual en el resumen del Home y en la página completa (/ministerios, /sedes...)
   ministriesEyebrow?: string;
   ministriesTitle?: string;
   ministriesDescription?: string;
@@ -313,22 +287,21 @@ export interface AdminSiteSettings {
   newsEyebrow?: string;
   newsTitle?: string;
   newsDescription?: string;
-  // Pastores no tiene resumen en el Home, solo aparece en /pastores.
+  // Pastores no tiene resumen en el Home, solo /pastores
   pastorsEyebrow?: string;
   pastorsTitle?: string;
   pastorsDescription?: string;
 
-  // Miniatura del bloque "En vivo" del Home — imagen + texto alternativo.
+  // bloque "En vivo" del Home
   liveThumbnailUrl?: string;
   liveThumbnailAlt?: string;
 
-  // Páginas legales — /privacidad y /terminos.
+  // /privacidad y /terminos
   privacyPolicy?: string;
   termsOfService?: string;
 
-  // Donaciones — se muestran en el widget de Ayuda cuando alguien elige
-  // "Donación económica". `donationsEnabled` controla si se muestran ahí (por
-  // defecto no, hasta que la iglesia confirme datos reales de cuenta).
+  // se muestran en el widget de Ayuda al elegir "Donación económica";
+  // donationsEnabled por defecto en false hasta tener datos de cuenta reales
   donationsEnabled: boolean;
   donationTitle?: string;
   donationTeaser?: string;
@@ -340,9 +313,7 @@ export interface AdminSiteSettings {
   nequiNumber?: string;
   daviplataNumber?: string;
 
-  // Si está activo, el sitio público muestra un aviso de mantenimiento en
-  // vez del contenido normal — el panel admin sigue funcionando siempre,
-  // para poder volver a apagarlo.
+  // si está activo, el sitio público muestra un aviso en vez del contenido normal; el admin sigue funcionando
   maintenanceMode: boolean;
 
   updatedAt: string;
@@ -350,7 +321,7 @@ export interface AdminSiteSettings {
 
 export type AdminContentType = "event" | "news";
 
-/** Forma "aplanada" común usada por las listas del dashboard (tabla completa, resumen reciente...). */
+/** Forma aplanada que usan las listas del dashboard (tabla completa, resumen reciente...). */
 export interface ContentRow {
   id: string;
   type: AdminContentType;
@@ -363,34 +334,31 @@ export interface ContentRow {
   featured?: boolean;
 }
 
-/** Una tarjeta de la sección "¿Es tu primera vez?" del Home — lista libre, se reemplaza completa al guardar. */
+/** Tarjeta de "¿Es tu primera vez?" del Home — lista libre, se reemplaza completa al guardar. */
 export interface AdminFirstTimeCard {
-  /** Clave de lib/firstTimeIcons.ts. */
+  /** Clave de firstTimeIcons.ts. */
   icon: string;
   title: string;
   description: string;
 }
 
-/** Una opción del widget de Ayuda y donaciones — lista libre, se reemplaza completa al guardar. */
+/** Opción del widget de Ayuda y donaciones — lista libre, se reemplaza completa al guardar. */
 export interface AdminHelpOption {
-  /** Clave de lib/helpOptionIcons.ts. */
+  /** Clave de helpOptionIcons.ts. */
   icon: string;
   title: string;
   description: string;
 }
 
-/** Una foto del carrusel de la portada (Hero) — lista libre, se reemplaza completa al guardar. */
+/** Foto del carrusel del Hero — lista libre, se reemplaza completa al guardar. */
 export interface AdminHeroPhoto {
   imageUrl: string;
   alt?: string;
 }
 
-/**
- * Perfil del pastor principal — singleton (una sola fila), como
- * AdminSiteSettings. New Life solo tiene un pastor a propósito (ver
- * data/pastors.ts original), así que no es una lista con crear/editar/
- * archivar como Ministerios/Sedes, solo un formulario que se guarda encima.
- */
+// Perfil del pastor principal, singleton como AdminSiteSettings. New Life
+// solo tiene un pastor, así que no es una lista con crear/editar/archivar,
+// solo un formulario que se guarda encima.
 export interface AdminPastorProfile {
   name: string;
   role?: string;

@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-/**
- * Expande un link corto de Google Maps (ej. maps.app.goo.gl/xxxx, el que
- * comparte la app móvil) a su URL larga real — necesario porque esos links
- * cortos no traen coordenadas visibles y el navegador no puede seguir la
- * redirección de otro dominio por CORS, así que se hace desde el servidor.
- * Lista blanca de dominios a propósito: es un endpoint sin autenticación,
- * así que no debe poder usarse para pedirle al servidor que abra CUALQUIER
- * URL (SSRF) — solo dominios de Google Maps.
- */
+// expande links cortos de Google Maps (maps.app.goo.gl) a la URL larga con coordenadas.
+// se hace en el servidor porque el navegador no puede seguir la redirección por CORS.
+// whitelist de dominios a propósito: sin auth, así que no puede abrir cualquier URL (SSRF)
 const ALLOWED_HOSTNAMES = new Set([
   "maps.app.goo.gl",
   "goo.gl",
@@ -35,9 +29,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // GET, no HEAD: algunos links cortos de Google (maps.app.goo.gl) no
-    // redirigen igual de confiable con HEAD — a veces responden 200 sin
-    // seguir la redirección real, dejando la URL "larga" sin resolver.
+    // con HEAD algunos links de Google responden 200 sin seguir la redirección real, por eso GET
     const response = await fetch(parsed.toString(), {
       method: "GET",
       redirect: "follow",

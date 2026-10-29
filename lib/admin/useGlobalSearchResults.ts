@@ -16,11 +16,9 @@ export interface GlobalSearchResult {
 
 const MAX_RESULTS = 8;
 
-/**
- * Lógica compartida entre GlobalSearch (el campo chiquito del encabezado) y
- * DashboardSearch (el campo grande de bienvenida del Dashboard) — mismo
- * resultado, dos presentaciones distintas, sin repetir el filtrado dos veces.
- */
+// Lógica compartida entre GlobalSearch (el campo del encabezado) y
+// DashboardSearch (el campo grande del Dashboard) — mismo filtrado, dos
+// presentaciones.
 export function useGlobalSearchResults() {
   const { ministries } = useAdminMinistries();
   const { campuses } = useAdminCampuses();

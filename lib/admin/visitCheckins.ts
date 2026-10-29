@@ -14,11 +14,8 @@ interface VisitCheckinRow {
   created_at: string;
 }
 
-/**
- * RLS solo deja ver esto a quien tenga el permiso "visits" (o "full"). Las
- * visitas de pastores van primero (se gestionan aparte, igual que lo pedido),
- * y dentro de cada grupo se mantiene el orden por fecha de visita de siempre.
- */
+// RLS solo deja verlo a quien tenga "visits" (o "full"). Las visitas de
+// pastores van primero, y dentro de cada grupo queda el orden por fecha.
 export async function loadVisitCheckins(): Promise<AdminVisitCheckin[]> {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -49,7 +46,7 @@ export async function setVisitCheckinStatus(id: number, status: "nueva" | "atend
   await logActivity(status === "atendida" ? "marcó un aviso de primera visita como atendido" : "marcó un aviso de primera visita como nuevo otra vez");
 }
 
-/** Borra uno o varios avisos de primera visita ya pasados. */
+/** Borra avisos de primera visita ya pasados. */
 export async function removeVisitCheckins(ids: number[]): Promise<void> {
   if (ids.length === 0) return;
   const supabase = createClient();

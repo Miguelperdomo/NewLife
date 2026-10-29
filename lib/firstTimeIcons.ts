@@ -1,12 +1,8 @@
 import { Baby, Car, Clock, Coffee, HandHeart, Heart, MapPin, Music2, Shield, Shirt, Sparkles, Users } from "lucide-react";
 import type { ComponentType } from "react";
 
-/**
- * Íconos disponibles para las tarjetas de "¿Es tu primera vez?" — un
- * catálogo fijo (no cualquier ícono) para que el selector en el admin sea
- * simple, y para que el sitio público sepa siempre qué dibujar sin depender
- * de que alguien escriba el nombre exacto de un ícono a mano.
- */
+// Catálogo fijo de íconos para "¿Es tu primera vez?" — así el selector del
+// admin es un dropdown simple, no un campo de texto libre que alguien puede escribir mal.
 export const FIRST_TIME_ICON_OPTIONS = [
   { value: "sparkles", label: "Destello (general)", icon: Sparkles },
   { value: "baby", label: "Bebé (niños)", icon: Baby },

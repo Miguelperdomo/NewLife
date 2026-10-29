@@ -113,12 +113,7 @@ function CardsForm({
   );
 }
 
-/**
- * Tarjetas de "¿Es tu primera vez?" del Home — sección propia en
- * Configuración, con su propio guardado (tabla `first_time_cards`, aparte de
- * `site_settings`, por eso no puede vivir dentro del formulario grande de
- * SiteSettingsForm — un <form> no puede ir anidado dentro de otro).
- */
+// panel aparte porque guarda en su propia tabla (first_time_cards) y un <form> no puede ir anidado en otro
 export function FirstTimeCardsPanel() {
   const { cards, isReady, save } = useFirstTimeCards();
 

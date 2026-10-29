@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** Cuenta hacia arriba desde 0 cuando entra en pantalla — una sola vez. Respeta "reduce motion". */
+// contador que sube desde 0 al entrar en pantalla, una sola vez; respeta reduce-motion
 export function CountUp({ value, duration = 1200 }: { value: number; duration?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [display, setDisplay] = useState(0);
@@ -14,8 +14,7 @@ export function CountUp({ value, duration = 1200 }: { value: number; duration?: 
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) {
-      // Lectura de preferencia del sistema, solo posible tras montar — mismo
-      // caso legítimo que useMedia/window.innerWidth en otros componentes.
+      // esto solo se puede leer tras montar, por eso va en el efecto
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplay(value);
       return;

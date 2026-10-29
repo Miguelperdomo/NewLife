@@ -9,7 +9,7 @@ export interface CampusAmenity {
   gradient: string;
 }
 
-/** Comodidades configurables por sede — compartido entre la página de cada campus y "Conócenos", que muestra las de la sede principal. */
+// Lo usa tanto la página de cada sede como "Conócenos" (sede principal).
 export const CAMPUS_AMENITIES: CampusAmenity[] = [
   { key: "hasParking", icon: Car, label: "Parqueadero", gradient: "from-sky-500 to-blue-600" },
   { key: "isWheelchairAccessible", icon: Accessibility, label: "Accesible", gradient: "from-emerald-500 to-teal-600" },

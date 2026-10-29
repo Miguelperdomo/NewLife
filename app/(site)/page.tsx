@@ -17,10 +17,8 @@ import { getNews } from "@/lib/newsContent";
 import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 
 export default async function Home() {
-  // AgendaSection es interactiva ("use client") y no puede pedirle datos a
-  // Supabase ella misma en medio del render — se los resuelve el Home (de
-  // servidor) y se los pasa. El resto de secciones se piden sus propios
-  // datos por su cuenta (son componentes de servidor async).
+  // AgendaSection es "use client" y no puede pedir datos a Supabase por su cuenta,
+  // así que el Home se los resuelve acá y se los pasa. Las demás secciones piden lo suyo solas.
   const [ministries, campuses, settings, events, news, helpOptions] = await Promise.all([
     getMinistries(),
     getCampuses(),
@@ -30,8 +28,7 @@ export default async function Home() {
     getHelpOptions(),
   ]);
 
-  // Interruptores de Configuración > Página principal. Si todavía no se ha
-  // guardado nada (settings === null), todo se muestra por defecto.
+  // switches de Configuración > Página principal; si no hay nada guardado, se muestra todo
   const show = {
     ministries: settings?.showMinistries ?? true,
     live: settings?.showLive ?? true,
@@ -44,9 +41,7 @@ export default async function Home() {
 
   return (
     <>
-      {/* El Hero decide solo si toca mostrar "en vivo", un evento destacado,
-          o el Hero normal (ver components/sections/Hero.tsx) — ya no hace
-          falta adelantar LiveSection por fuera. */}
+      {/* Hero decide solo si muestra "en vivo", un evento destacado o el hero normal */}
       <Hero />
       <WaveDivider className="bg-slate-50" fillClassName="text-slate-950" />
       <FirstTimeSection />

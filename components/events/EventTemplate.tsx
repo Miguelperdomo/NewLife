@@ -18,10 +18,7 @@ import { getPublicSiteSettings } from "@/lib/supabase/publicSettings";
 import type { ChurchEvent } from "@/lib/types";
 import { buildWhatsAppLink, eventInscriptionMessage } from "@/lib/whatsapp";
 
-/**
- * Plantilla única reutilizada por todas las páginas /eventos/[slug].
- * Análoga a MinistryTemplate: solo cambian los datos, no la estructura.
- */
+// plantilla única para /eventos/[slug], mismo patrón que MinistryTemplate
 export async function EventTemplate({ event }: { event: ChurchEvent }) {
   const status = getEventStatus(event.date, event.endDate);
   const [campus, ministry, ministries, campuses, settings] = await Promise.all([
@@ -36,10 +33,8 @@ export async function EventTemplate({ event }: { event: ChurchEvent }) {
 
   const related = await getRelatedEvents(event, 3);
   const canRegister = status !== "finalizado" && event.registrationByWhatsApp !== false;
-  // Si el evento tiene su propio link de inscripción (ej. Google Forms), ese
-  // manda — si no, WhatsApp, usando el número propio del evento si lo tiene
-  // (ej. el celular del encargado de ese evento específico) antes de caer al
-  // general de la iglesia.
+  // si el evento tiene su propio link de inscripción manda ese, si no WhatsApp
+  // (número propio del evento antes que el general de la iglesia)
   const registrationHref = event.registrationUrl
     ? event.registrationUrl
     : buildWhatsAppLink(

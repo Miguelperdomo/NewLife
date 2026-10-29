@@ -44,15 +44,12 @@ export default async function NosotrosPage() {
   const [settings, campuses] = await Promise.all([getPublicSiteSettings(), getCampuses()]);
   const apostle = getPastors()[0];
 
-  // La sede principal manda para "Visítanos" — antes se mostraba la dirección
-  // suelta de Configuración, sin decir de cuál sede era, y la gente no sabía
-  // si esa dirección correspondía a la principal o a otra. Si todavía no hay
-  // ninguna sede marcada como principal, cae a la dirección de Configuración
-  // (comportamiento de siempre) para no dejar la sección vacía.
+  // "Visítanos" usa la sede marcada como principal; si no hay ninguna, cae a
+  // la dirección de Configuración para no dejar la sección vacía.
   const mainCampus = campuses.find((campus) => campus.isMain) ?? campuses[0];
   const nextService = mainCampus ? findNextService(mainCampus.schedules ?? [], new Date()) : undefined;
   const mainAmenities = mainCampus ? activeCampusAmenities(mainCampus) : [];
-  // La sede principal va primero — así "Avísanos que vienes" arranca con esta ya seleccionada.
+  // la principal va primero para que el check-in arranque ya seleccionada en ella
   const checkinCampuses = mainCampus
     ? [mainCampus, ...campuses.filter((item) => item.slug !== mainCampus.slug)].map((item) => ({
         slug: item.slug,
@@ -67,8 +64,7 @@ export default async function NosotrosPage() {
       )
     : undefined;
 
-  // "Quiénes somos" va destacado, más grande que los otros tres — antes los
-  // 4 bloques se veían idénticos en la misma grilla, sin ninguna jerarquía.
+  // "Quiénes somos" va destacado y más grande que los otros tres
   const featuredBlock = {
     icon: Users,
     title: "Quiénes somos",
@@ -85,9 +81,7 @@ export default async function NosotrosPage() {
     { icon: HandHeart, title: "Valores", text: settings?.aboutValores || FALLBACK_TEXT.valores, iconClass: "bg-rose-50 text-rose-600" },
   ];
 
-  // Mismo patrón que Footer.tsx/LiveSection.tsx: Configuración > Redes
-  // sociales manda, y si todavía no hay nada guardado ahí, cae a los links
-  // fijos de data/site.ts para no dejar la sección vacía.
+  // mismo patrón que Footer/LiveSection: redes de Configuración mandan, si no hay cae a data/site.ts
   const socialCandidates: (SocialLink | undefined)[] = settings
     ? [
         settings.instagramUrl ? { platform: "instagram" as const, label: "Instagram", url: settings.instagramUrl } : undefined,

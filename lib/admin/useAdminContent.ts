@@ -22,12 +22,8 @@ import type { AdminEvent, AdminNews } from "@/lib/admin/types";
 type NewEventInput = Omit<AdminEvent, "id" | "slug" | "createdAt" | "updatedAt"> & { slug?: string };
 type NewNewsInput = Omit<AdminNews, "id" | "slug" | "createdAt" | "updatedAt"> & { slug?: string };
 
-/**
- * Único punto de acceso al contenido del admin (eventos + noticias) — ambos
- * ya viven en Supabase (lib/admin/events.ts, lib/admin/news.ts). Mismo
- * patrón que los demás módulos: cada mutación vuelve a pedir su lista
- * completa.
- */
+// Único punto de acceso al contenido (eventos + noticias). Mismo patrón que
+// los demás módulos: cada mutación vuelve a pedir su lista completa.
 interface ContentState {
   events: AdminEvent[];
   news: AdminNews[];

@@ -7,12 +7,8 @@ import type { AdminMinistry } from "@/lib/admin/types";
 import { DAY_OF_WEEK_LABELS } from "@/lib/schedule";
 import { inputClass } from "./FormField";
 
-/**
- * Lista de horarios recurrentes de una sede (día + hora + título), editable
- * agregando/quitando filas — reemplaza el horario fijo que antes vivía en
- * data/agenda.ts. Se guarda completa (reemplaza todo) al enviar el
- * formulario, ver syncCampusSchedules en lib/admin/campuses.ts.
- */
+// lista de horarios recurrentes de una sede, agregando/quitando filas.
+// se reemplaza completa al guardar (ver syncCampusSchedules en lib/admin/campuses.ts)
 export function ScheduleListField({
   control,
   errors,
@@ -20,7 +16,7 @@ export function ScheduleListField({
 }: {
   control: Control<CampusFormValues>;
   errors?: FieldErrors<CampusFormValues>["schedules"];
-  /** Si un horario es de un ministerio en particular (ej. "Reunión Juvenil" -> New Gen), se puede enlazar aquí — aplica en cualquier sede, no solo esta. */
+  /** para enlazar un horario a un ministerio, ej. "Reunión Juvenil" -> New Gen */
   ministries?: AdminMinistry[];
 }) {
   const { fields, append, remove } = useFieldArray({ control, name: "schedules" });

@@ -25,11 +25,7 @@ const ACTIONS: ActionDef[] = [
   { id: "actividad", section: "full", href: "/admin/actividad", label: "Ver actividad", icon: History },
 ];
 
-/**
- * Cuáles accesos quedan primero es una preferencia de cada persona que usa
- * el panel (guardada en su propio navegador, no en la base de datos) — mismo
- * patrón que AccessibilityMenu.tsx.
- */
+// el orden de pines se guarda en localStorage, no en la base de datos — mismo patrón que AccessibilityMenu.tsx
 function usePinnedActions() {
   const [pinned, setPinned] = useState<string[]>([]);
 
@@ -42,7 +38,7 @@ function usePinnedActions() {
         setPinned(saved.filter((item): item is string => typeof item === "string"));
       }
     } catch {
-      // Privado/bloqueado: sin pines guardados, sin romper nada.
+      // modo privado o bloqueado, sin pines guardados
     }
   }, []);
 
@@ -52,7 +48,7 @@ function usePinnedActions() {
       try {
         localStorage.setItem(PIN_STORAGE_KEY, JSON.stringify(next));
       } catch {
-        // Silencioso — ver comentario de arriba.
+        // igual, sin romper nada
       }
       return next;
     });
@@ -106,11 +102,7 @@ export function QuickActions({ sections }: { sections: AdminSection[] }) {
             </div>
           );
         })}
-        {/* "Crear noticia" — comentado a propósito, Noticias está en pausa
-            por ahora. El módulo sigue funcionando completo desde "Ver
-            contenido" si hace falta crear una detrás de cámaras; esto solo
-            quita el atajo directo. Para reactivarlo, agrégalo a ACTIONS
-            arriba (icon: Newspaper). */}
+        {/* "Crear noticia" quitado del atajo mientras Noticias está en pausa, sigue disponible desde "Ver contenido" */}
       </div>
     </div>
   );

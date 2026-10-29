@@ -6,21 +6,16 @@ export interface LiveStatus {
   checkedAt: number;
 }
 
-/** Miniatura real del video en vivo detectado — mismo patrón de URL que usa YouTube en todos lados, no hace falta otra llamada a la API. */
+/** mismo patrón de URL de thumbnail que usa YouTube, no hace falta otra llamada */
 export function youtubeThumbnailUrl(videoId: string): string {
   return `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
 }
 
 let cache: LiveStatus | null = null;
 
-/**
- * Consulta si el canal de YouTube de New Life tiene una transmisión activa
- * ahora mismo. Compartido entre app/api/live-status/route.ts (lo consulta el
- * navegador para el aviso del menú) y el Home (para decidir, al momento de
- * generar la página, si "En vivo" va de primero) — ambos reutilizan el mismo
- * caché en memoria de 15 minutos, así que no duplican cuota de YouTube entre
- * sí.
- */
+// Consulta si el canal tiene transmisión activa ahora. La usan tanto
+// /api/live-status (el navegador, para el aviso del menú) como el Home —
+// comparten el mismo caché de 15 min, así que no duplican cuota de YouTube.
 export async function getLiveStatus(): Promise<LiveStatus> {
   if (cache && Date.now() - cache.checkedAt < CACHE_MS) {
     return cache;
@@ -52,7 +47,7 @@ export async function getLiveStatus(): Promise<LiveStatus> {
       checkedAt: Date.now(),
     };
   } catch {
-    // Si YouTube falla o no responde, no rompe el sitio — simplemente no muestra "en vivo".
+    // si YouTube falla, no rompe el sitio, solo no muestra "en vivo"
     cache = { isLive: false, checkedAt: Date.now() };
   }
 

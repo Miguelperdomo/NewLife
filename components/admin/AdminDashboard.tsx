@@ -25,9 +25,7 @@ function useGreeting() {
 
   useEffect(() => {
     const hour = new Date().getHours();
-    // Excepción deliberada, igual que en useAdminContent: la hora real solo
-    // existe en el cliente, así que se fija después del montaje para no
-    // romper la hidratación.
+    // la hora solo se sabe en el cliente, se setea después del mount para no romper la hidratación
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setGreeting(hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches");
   }, []);
@@ -46,9 +44,7 @@ export function AdminDashboard({ sections, name }: { sections: AdminSection[]; n
   const greeting = useGreeting();
   const todayLabel = fullDateFormatter.format(new Date());
   const capitalizedToday = todayLabel.charAt(0).toUpperCase() + todayLabel.slice(1);
-  // Una cuenta con un único permiso puntual (ej. solo "Oración") no tiene
-  // nada que hacer con estadísticas generales de todo el sitio — ve un
-  // Dashboard reducido a lo suyo en vez del panel completo.
+  // cuenta con un solo permiso (ej. solo "Oración") -> dashboard reducido, no el completo
   const isFocusedRole = !sections.includes("full") && sections.length === 1;
 
   const totalDrafts =
@@ -86,9 +82,6 @@ export function AdminDashboard({ sections, name }: { sections: AdminSection[]; n
     );
   }
 
-  // Cuenta con un solo permiso puntual (ej. un voluntario que solo ve
-  // Oración) — nada de estadísticas generales que no le sirven ni puede
-  // usar, directo a lo suyo.
   if (isFocusedRole) {
     return (
       <div className="space-y-6">
@@ -106,10 +99,7 @@ export function AdminDashboard({ sections, name }: { sections: AdminSection[]; n
 
   return (
     <div className="space-y-6">
-      {/* Sin overflow-hidden en este contenedor a propósito: el buscador de
-          abajo abre un desplegable de resultados que necesita salirse de esta
-          tarjeta — el fondo de puntos se recorta solo (ver su propio
-          envoltorio), sin tener que recortar la tarjeta entera. */}
+      {/* ojo: sin overflow-hidden aquí a propósito, el buscador necesita que su desplegable se salga de la tarjeta */}
       <div className="relative rounded-3xl bg-gradient-to-br from-brand-600 via-brand-700 to-brand-950 p-6 text-white shadow-lg shadow-brand-900/20 sm:p-8">
         <div className="absolute inset-0 overflow-hidden rounded-3xl" aria-hidden="true">
           <div

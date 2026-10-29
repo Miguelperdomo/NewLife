@@ -1,17 +1,11 @@
 import { siteConfig } from "@/data/site";
 
-/**
- * Metadata de Open Graph/Twitter reutilizada en todas las páginas públicas,
- * para que compartir un link por WhatsApp/redes muestre una vista previa con
- * imagen y descripción en vez de un link pelado. Si la página no tiene foto
- * propia, se usa el logo de New Life como respaldo — mejor eso que nada.
- *
- * Los campos anidados (`openGraph`, `twitter`) de Next.js NO se combinan con
- * los del layout padre cuando una página los redefine: el objeto completo
- * del hijo reemplaza al del padre. Por eso cada página que llama a esto debe
- * pasar sus propios `title`/`description`/`imageSrc`, sin asumir que algo se
- * hereda del layout raíz.
- */
+// Metadata de Open Graph/Twitter para que compartir un link muestre imagen +
+// descripción en vez de un link pelado. Sin foto propia, cae al logo.
+//
+// Ojo: Next.js NO combina `openGraph`/`twitter` con los del layout padre —
+// el objeto del hijo reemplaza completo al del padre. Por eso cada página
+// debe mandar su propio title/description/imageSrc, no asumir herencia.
 export function buildOpenGraphMetadata({
   title,
   description,

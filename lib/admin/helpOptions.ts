@@ -1,11 +1,8 @@
 import { createClient } from "@/lib/supabase/client";
 import type { AdminHelpOption } from "@/lib/admin/types";
 
-/**
- * Opciones del widget de Ayuda y donaciones (tabla `help_options`) — lista
- * libre sin id propio del lado del formulario, se reemplaza completa al
- * guardar (mismo patrón que lib/admin/firstTimeCards.ts).
- */
+// Opciones del widget de Ayuda y donaciones (tabla help_options) — lista
+// libre, se reemplaza completa al guardar (mismo patrón que firstTimeCards.ts).
 interface OptionRow {
   icon: string;
   title: string;

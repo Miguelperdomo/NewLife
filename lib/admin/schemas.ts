@@ -33,9 +33,7 @@ export const eventFormSchema = z
     audience: audienceSchema,
     registrationUrl: z.string().trim().optional(),
     whatsappNumber: z.string().trim().optional(),
-    // String (no z.coerce) a propósito: mantiene idéntico el tipo que RHF
-    // guarda en el formulario y el que espera el resolver — se convierte a
-    // número al guardar (ver lib/admin/mappers.ts).
+    // string y no z.coerce, para que calce con lo que guarda RHF — se convierte a número en mappers.ts
     capacity: z
       .string()
       .trim()
@@ -107,8 +105,7 @@ const ministryStatusEnum = z.enum(["active", "archived"]);
 
 export const ministryFormSchema = z.object({
   name: z.string().trim().min(2, "El nombre es obligatorio.").max(80, "Máximo 80 caracteres."),
-  // Editable a mano (a diferencia de eventos/noticias/sedes), por eso vive en
-  // el propio schema en vez de generarse solo del lado del hook.
+  // acá sí es editable a mano (a diferencia de eventos/noticias/sedes)
   slug: z
     .string()
     .trim()
@@ -130,7 +127,7 @@ export const ministryFormSchema = z.object({
   meetingSchedule: z.string().trim().optional(),
   meetingLocation: z.string().trim().optional(),
   status: ministryStatusEnum,
-  // String (no z.coerce) por la misma razón que "capacity" en eventFormSchema.
+  // mismo motivo que "capacity" arriba
   displayOrder: z
     .string()
     .trim()
@@ -256,14 +253,9 @@ export const siteSettingsFormSchema = z.object({
 
 export type SiteSettingsFormValues = z.infer<typeof siteSettingsFormSchema>;
 
-/**
- * Valida un archivo de "Importar configuración" (Sistema > Zona peligrosa)
- * antes de guardarlo — a diferencia de siteSettingsFormSchema (campos
- * opcionales como string vacío ""), este espera la forma real de
- * AdminSiteSettings (campos opcionales como undefined). Sin esto, un JSON
- * dañado o manipulado a mano se escribiría directo en Supabase sin revisar
- * nada.
- */
+// Valida el archivo de "Importar configuración" (Sistema > Zona peligrosa)
+// antes de guardar — a diferencia de siteSettingsFormSchema (opcionales
+// como ""), acá los opcionales son undefined, como en AdminSiteSettings.
 export const adminSiteSettingsSchema = z.object({
   churchName: z.string().trim().min(1),
   description: z.string().optional(),
@@ -429,8 +421,7 @@ export const createAdminUserFormSchema = z.object({
   email: z.string().trim().min(1, "El correo es obligatorio.").email("Ingresa un correo válido."),
   password: z.string().min(8, "Mínimo 8 caracteres."),
   sections: z.array(z.string()).min(1, "Selecciona al menos un permiso."),
-  // Vacío = sin fecha límite (acceso indefinido).
-  accessUntil: z.string().optional(),
+  accessUntil: z.string().optional(), // vacío = sin fecha límite
 });
 
 export type CreateAdminUserFormValues = z.infer<typeof createAdminUserFormSchema>;

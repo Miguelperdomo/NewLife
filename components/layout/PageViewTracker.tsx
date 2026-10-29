@@ -4,13 +4,8 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/publicClient";
 
-/**
- * Contador de visitas propio y simple — sin cookies, sin terceros, sin datos
- * personales: cada carga de página solo suma 1 al contador de esa ruta en
- * Supabase (tabla `page_views`, vía la función `increment_page_view`). No
- * reemplaza una herramienta real de analítica (no filtra bots, no mide
- * tiempo en pantalla) — es a propósito lo más simple posible.
- */
+// contador de visitas propio, sin cookies ni terceros: cada carga suma 1 en
+// page_views vía increment_page_view. No reemplaza una analítica real (no filtra bots)
 export function PageViewTracker() {
   const pathname = usePathname();
   const lastTrackedRef = useRef<string | null>(null);
@@ -20,8 +15,7 @@ export function PageViewTracker() {
     lastTrackedRef.current = pathname;
 
     const supabase = createPublicClient();
-    // Silencioso a propósito: si falla (ej. sin conexión, o la función SQL
-    // todavía no se creó), nunca debe afectar la navegación de quien visita.
+    // silencioso a propósito: si falla, nunca debe afectar la navegación
     supabase.rpc("increment_page_view", { page_path: pathname }).then(() => {}, () => {});
   }, [pathname]);
 

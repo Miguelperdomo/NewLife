@@ -18,11 +18,7 @@ interface MinistryState {
   isReady: boolean;
 }
 
-/**
- * Único punto de acceso a los ministerios del admin — ahora respaldado por
- * la tabla `ministries` de Supabase. Mismo patrón que useAdminCampuses.ts:
- * cada mutación vuelve a pedir la lista completa.
- */
+// Único punto de acceso a los ministerios, mismo patrón que useAdminCampuses.ts.
 export function useAdminMinistries() {
   const [{ ministries, isReady }, setState] = useState<MinistryState>({ ministries: [], isReady: false });
 

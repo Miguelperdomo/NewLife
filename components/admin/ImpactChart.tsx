@@ -37,12 +37,7 @@ function weekLabels(now: number): string[] {
   return labels;
 }
 
-/**
- * Gráfica de barras sencilla (sin librería — solo divs con alto proporcional)
- * con Oración/Bautismo/Primera visita de las últimas 4 semanas, en vez de
- * solo los números acumulados de siempre. Reutiliza las mismas funciones de
- * carga que ya usa cada pestaña — no hay conteo nuevo del lado del servidor.
- */
+// barras hechas con divs, nada de librería de gráficas. Reusa las mismas funciones de carga de cada pestaña
 export function ImpactChart({ sections }: { sections: AdminSection[] }) {
   const showPrayer = hasAccess(sections, "prayer");
   const showBaptism = hasAccess(sections, "baptism");
@@ -54,9 +49,7 @@ export function ImpactChart({ sections }: { sections: AdminSection[] }) {
   const [visitWeeks, setVisitWeeks] = useState<number[]>(new Array(WEEKS).fill(0));
   const [labels, setLabels] = useState<string[]>(new Array(WEEKS).fill(""));
   const [year, setYear] = useState<number | null>(null);
-  // Colapsada por defecto — es un cuadro chiquito con el total, y se expande
-  // a la gráfica completa solo si alguien la toca, para no ocupar tanto
-  // espacio de entrada en un Dashboard que ya tiene bastante.
+  // colapsada por defecto para no saturar el dashboard, se expande al tocarla
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

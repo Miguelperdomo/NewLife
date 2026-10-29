@@ -4,14 +4,10 @@ import { useEffect, useState } from "react";
 
 const TYPE_SPEED_MS = 45;
 
-/**
- * Escribe `text` letra por letra al montar, como si alguien lo tecleara —
- * solo decorativo, dura 1-2 segundos y queda quieto. Arranca mostrando el
- * texto COMPLETO (lo que el servidor ya mandó) y recién en el navegador lo
- * borra y empieza a escribir de nuevo — así un buscador o alguien sin
- * JavaScript siempre ve el título completo, nunca vacío. Respeta "reduce
- * motion": ahí ni se borra, se queda tal cual.
- */
+// escribe el texto letra por letra al montar, solo decorativo (dura 1-2s).
+// arranca con el texto completo (lo que mandó el servidor) y recién en el
+// navegador lo borra para "escribirlo" — así un buscador o alguien sin JS
+// siempre ve el título completo. respeta "reduce motion"
 export function TypewriterText({ text }: { text: string }) {
   const [displayed, setDisplayed] = useState(text);
   const [typing, setTyping] = useState(false);
@@ -19,10 +15,8 @@ export function TypewriterText({ text }: { text: string }) {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    // Nada de setState síncrono en el cuerpo del efecto: el primer "tick"
-    // del intervalo (que corre después, no durante el efecto) ya se encarga
-    // de pasar de "texto completo" a "solo la primera letra" — no hace
-    // falta un paso aparte que lo vacíe primero.
+    // el primer tick del intervalo ya pasa de "texto completo" a la primera
+    // letra, no hace falta vaciarlo antes
     let i = 0;
     const timer = setInterval(() => {
       i += 1;

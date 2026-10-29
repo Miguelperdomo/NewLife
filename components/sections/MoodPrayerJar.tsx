@@ -15,11 +15,8 @@ interface Mood {
   reference: string;
 }
 
-/**
- * Versículos reales (Reina-Valera 1960), uno por estado de ánimo — ningún
- * texto aquí está inventado. Si se agregan más estados, el versículo debe
- * ser uno de verdad y citado correctamente.
- */
+// versículos reales (RV1960), nada inventado — si se agrega otro estado,
+// que sea un versículo real y bien citado
 const MOODS: Mood[] = [
   {
     key: "feliz",
@@ -95,13 +92,8 @@ const MOODS: Mood[] = [
   },
 ];
 
-/**
- * "¿Cómo te sientes hoy?" — un detalle pastoral, no un formulario: no guarda
- * nada en la base de datos, es solo una experiencia para la persona en ese
- * momento. Elige un estado de ánimo entre varios (el "frasco") y recibe un
- * versículo real para eso que está sintiendo, con la opción de pasar directo
- * a pedir oración si quiere.
- */
+// detalle pastoral, no un formulario — no guarda nada en la base de datos,
+// solo muestra un versículo según el estado de ánimo que elija la persona
 export function MoodPrayerJar({ onRequestPrayer }: { onRequestPrayer: () => void }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Mood | null>(null);

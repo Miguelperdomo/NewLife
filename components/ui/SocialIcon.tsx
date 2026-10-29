@@ -1,10 +1,7 @@
 import type { ComponentType } from "react";
 import type { SocialPlatform } from "@/lib/types";
 
-/**
- * lucide-react retiró sus íconos de marca (Instagram, Facebook, YouTube, TikTok)
- * en la v1, así que las redes sociales usan glifos SVG propios y minimalistas.
- */
+// lucide-react quitó los íconos de marca en la v1, así que estos son SVG propios
 function InstagramGlyph({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className} aria-hidden="true">

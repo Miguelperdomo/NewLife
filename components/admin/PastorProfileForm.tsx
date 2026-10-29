@@ -128,12 +128,7 @@ function Form({
   );
 }
 
-/**
- * Perfil del pastor principal — sección propia en Configuración, con su
- * propio guardado (tabla `pastor`, aparte de `site_settings`). New Life solo
- * tiene un pastor a propósito, así que es un formulario simple, no un
- * módulo con lista/crear/archivar.
- */
+// guarda en la tabla pastor aparte de site_settings. Solo hay un pastor, por eso no tiene lista/crear/archivar
 export function PastorProfileForm() {
   const { profile, isReady, update } = usePastorProfile();
 

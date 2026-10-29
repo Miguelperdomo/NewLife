@@ -10,7 +10,7 @@ export function Logo({
 }: {
   variant?: "dark" | "light";
   className?: string;
-  /** Logo/nombre guardados en Configuración; si no se pasan, usa los fijos de siempre. */
+  /** logo/nombre de Configuración; si no vienen, usa los de siempre */
   logoSrc?: string;
   name?: string;
 }) {

@@ -23,11 +23,8 @@ function coversDate(event: ChurchEvent, date: string) {
   return date >= event.date && date <= end;
 }
 
-/**
- * Vista de calendario del listado de eventos — reutiliza el mismo Calendar
- * de la Agenda del Home, pero solo con indicadores de evento/ministerio (sin
- * cultos ni noticias, que no aplican aquí).
- */
+// vista de calendario del listado de eventos, reutiliza el Calendar de la Agenda del Home
+// pero solo con indicadores de evento/ministerio (sin cultos ni noticias)
 export function EventCalendarView({
   events,
   ministries,

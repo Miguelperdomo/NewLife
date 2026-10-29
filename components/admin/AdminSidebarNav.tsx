@@ -24,7 +24,7 @@ interface NavItem {
   icon: typeof LayoutGrid;
   exact: boolean;
   section: AdminSection | null;
-  /** Color propio de este ítem — para ubicarse más rápido de un vistazo en vez de un menú todo del mismo tono. */
+  /** color del ícono para que no todo el menú se vea igual */
   color: string;
   activeBg: string;
 }
@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
   { label: "Actividad", href: "/admin/actividad", icon: History, exact: false, section: "full", color: "text-orange-400", activeBg: "bg-orange-400/10" },
 ];
 
-/** `sections` = lo que puede ver esta cuenta ("full" lo destraba todo) — ver lib/admin/auth.ts. */
+// sections = lo que puede ver esta cuenta, "full" destraba todo (ver lib/admin/auth.ts)
 export function AdminSidebarNav({
   sections,
   onNavigate,

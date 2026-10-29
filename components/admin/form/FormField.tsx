@@ -48,7 +48,7 @@ export function FormSection({
   title: string;
   description?: string;
   children: ReactNode;
-  /** false = arranca plegada (clic para abrir) — usado en formularios largos con muchas secciones, para que no se sientan como una sola pared de texto. */
+  /** false = arranca plegada, para formularios largos. */
   defaultOpen?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);

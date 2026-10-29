@@ -124,12 +124,7 @@ function PhotosForm({
   );
 }
 
-/**
- * Carrusel de fotos de la portada (Home) — sección propia en Configuración,
- * con su propio guardado (tabla `hero_photos`, aparte de `site_settings`).
- * Con 0 o 1 foto, la portada se comporta igual que siempre (una sola
- * imagen); con 2 o más, rota sola cada pocos segundos.
- */
+// guarda en hero_photos aparte de site_settings. Con 0-1 foto se ve igual que antes, con 2+ rota sola
 export function HeroPhotosPanel() {
   const { photos, isReady, save } = useHeroPhotos();
 

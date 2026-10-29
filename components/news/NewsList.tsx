@@ -7,11 +7,7 @@ import { NewsFilters, type NewsFilterOption } from "./NewsFilters";
 import { EmptyState } from "@/components/ui/EmptyState";
 import type { NewsArticle } from "@/lib/types";
 
-/**
- * Único componente con estado del listado de noticias: guarda la búsqueda y
- * la categoría activa (derivada de article.category) — mismo patrón que
- * EventList para eventos.
- */
+// guarda búsqueda + categoría activa, mismo patrón que EventList
 export function NewsList({ articles }: { articles: NewsArticle[] }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("todas");

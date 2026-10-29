@@ -16,12 +16,7 @@ const FRIENDLY_LABELS: Record<string, string> = {
 
 const MAX_ROWS = 8;
 
-/**
- * Contador de visitas propio — solo cuenta cargas de página por ruta (tabla
- * `page_views`, sumada por components/layout/PageViewTracker.tsx en cada
- * visita pública). No es Google Analytics: no distingue bots de personas
- * reales, ni país, ni dispositivo — es a propósito lo más simple posible.
- */
+// contador simple de cargas de página por ruta (tabla page_views), no es Google Analytics
 export function PageViewsCard() {
   const [rows, setRows] = useState<PageViewRow[]>([]);
   const [isReady, setIsReady] = useState(false);

@@ -4,12 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * Revela a sus hijos con una aparición discreta cuando entran al viewport.
- * Aísla el único bit de interactividad (IntersectionObserver) en un
- * componente cliente pequeño, para que la sección que lo usa siga siendo
- * un Server Component.
- */
+// revela sus hijos al entrar al viewport; aísla el IntersectionObserver acá
+// para que la sección que lo usa pueda seguir siendo Server Component
 export function ScrollReveal({
   children,
   className,

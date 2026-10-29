@@ -7,34 +7,22 @@ import { cn } from "@/lib/utils";
 import { resolveCampusCoordinates } from "@/lib/maps";
 import type { Campus } from "@/lib/types";
 
-// Ícono vía CDN en vez de los PNG que trae el paquete — Leaflet los referencia
-// con rutas relativas que los empaquetadores (webpack/Turbopack) no resuelven
-// bien, y esto evita tener que configurar ese caso especial.
+// íconos vía CDN porque los PNG del paquete usan rutas relativas que Turbopack no resuelve bien
 const MARKER_ICON_URL = "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png";
 const MARKER_SHADOW_URL = "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png";
 const MARKER_RETINA_URL = "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png";
-// Pin dorado para la sede principal (isMain) — mismo paquete de íconos de
-// color que usan muchos proyectos con Leaflet, comparte la sombra de arriba.
+// pin dorado para la sede principal
 const MARKER_ICON_URL_MAIN = "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-gold.png";
 const MARKER_RETINA_URL_MAIN = "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-gold.png";
 
-// Ciudad que se muestra de entrada cuando hay sedes en más de una — si no
-// existe entre las ciudades cargadas, cae a la primera en orden alfabético.
+// ciudad que se muestra de entrada si hay varias; si no está, cae a la primera alfabética
 const DEFAULT_CITY = "Ibagué";
 const FALLBACK_CITY_LABEL = "Otros campus";
 
-/**
- * Mapa con todas las sedes a la vez — sin API key (Leaflet + OpenStreetMap,
- * gratis). Solo puede ubicar las sedes cuyo `mapQuery` ya quedó como
- * "lat,lng" (lo normal al crear la sede pegando un link de Google Maps); las
- * que tengan una dirección escrita a mano no aparecen aquí, pero sí siguen
- * mostrando su propio mapa individual en su página de sede.
- *
- * Si las sedes quedan en ciudades muy separadas (Ibagué, Girardot,
- * Bucaramanga...), mostrar todas a la vez obliga a alejar tanto el mapa que
- * cada pin se ve diminuto — por eso, en cuanto hay más de una ciudad,
- * aparece un selector arriba y el mapa se acerca solo a la ciudad elegida.
- */
+// Mapa con todas las sedes (Leaflet + OSM, sin API key). Solo ubica sedes cuyo mapQuery
+// ya es "lat,lng" — las que tienen dirección escrita a mano no salen acá, pero sí en su
+// propia página. Con sedes en ciudades muy separadas el zoom general dejaría los pines
+// minúsculos, así que con más de una ciudad aparece un selector.
 export function AllCampusesMap({ campuses }: { campuses: Campus[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -45,10 +33,7 @@ export function AllCampusesMap({ campuses }: { campuses: Campus[] }) {
     })
     .filter((value): value is { campus: Campus; coords: { lat: number; lng: number } } => value !== null);
 
-  // Agrupa sin importar mayúsculas/acentos de más o de menos en lo que
-  // alguien escribió a mano ("Ibagué" e "ibague" caen en la misma llave) —
-  // la lista de sugerencias del formulario (ver CampusForm) ya ayuda a que
-  // esto casi no pase, esto es una segunda red de seguridad.
+  // normaliza mayúsculas/acentos para agrupar ("Ibagué" e "ibague" caen igual)
   function cityKeyOf(campus: Campus): string {
     return (campus.city?.trim() || FALLBACK_CITY_LABEL).toLowerCase();
   }
@@ -66,9 +51,7 @@ export function AllCampusesMap({ campuses }: { campuses: Campus[] }) {
   const defaultCityKey = cityKeys.find((key) => key === DEFAULT_CITY.toLowerCase()) ?? cityKeys[0] ?? null;
 
   const [requestedCityKey, setRequestedCityKey] = useState<string | null>(null);
-  // Derivado en vez de sincronizado con un efecto: si lo que el usuario
-  // seleccionó ya no existe entre las ciudades disponibles (ej. cambiaron
-  // los datos), cae sola a la de por defecto en el mismo render.
+  // derivado, no sincronizado con un efecto: si la ciudad elegida ya no existe, cae sola a la default
   const selectedCityKey = requestedCityKey && cityKeys.includes(requestedCityKey) ? requestedCityKey : defaultCityKey;
 
   const visiblePins =
@@ -131,7 +114,7 @@ export function AllCampusesMap({ campuses }: { campuses: Campus[] }) {
       cancelled = true;
       map?.remove();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `visiblePins` se recalcula cada render; `selectedCityKey` ya cubre cuándo debe reconstruirse el mapa, comparar por longitud alcanza para el resto.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- visiblePins se recalcula cada render, el length alcanza para saber si cambió
   }, [visiblePins.length, selectedCityKey]);
 
   if (pins.length === 0) return null;

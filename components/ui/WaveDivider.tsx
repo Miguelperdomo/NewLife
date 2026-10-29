@@ -1,11 +1,7 @@
 import { cn } from "@/lib/utils";
 
-/**
- * Transición ondulada entre una sección oscura y la siguiente clara — en vez
- * del corte plano de color a color. `className` define el fondo de la franja
- * (el color de la sección que sigue) y `fillClassName` el color de la ola
- * (el color de la sección que termina), vía `currentColor` + `fill`.
- */
+// transición ondulada entre secciones en vez de un corte plano.
+// className = color de fondo de la franja, fillClassName = color de la ola
 export function WaveDivider({
   className,
   fillClassName = "text-slate-950",

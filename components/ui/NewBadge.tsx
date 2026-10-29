@@ -1,7 +1,7 @@
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/** Insignia "Nuevo" para contenido publicado hace poco — mismo estilo de pastilla que FeaturedBadge/EventBadge, en verde para distinguirse de esos. */
+// insignia "Nuevo", misma pastilla que FeaturedBadge pero en verde
 export function NewBadge({ className }: { className?: string }) {
   return (
     <span

@@ -3,11 +3,7 @@
 import { Controller, type Control, type FieldPath, type FieldValues } from "react-hook-form";
 import { inputClass } from "./FormField";
 
-/**
- * Fila "activar red + URL" reutilizada por cualquier formulario del admin
- * que administre redes sociales (Configuración, Pastores...) — genérica
- * sobre el tipo de formulario vía FieldPath, para no atarla a un solo schema.
- */
+// fila "activar red + URL" reutilizable en cualquier form que maneje redes sociales
 export function SocialRowField<TFieldValues extends FieldValues>({
   control,
   urlName,

@@ -6,7 +6,7 @@ import { SocialIcon } from "@/components/ui/SocialIcon";
 import { buildFacebookShareLink, buildWhatsAppShareLink } from "@/lib/share";
 import { cn } from "@/lib/utils";
 
-/** Botón circular compartido por los tres enlaces de compartir. */
+// botón circular que reutilizan los tres enlaces de compartir
 function ShareButton({
   href,
   onClick,
@@ -36,11 +36,8 @@ function ShareButton({
   );
 }
 
-/**
- * Compartir por WhatsApp/Facebook + copiar enlace. La URL real (dominio +
- * ruta) solo se conoce en el navegador, así que se lee tras el montaje —
- * mismo patrón que HelpWidget/ScrollReveal para no romper la hidratación.
- */
+// compartir por WhatsApp/Facebook + copiar enlace. La URL completa solo se
+// conoce en el navegador, así que se lee después de montar.
 export function ShareButtons({ title, className }: { title: string; className?: string }) {
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState(false);
@@ -57,7 +54,7 @@ export function ShareButtons({ title, className }: { title: string; className?: 
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Portapapeles no disponible (permisos, navegador antiguo) — no es crítico.
+      // sin acceso al portapapeles, no pasa nada grave
     }
   }
 

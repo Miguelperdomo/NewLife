@@ -4,12 +4,7 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Download, Loader2, QrCode } from "lucide-react";
 
-/**
- * Código QR de un link público (sede o evento) — se genera en el propio
- * navegador (sin llamar a ningún servicio externo) a partir de la URL real
- * de la página. Pensado para imprimir en volantes/pendones: alguien lo
- * escanea con la cámara del celular y llega directo a esa página.
- */
+// genera el QR en el navegador, sin servicio externo — para imprimir en volantes/pendones
 export function QRCodeCard({ url, label }: { url: string; label: string }) {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
 

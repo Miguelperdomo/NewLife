@@ -60,10 +60,7 @@ function OptionsForm({
           <div key={field.id} className="space-y-2.5 rounded-xl border border-slate-200 p-3">
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-[200px_1fr_auto]">
               <select className={inputClass} {...register(`options.${index}.icon`)}>
-                {/* Si esta fila quedó guardada con un ícono que ya no está en el
-                    catálogo (ej. uno que se retiró más adelante), se agrega como
-                    opción aparte — así el <select> sigue mostrando el valor real
-                    guardado en vez de cambiarlo solo al primero de la lista. */}
+                {/* si el ícono guardado ya no existe en el catálogo, se agrega aparte para no perder el valor real */}
                 {!HELP_OPTION_ICON_OPTIONS.some((option) => option.value === field.icon) && field.icon && (
                   <option value={field.icon}>{field.icon} (ícono anterior)</option>
                 )}
@@ -120,12 +117,7 @@ function OptionsForm({
   );
 }
 
-/**
- * Opciones del widget de Ayuda y donaciones — sección propia en
- * Configuración con su propio guardado (tabla `help_options`, aparte de
- * `site_settings`). El texto fijo del widget (título/descripción/CTA) vive
- * en SiteSettingsForm, junto a los demás campos de `site_settings`.
- */
+// guarda en su propia tabla (help_options), el texto fijo del widget vive en SiteSettingsForm
 export function HelpOptionsPanel() {
   const { options, isReady, save } = useHelpOptions();
 

@@ -1,15 +1,9 @@
 import { formatEventDate, formatEventTime } from "@/lib/events";
 import type { Campus, ChurchEvent, Ministry, NewsArticle } from "@/lib/types";
 
-/**
- * Capa de agenda: combina los cultos recurrentes (horarios de cada sede,
- * ver campus.schedules) con eventos y noticias en una sola línea de tiempo
- * por día. Funciones puras a propósito, sin pedir datos ellas mismas:
- * eventos/noticias/sedes vienen de Supabase (async), y este archivo lo usan
- * componentes "use client" (EventCalendarView, AgendaSection) que no pueden
- * pedirlos en medio del render — su ancestro de servidor los resuelve una
- * vez y los pasa como parámetro.
- */
+// Junta cultos recurrentes + eventos + noticias en una sola línea de tiempo por día.
+// Todo puro, sin pedir datos acá: EventCalendarView y AgendaSection son "use client"
+// y reciben todo ya resuelto desde el servidor.
 export type AgendaItemType = "culto" | "evento" | "ministerio" | "noticia";
 
 export interface AgendaItem {
@@ -18,10 +12,10 @@ export interface AgendaItem {
   title: string;
   subtitle?: string;
   time?: string;
-  /** Minutos desde medianoche, solo para ordenar los ítems de un mismo día. */
+  /** minutos desde medianoche, solo para ordenar */
   sortMinutes: number;
   location?: string;
-  /** Link a la página de la sede (ej. /sedes/arena) — distinto de `href`, que es del evento/noticia. */
+  /** link a la sede, no al evento/noticia */
   locationHref?: string;
   ministryLabel?: string;
   href?: string;
@@ -46,13 +40,8 @@ export interface AgendaCultoGroup {
   entries: AgendaCultoEntry[];
 }
 
-/**
- * Un mismo culto (mismo título, como "Reunión Juvenil") suele repetirse en
- * varias sedes el mismo día, pero no siempre a la misma hora — sin agrupar,
- * "Servicios del día" terminaba mostrando una tarjeta casi idéntica por
- * cada sede. Se agrupan por título en una sola tarjeta, con cada sede y su
- * propio horario como etiqueta.
- */
+// Un mismo culto se repite en varias sedes el mismo día (no siempre a la misma hora),
+// así que los agrupamos por título en vez de sacar una tarjeta casi igual por cada sede.
 export function groupCultosByServicio(items: AgendaItem[]): AgendaCultoGroup[] {
   const groups = new Map<string, AgendaCultoGroup>();
   for (const item of items) {

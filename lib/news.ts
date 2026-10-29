@@ -7,7 +7,6 @@ export function formatNewsDate(date: string) {
   }).format(parsed);
 }
 
-// Reexportada desde lib/readingTime.ts — se movió ahí porque Eventos
-// también la usa ahora, no solo Noticias. Se reexporta acá para no romper
-// los imports ya existentes (NewsCard, NewsTemplate).
+// Vive en lib/readingTime.ts ahora (Eventos también la usa), reexportada
+// acá para no romper NewsCard/NewsTemplate.
 export { formatReadingTime } from "@/lib/readingTime";

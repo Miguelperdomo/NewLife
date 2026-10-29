@@ -1,9 +1,6 @@
 import type { Verse } from "@/lib/types";
 
-// Versículos bíblicos reales, texto de la Reina-Valera 1960 (RVR1960),
-// traducción usada de forma consistente en toda la tarjeta "Un momento para
-// ti". Cada uno corresponde a uno de los temas pedidos para esta primera
-// versión — se puede seguir agregando aquí sin tocar el componente.
+// versículos en RVR1960 para la tarjeta "Un momento para ti"
 export const verses: Verse[] = [
   {
     slug: "salmos-23-1",

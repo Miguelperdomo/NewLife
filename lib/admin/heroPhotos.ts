@@ -1,11 +1,8 @@
 import { createClient } from "@/lib/supabase/client";
 import type { AdminHeroPhoto } from "@/lib/admin/types";
 
-/**
- * Fotos del carrusel de la portada (tabla `hero_photos`) — lista libre sin id
- * propio del lado del formulario, se reemplaza completa al guardar (mismo
- * patrón que first_time_cards/help_options).
- */
+// Fotos del carrusel de portada (tabla hero_photos) — lista libre, se
+// reemplaza completa al guardar (mismo patrón que first_time_cards/help_options).
 interface HeroPhotoRow {
   image_url: string;
   alt_text: string | null;

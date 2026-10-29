@@ -65,8 +65,7 @@ function PrayerModalBody({ onClose }: { onClose: () => void }) {
 
   async function onSubmit(values: PrayerRequestFormValues) {
     setServerError(null);
-    // Honeypot: si un bot llenó este campo invisible, fingimos éxito sin
-    // enviar nada de verdad.
+    // honeypot: si un bot llenó este campo invisible, fingimos éxito sin mandar nada
     if (values.website) {
       setSent(true);
       reset();
@@ -223,13 +222,8 @@ function BaptismModalBody({ onClose }: { onClose: () => void }) {
   );
 }
 
-/**
- * Oración y Bautismo compartían el mismo formato de tarjeta y ocupaban el
- * doble de scroll por separado — se unieron en una sola tarjeta con pestañas
- * (como el selector "Iniciar sesión / Registrarse" de un login), más
- * compacta y moderna. Cada pestaña abre su propio modal/formulario, sin
- * mezclar los datos de una con la otra.
- */
+// Oración y Bautismo eran dos tarjetas separadas (el doble de scroll) —
+// ahora es una con pestañas, cada una con su propio modal/formulario
 export function PersonalStepsSection() {
   const [tab, setTab] = useState<StepTab>("prayer");
   const [prayerOpen, setPrayerOpen] = useState(false);

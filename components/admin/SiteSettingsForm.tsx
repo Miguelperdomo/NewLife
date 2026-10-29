@@ -52,7 +52,7 @@ function ColorField({
   );
 }
 
-/** Mini vista previa en vivo: usa los colores elegidos ANTES de guardar, para que no haya sorpresas. */
+// preview en vivo con los colores elegidos, antes de guardar
 function ColorPreview({ primaryColor, accentColor }: { primaryColor: string; accentColor: string }) {
   const isValid = (hex: string) => /^#[0-9a-fA-F]{6}$/.test(hex);
   const primary = isValid(primaryColor) ? primaryColor : "#7c3aed";
@@ -326,13 +326,8 @@ export function SiteSettingsForm({
       </FormSection>
 
       {/*
-        "Encabezados de secciones" — comentado a pedido del usuario (no se
-        borró nada): la etiqueta/título/descripción de cada sección (Home +
-        página completa) seguían guardadas en la base de datos y siguen
-        usándose tal cual en el sitio público, solo se quitó la posibilidad
-        de editarlas desde el panel. Para reactivarlo, descomentar este
-        bloque — los campos del formulario (register, defaultValues, schema)
-        no se tocaron.
+        Sección comentada a pedido del usuario — los datos siguen en la BD y se usan en el sitio,
+        solo se quitó la edición desde el panel. Descomentar para reactivarla.
 
       <FormSection
         title="Encabezados de secciones"

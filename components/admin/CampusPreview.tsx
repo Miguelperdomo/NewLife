@@ -18,10 +18,7 @@ function toPreviewCampus(campus: AdminCampus): Campus {
   };
 }
 
-/**
- * Renderiza literalmente CampusCard (el mismo componente de /sedes) con los
- * datos del borrador — mismo patrón que ContentPreview.tsx.
- */
+// usa el mismo CampusCard de /sedes, mismo patrón que ContentPreview.tsx
 export function CampusPreview({ campus }: { campus: AdminCampus }) {
   return (
     <div className="space-y-4">

@@ -12,7 +12,7 @@ const statusOptions: { label: string; value: MinistryFiltersValue["status"] }[] 
   { label: "Archivados", value: "archived" },
 ];
 
-/** Mismo patrón visual que ContentFilters.tsx: buscador + select de estado. */
+// mismo patrón que ContentFilters.tsx: buscador + select de estado
 export function MinistryFilters({
   value,
   onChange,

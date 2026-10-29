@@ -6,12 +6,9 @@ import { cn } from "@/lib/utils";
 const MAGNETIC_STRENGTH = 0.35;
 const MAX_OFFSET_PX = 14;
 
-/**
- * Envuelve un botón/link para que se desplace levemente hacia el cursor al
- * acercarse (efecto "imán") y vuelva a su lugar al salir. El desplazamiento
- * se escribe directo en el DOM (sin setState) porque corre en cada
- * mousemove — usar React state ahí re-renderizaría de más.
- */
+// efecto "imán": el botón se desplaza hacia el cursor al acercarse y vuelve
+// al salir. El movimiento se escribe directo en el DOM (sin setState) porque
+// esto corre en cada mousemove y con state re-renderizaría de más.
 export function MagneticButton({ children, className }: { children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
 

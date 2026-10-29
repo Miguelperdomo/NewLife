@@ -10,14 +10,9 @@ import { siteConfig } from "@/data/site";
 import type { Campus, ChurchEvent, Ministry } from "@/lib/types";
 import { buildWhatsAppLink, ministryInscriptionMessage } from "@/lib/whatsapp";
 
-/**
- * Plantilla única reutilizada por todas las páginas /ministerios/[slug] —
- * también la reutiliza la vista previa del panel admin (dentro de un
- * componente "use client"), así que no puede ser async ni importar nada de
- * lib/content.ts/lib/eventsContent.ts (Supabase): ministries/campuses/
- * upcomingEvents le llegan ya resueltos, opcionales (la vista previa
- * simplemente no los pasa).
- */
+// La reutiliza la vista previa del admin (que es "use client"), así que
+// esto NO puede ser async ni importar nada de Supabase. Todo llega ya
+// resuelto por quien llama; en la vista previa simplemente no se pasa.
 export function MinistryTemplate({
   ministry,
   ministries = [],
@@ -29,12 +24,11 @@ export function MinistryTemplate({
   ministries?: Ministry[];
   campuses?: Campus[];
   upcomingEvents?: ChurchEvent[];
-  /** Configuración > WhatsApp principal; el llamador la resuelve (ver comentario de arriba). */
+  /** WhatsApp de Configuración, ya resuelto por quien llama. */
   whatsappNumber?: string;
 }) {
-  // Si el ministerio tiene su propio link de inscripción (ej. Google Forms),
-  // ese manda — si no, WhatsApp, con el número propio del ministerio antes
-  // de caer al general de la iglesia (igual que ya pasa con Eventos y Sedes).
+  // link propio (Google Forms, etc) manda; si no hay, WhatsApp del ministerio
+  // o, en su defecto, el general de la iglesia
   const registrationHref = ministry.registrationUrl
     ? ministry.registrationUrl
     : buildWhatsAppLink(

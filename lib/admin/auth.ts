@@ -15,19 +15,12 @@ interface AdminRow {
   access_until: string | null;
 }
 
-/**
- * Sesión real contra Supabase Auth. `is_admin()` es una función SQL
- * (security definer) creada junto con la base de datos: confirma que
- * auth.uid() está presente en la tabla `admins` sin necesitar exponerla a
- * lectura directa. Devuelve null si no hay sesión O si la sesión no
- * pertenece al administrador — ambos casos se tratan igual en
- * app/admin/(dashboard)/layout.tsx (redirect a /admin/login).
- *
- * `sections` es lo que decide qué partes del panel puede ver/tocar esta
- * cuenta — "full" es el comodín que da acceso a todo. Una fila propia en
- * `admins` siempre es legible por su dueño (política "select_own_admin_row"),
- * por eso este select funciona aunque la tabla esté cerrada para todo lo demás.
- */
+// Sesión real contra Supabase Auth. is_admin() es una función SQL (security
+// definer) que confirma que auth.uid() está en la tabla `admins` sin tener
+// que exponerla a lectura directa. Null = sin sesión O sesión que no es de
+// admin, ambos casos se tratan igual en app/admin/(dashboard)/layout.tsx.
+//
+// "sections" decide qué puede ver/tocar esta cuenta, "full" es el comodín.
 export async function getAdminSession(): Promise<AdminSession | null> {
   const supabase = await createClient();
 
@@ -47,10 +40,8 @@ export async function getAdminSession(): Promise<AdminSession | null> {
     .maybeSingle();
   const adminRow = row as AdminRow | null;
 
-  // Si `access_until` ya pasó, la sesión se trata como "Sin permisos" sin
-  // borrar lo que esa persona tenía guardado en `sections` — así, si luego le
-  // extienden la fecha, recupera exactamente los mismos permisos de antes en
-  // vez de que un administrador tenga que volver a marcar todo desde cero.
+  // si ya venció access_until, se trata como "sin permisos" pero sin borrar
+  // sections — si le extienden la fecha, recupera los mismos permisos
   const today = new Date().toISOString().slice(0, 10);
   const expired = !!adminRow?.access_until && adminRow.access_until < today;
 
@@ -58,13 +49,9 @@ export async function getAdminSession(): Promise<AdminSession | null> {
     id: user.id,
     name: adminRow?.name || user.email || "Administrador",
     email: user.email ?? "",
-    // OJO: `?? ["full"]` (no `.length > 0 ? ... : ["full"]`) a propósito — ese
-    // operador solo cae al respaldo cuando `sections` es null/undefined
-    // (fila vieja de antes de que existiera este sistema de roles), nunca
-    // cuando es un arreglo vacío `[]`. Antes, cualquiera marcado como "Sin
-    // permisos" (sections = []) terminaba tratado como "Todo" por error — la
-    // misma regla pensada para cuentas viejas atrapaba también a quien se
-    // quería dejar a propósito sin ningún acceso.
+    // ojo: es `?? ["full"]`, no `.length > 0 ? ... : ["full"]` — ese segundo
+    // caería al respaldo también con sections = [], y antes eso hacía que
+    // alguien marcado a propósito como "sin permisos" terminara con acceso total
     sections: expired ? [] : adminRow?.sections ?? ["full"],
   };
 }
@@ -73,14 +60,10 @@ export function hasSection(session: AdminSession, section: AdminSection): boolea
   return session.sections.includes("full") || session.sections.includes(section);
 }
 
-/**
- * Título de cada página del panel, usado vía `generateMetadata` (nunca un
- * `export const metadata` fijo) — Next.js resuelve el <title> de la página
- * antes de que layout.tsx/page.tsx alcancen a llamar notFound(), así que un
- * título fijo como "Dashboard — Panel administrativo New Life" se filtraba en
- * la pestaña del navegador incluso sin sesión, delatando que la URL sí existe.
- * Con esto, sin sesión siempre se devuelve el mismo título genérico del 404.
- */
+// Título de cada página, siempre vía generateMetadata (nunca un `export
+// const metadata` fijo) porque Next resuelve el <title> antes de que
+// notFound() alcance a correr — un título fijo filtraba el nombre real de
+// la página en la pestaña aunque no hubiera sesión. Sin sesión, título genérico.
 export async function adminMetadata(title: string): Promise<Metadata> {
   const session = await getAdminSession();
   if (!session) {

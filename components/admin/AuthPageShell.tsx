@@ -6,11 +6,7 @@ import type { ReactNode } from "react";
 
 const verse = verses.find((item) => item.slug === "filipenses-4-13") ?? verses[0];
 
-/**
- * Fondo/tarjeta compartidos por las pantallas públicas de autenticación
- * (login, olvidé mi contraseña -> actualizar contraseña) — mismo diseño,
- * distinto contenido adentro.
- */
+// shell compartido por las pantallas de login / recuperar contraseña
 export function AuthPageShell({
   title,
   subtitle,

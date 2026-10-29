@@ -18,17 +18,12 @@ function createParticles() {
   }));
 }
 
-/**
- * Ráfaga corta de confeti al confirmar un envío (Oración/Bautismo/Primera
- * visita) — puro CSS, sin librería: cada partícula es un <span> con su propia
- * posición/color/retraso al azar, animado una sola vez por @keyframes
- * confetti-fall (app/globals.css). Se usa junto con <AnimatedCheck />, nunca
- * solo — debe ir dentro de un contenedor con `relative` y `overflow-hidden`.
- *
- * `Math.random()` vive dentro del inicializador de useState (se ejecuta una
- * sola vez, al montar) y no directamente en el render — llamarlo en el
- * cuerpo del render rompe la regla de pureza de componentes de React.
- */
+// Confeti en CSS puro al confirmar un envío (Oración/Bautismo/Primera visita).
+// Cada <span> es una partícula con posición/color/retraso random, animada por
+// @keyframes confetti-fall en globals.css. Va siempre junto a <AnimatedCheck />,
+// dentro de un contenedor relative + overflow-hidden.
+// El Math.random() va en el useState (corre una sola vez al montar) para no
+// llamarlo directo en el render.
 export function ConfettiBurst() {
   const [particles] = useState(createParticles);
 

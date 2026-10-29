@@ -1,11 +1,8 @@
 import { createClient } from "@/lib/supabase/client";
 import type { AdminFirstTimeCard } from "@/lib/admin/types";
 
-/**
- * Tarjetas de "¿Es tu primera vez?" (tabla `first_time_cards`) — lista libre
- * sin id propio del lado del formulario, se reemplaza completa al guardar
- * (mismo patrón que syncCampusSchedules en lib/admin/campuses.ts).
- */
+// Tarjetas de "¿Es tu primera vez?" (tabla first_time_cards) — lista libre,
+// se reemplaza completa al guardar (igual que syncCampusSchedules).
 interface CardRow {
   icon: string;
   title: string;
@@ -30,8 +27,7 @@ export async function loadFirstTimeCards(): Promise<AdminFirstTimeCard[]> {
 
 export async function saveFirstTimeCards(cards: AdminFirstTimeCard[]): Promise<void> {
   const supabase = createClient();
-  // "Borrar todo" no acepta un delete() sin filtro — .not("id","is",null)
-  // calza con cualquier fila real (id nunca es null), así que borra todas.
+  // delete() sin filtro no funciona, .not("id","is",null) calza con todas las filas reales
   await supabase.from("first_time_cards").delete().not("id", "is", null);
 
   if (cards.length > 0) {

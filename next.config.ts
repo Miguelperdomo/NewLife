@@ -3,28 +3,21 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      // Fotos subidas desde el panel admin (Supabase Storage, bucket "media").
-      // El comodín cubre cualquier proyecto de Supabase, no solo el actual.
+      // fotos subidas desde el admin (Supabase Storage, bucket "media")
       {
         protocol: "https",
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
-      // Imágenes pegadas como link externo (ver ImageUploadField "o pega un
-      // enlace") — cualquier dominio https, a propósito: no hay forma de
-      // adivinar de antemano dónde va a estar alojada una foto que alguien
-      // encuentra en Google. Sin optimización automática para esas (no son
-      // de Supabase), pero sí se muestran sin romper el sitio.
+      // imágenes pegadas como link externo — cualquier https, no hay forma de
+      // saber de antemano el dominio. No se optimizan pero igual se muestran.
       { protocol: "https", hostname: "**" },
     ],
   },
 
-  // Cabeceras de seguridad aplicadas a todo el sitio. `frame-ancestors 'none'`
-  // + X-Frame-Options bloquean que /admin/login (o cualquier página) se
-  // esconda dentro de un <iframe> de otro sitio para engañar a alguien
-  // (clickjacking). No se agrega un Content-Security-Policy más estricto a
-  // propósito: Analytics/Meta Pixel/YouTube/Google Maps/Supabase necesitan
-  // scripts e iframes de terceros, y restringirlos mal rompería el sitio.
+  // cabeceras de seguridad para todo el sitio — frame-ancestors + X-Frame-Options
+  // evitan que metan el sitio en un iframe ajeno (clickjacking). No se puso un
+  // CSP más estricto porque rompería Analytics/Meta Pixel/YouTube/Maps/Supabase
   async headers() {
     return [
       {

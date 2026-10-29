@@ -17,7 +17,7 @@ const fieldClass =
 
 const FALLBACK_CITY_LABEL = "Otra ciudad";
 
-/** Colores por ciudad, en el mismo orden en que van apareciendo — así cada una se distingue de un vistazo. */
+// colores por ciudad en el orden que van apareciendo, para distinguirlas de un vistazo
 const CITY_BADGE_COLORS = [
   "bg-brand-50 text-brand-700",
   "bg-amber-50 text-amber-700",
@@ -31,7 +31,7 @@ function cityOf(campus: { city?: string }): string {
   return campus.city?.trim() || FALLBACK_CITY_LABEL;
 }
 
-/** Agrupa los campus por ciudad (en el orden en que aparecen) — para que el desplegable los muestre separados por <optgroup>, no todos mezclados. */
+// agrupa los campus por ciudad para el <optgroup> del desplegable
 function groupByCity<T extends { city?: string }>(campuses: T[]): [string, T[]][] {
   const groups = new Map<string, T[]>();
   for (const campus of campuses) {

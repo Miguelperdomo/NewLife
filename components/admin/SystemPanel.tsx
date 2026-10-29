@@ -9,7 +9,7 @@ import type { AdminSiteSettings } from "@/lib/admin/types";
 
 type PendingAction = "reset" | { type: "import"; data: AdminSiteSettings } | null;
 
-/** Acciones de Configuración: exportar, importar o restablecer a los valores demo. */
+// exportar, importar o restablecer a los valores demo
 export function SystemPanel({
   settings,
   onResetDemo,
@@ -42,8 +42,7 @@ export function SystemPanel({
     reader.onload = () => {
       try {
         const rawParsed: unknown = JSON.parse(String(reader.result));
-        // Valida la forma real antes de dejarla llegar a Supabase — un JSON
-        // dañado o manipulado a mano ya no se guarda tal cual.
+        // valida la forma antes de mandarlo a Supabase
         const parsed = adminSiteSettingsSchema.parse(rawParsed) as AdminSiteSettings;
         setImportError(null);
         setPending({ type: "import", data: parsed });

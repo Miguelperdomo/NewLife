@@ -12,11 +12,8 @@ import type { SocialLink, SocialPlatform } from "@/lib/types";
 
 const liveSocialPlatforms: SocialPlatform[] = ["youtube", "facebook", "instagram", "tiktok"];
 
-/**
- * Los links "Ver en YouTube/Facebook" salen de Configuración > Redes
- * sociales cuando existen — antes usaban siempre el link fijo de
- * data/live.ts, así que cambiarlos en Configuración no movía nada aquí.
- */
+// los links de YouTube/Facebook salen de Configuración cuando existen,
+// antes quedaban fijos en data/live.ts
 export async function LiveSection() {
   const settings = await getPublicSiteSettings();
   const youtubeUrl = settings?.youtubeUrl || liveLinks.youtube;
@@ -136,8 +133,7 @@ export async function LiveSection() {
                 aria-label="Ver el canal de YouTube de New Life"
                 className="group block overflow-hidden rounded-3xl border border-white/10 bg-slate-900 shadow-2xl shadow-black/40"
               >
-                {/* La relación de aspecto calca la de la imagen real, para mostrarla
-                    completa (sin recortes ni franjas vacías) — ver liveThumbnail. */}
+                {/* mismo aspect ratio que la imagen real, para que no se recorte */}
                 <div className="relative aspect-[1138/187] w-full overflow-hidden">
                   <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
                     <PlaceholderImage

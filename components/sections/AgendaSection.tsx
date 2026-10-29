@@ -44,12 +44,9 @@ export function AgendaSection({
     () => getAgendaItemsForDate(selectedDate, ministries, campuses, events, news),
     [selectedDate, ministries, campuses, events, news]
   );
-  // Cultos dominicales agrupados POR SEDE para el panel de abajo ("Todos los
-  // domingos") — antes era una bolsa de pastillas solo con la hora, mezclando
-  // todas las sedes sin decir de cuál era cada una (y repitiendo la misma
-  // hora una vez por cada sede que la comparte). El resto de horarios (si
-  // hay entre semana) igual aparecen en el calendario, solo no se resumen
-  // aquí.
+  // cultos dominicales agrupados por sede para el panel de abajo (antes era
+  // una sola bolsa de horas, mezclando todas las sedes). lo demás entre
+  // semana igual sale en el calendario, aquí solo se resume el domingo
   const sundaysByCampus = useMemo(
     () =>
       campuses

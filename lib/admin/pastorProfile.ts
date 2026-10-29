@@ -1,10 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { AdminPastorProfile } from "@/lib/admin/types";
 
-/**
- * Perfil del pastor principal (tabla `pastor`, singleton fila id=1) — mismo
- * patrón que lib/admin/siteSettings.ts.
- */
+// Perfil del pastor principal (tabla pastor, fila única id=1), mismo patrón que siteSettings.ts
 const ROW_ID = 1;
 
 interface PastorRow {
@@ -35,7 +32,7 @@ function rowToPastor(row: PastorRow): AdminPastorProfile {
   };
 }
 
-/** Valores de arranque cuando todavía no existe la fila en Supabase. */
+/** Valores por defecto mientras no exista la fila en Supabase. */
 function defaultPastorProfile(): AdminPastorProfile {
   return {
     name: "Apóstol Giovany",

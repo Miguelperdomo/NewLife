@@ -13,10 +13,7 @@ import type { Pastor } from "@/lib/types";
 import { buildWhatsAppLink, pastorInquiryMessage } from "@/lib/whatsapp";
 import { PastorCard } from "./PastorCard";
 
-/**
- * Plantilla única reutilizada por todas las páginas /pastores/[slug].
- * Análoga a MinistryTemplate/EventTemplate: solo cambian los datos.
- */
+// igual que MinistryTemplate/EventTemplate: una sola plantilla, cambian los datos
 export async function PastorTemplate({ pastor }: { pastor: Pastor }) {
   const paragraphs = pastor.bio.split("\n\n").filter(Boolean);
   const [allPastors, settings] = await Promise.all([getPastors(), getPublicSiteSettings()]);

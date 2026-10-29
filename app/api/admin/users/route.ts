@@ -3,13 +3,8 @@ import { getAdminSession, hasSection } from "@/lib/admin/auth";
 import { createServiceRoleClient } from "@/lib/supabase/serviceRole";
 import { ADMIN_SECTIONS, type AdminSection } from "@/lib/admin/types";
 
-/**
- * Crea una cuenta de administrador de verdad — necesita la llave de servicio
- * (supabase.auth.admin.*), así que corre acá, nunca en el navegador. Antes
- * de tocar nada, confirma con la sesión normal (cookies) que quien pide esto
- * ya es un administrador con permiso "full" — sin esto, cualquiera con la
- * URL podría crear cuentas.
- */
+// crea el usuario con la service role (necesita permisos admin, por eso corre en servidor).
+// primero valida que quien llama ya sea admin "full" — si no, cualquiera con la URL crearía cuentas
 export async function POST(request: NextRequest) {
   const session = await getAdminSession();
   if (!session || !hasSection(session, "full")) {
@@ -57,8 +52,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (insertError) {
-    // Si falla guardar la fila de permisos, se deshace la cuenta recién
-    // creada — mejor que dejar un usuario de Auth fantasma sin ningún acceso.
+    // si no se pudo guardar los permisos, se borra la cuenta para no dejar un usuario fantasma
     await supabase.auth.admin.deleteUser(data.user.id);
     return NextResponse.json({ error: insertError.message }, { status: 400 });
   }
@@ -66,12 +60,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ ok: true });
 }
 
-/**
- * Último inicio de sesión de cada administrador — vive en Supabase Auth
- * (auth.users.last_sign_in_at), no en la tabla `admins`, así que solo se
- * puede leer con la llave de servicio. Devuelve un mapa id -> fecha para que
- * el panel lo cruce con la lista de usuarios que ya carga por su cuenta.
- */
+// el último login vive en auth.users, no en la tabla admins — solo se puede leer con service role
 export async function GET() {
   const session = await getAdminSession();
   if (!session || !hasSection(session, "full")) {

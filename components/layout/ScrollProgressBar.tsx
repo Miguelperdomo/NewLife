@@ -21,8 +21,7 @@ export function ScrollProgressBar() {
   }, []);
 
   return (
-    // top-[2px]: ya existe RouteProgressBar pegado al borde (top-0) para la
-    // navegación entre páginas — esta se corre un poco para no encimarse.
+    // top-[2px] para no encimarse con RouteProgressBar que está en top-0
     <div className="pointer-events-none fixed inset-x-0 top-[2px] z-[59] h-0.5 bg-transparent">
       <div className="h-full bg-brand-300/80 transition-[width] duration-150 ease-out" style={{ width: `${progress}%` }} />
     </div>

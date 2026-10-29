@@ -8,14 +8,9 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-/**
- * Botón "Instalar app" — usa el evento nativo `beforeinstallprompt`, que
- * SOLO disparan navegadores compatibles (Chrome/Edge en Android o
- * computador) cuando el sitio ya cumple los requisitos (manifest válido,
- * HTTPS). En Safari/iPhone ese evento no existe — ahí el botón nunca
- * aparece, sin dejar un hueco vacío ni confundir a nadie con algo que no
- * va a funcionar. `appinstalled` lo oculta después de instalarlo.
- */
+// botón "Instalar app" usando beforeinstallprompt — solo lo disparan navegadores
+// compatibles (Chrome/Edge). En Safari/iPhone ese evento no existe así que el botón
+// simplemente nunca aparece ahí
 export function InstallAppButton() {
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);

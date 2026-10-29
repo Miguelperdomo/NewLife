@@ -1,7 +1,4 @@
-/**
- * Construye un link de "click to chat" de WhatsApp (wa.me) con un mensaje
- * pre-escrito, para que la persona solo tenga que presionar enviar.
- */
+// link wa.me con mensaje pre-escrito, la persona solo da enviar
 export function buildWhatsAppLink(phoneNumber: string, message: string) {
   return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 }
@@ -15,7 +12,7 @@ export function eventInscriptionMessage(eventName: string, ministryName?: string
   return ministryName ? `${base} Ministerio: ${ministryName}.` : base;
 }
 
-/** Como eventInscriptionMessage, pero con el nombre de la persona y la sede que eligió — usado por el formulario "Quiero asistir" del Hero. */
+/** como eventInscriptionMessage pero con nombre y sede — form "Quiero asistir" del Hero */
 export function eventAttendanceMessage(eventName: string, name: string, campusName: string) {
   return `Hola New Life, soy ${name} y quiero asistir al evento "${eventName}" en ${campusName}.`;
 }
@@ -32,24 +29,20 @@ export function pastorInquiryMessage(pastorName: string) {
   return `Hola, quisiera comunicarme con ${pastorName}.`;
 }
 
-/**
- * El campo "contacto" de un pedido de oración es texto libre — puede traer
- * espacios, guiones, indicativo, o ser directamente un correo. Esto intenta
- * reconocer si de verdad es un número de WhatsApp; si parece un correo o no
- * tiene suficientes dígitos para ser un teléfono real, devuelve null (no se
- * intenta abrir WhatsApp en esos casos).
- */
+// "contacto" en un pedido de oración es texto libre (espacios, guiones,
+// indicativo, o un correo). Esto intenta reconocer si de verdad es un
+// WhatsApp; si no, devuelve null y no se intenta abrir WhatsApp.
 export function normalizeWhatsAppNumber(contact: string): string | null {
   if (contact.includes("@")) return null;
   const digits = contact.replace(/\D/g, "");
   if (digits.length < 7) return null;
-  // Celular colombiano típico escrito sin el indicativo (10 dígitos, empieza por 3).
+  // celular colombiano sin indicativo (10 dígitos, empieza por 3)
   if (digits.length === 10 && digits.startsWith("3")) return `57${digits}`;
   return digits;
 }
 
 export function prayerRequestFollowUpMessage(name?: string | null) {
-  // Sin emoji a propósito — el 🙏 se veía como "�" en algunos celulares/clientes de WhatsApp.
+  // sin emoji: el 🙏 se veía como "�" en algunos celulares
   return `Hola${name ? ` ${name}` : ""}, somos del equipo de New Life. Ya oramos por tu petición — cualquier cosa que necesites, aquí estamos para ti.`;
 }
 

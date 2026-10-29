@@ -7,11 +7,8 @@ export interface BreadcrumbItem {
   href?: string;
 }
 
-/**
- * Migas de pan para páginas internas — Inicio siempre se antepone. Incluye
- * BreadcrumbList (JSON-LD) para que buscadores muestren la ruta en los
- * resultados, además de ayudar a la orientación de quien navega.
- */
+// Migas de pan, con Inicio siempre primero. También mete el JSON-LD de
+// BreadcrumbList para que Google muestre la ruta en los resultados.
 export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
   const allItems: BreadcrumbItem[] = [{ label: "Inicio", href: "/" }, ...items];
 
@@ -54,9 +51,7 @@ export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
           })}
         </ol>
       </Container>
-      {/* JSON.stringify no escapa "<", así que un título con "</script>" podría
-          cerrar esta etiqueta antes de tiempo — se reemplaza por su escape
-          unicode, inofensivo dentro de JSON válido. */}
+      {/* escapamos "<" por si un título trae "</script>" y rompe el tag */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}

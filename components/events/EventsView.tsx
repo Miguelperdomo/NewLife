@@ -14,10 +14,7 @@ const modes: { mode: ViewMode; label: string; icon: typeof List }[] = [
   { mode: "calendar", label: "Calendario", icon: CalendarDays },
 ];
 
-/**
- * Envuelve EventList (sin tocarlo) y agrega una vista de calendario
- * alternativa — el toggle decide cuál de las dos se muestra.
- */
+// envuelve EventList y agrega vista de calendario, el toggle decide cuál se muestra
 export function EventsView({
   events,
   ministries,

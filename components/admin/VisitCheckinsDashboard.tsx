@@ -63,9 +63,7 @@ export function VisitCheckinsDashboard() {
   async function toggleStatus(entry: AdminVisitCheckin) {
     const nextStatus = entry.status === "nueva" ? "atendida" : "nueva";
 
-    // Se abre ANTES de esperar la respuesta de la base de datos — si se abre
-    // después de un await, varios navegadores bloquean el pop-up por no
-    // reconocerlo como reacción directa al clic.
+    // se abre antes del await o el navegador bloquea el pop-up
     if (nextStatus === "atendida" && entry.phone) {
       const whatsappNumber = normalizeWhatsAppNumber(entry.phone);
       if (whatsappNumber) {

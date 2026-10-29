@@ -6,17 +6,10 @@ import { cn } from "@/lib/utils";
 const MAX_STAGGER_ITEMS = 8;
 const STAGGER_STEP_MS = 70;
 
-/**
- * Envuelve una tarjeta (evento/ministerio/noticia) para que aparezca con un
- * leve fade + desplazamiento hacia arriba al entrar en el viewport, en vez
- * de estar ya ahí de golpe. `index` agrega un retraso en cascada para que
- * una grilla entera no aparezca toda de una vez (con tope, para que listas
- * largas no tarden una eternidad en terminar de aparecer).
- *
- * Con "prefers-reduced-motion" el fade/transform se desactiva por CSS
- * (motion-reduce:), no por JS, así el contenido nunca depende del
- * IntersectionObserver para quedar visible.
- */
+// fade + desplazamiento al entrar en viewport, en vez de aparecer de golpe.
+// `index` mete un retraso en cascada (con tope, para que una lista larga no
+// tarde una eternidad). Con reduce-motion el fade se apaga por CSS, no por
+// JS, así el contenido nunca depende del IntersectionObserver para verse.
 export function RevealOnScroll({
   children,
   index = 0,

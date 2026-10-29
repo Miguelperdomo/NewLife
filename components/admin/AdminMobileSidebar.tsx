@@ -8,19 +8,12 @@ import { Logo } from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
 import type { AdminSection } from "@/lib/admin/types";
 
-/**
- * En pantallas menores a `lg` el <aside> fijo del layout se oculta por
- * completo (ver app/admin/(dashboard)/layout.tsx) — sin esto, alguien en el
- * teléfono no tenía ninguna forma de llegar a Configuración/Ministerios/
- * Sedes. Es el mismo patrón de menú móvil que el Navbar público, adaptado a
- * un panel lateral en vez de un desplegable debajo del encabezado.
- */
+// el <aside> del layout se oculta en móvil, así que esto es lo único que da acceso al menú ahí
 export function AdminMobileSidebar({ sections }: { sections: AdminSection[] }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // Cierra el panel al cambiar de página — sincroniza el estado local con la
-  // URL (fuente externa), el caso de uso legítimo de un efecto.
+  // cierra el panel al cambiar de página
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpen(false);

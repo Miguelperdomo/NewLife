@@ -1,9 +1,7 @@
 import type { Pastor } from "@/lib/types";
 
-// Solo el pastor principal de New Life — sin módulo admin ni base de datos
-// para esto a propósito: es una única persona fija, no una lista que vaya a
-// crecer. [CONTENIDO TEMPORAL] Reemplazar biografía, foto y redes por la
-// información oficial cuando la tengamos.
+// solo el pastor principal, es fijo y no necesita admin ni BD.
+// [CONTENIDO TEMPORAL] falta la bio y redes oficiales
 export const pastors: Pastor[] = [
   {
     slug: "giovany",

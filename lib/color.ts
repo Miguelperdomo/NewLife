@@ -1,11 +1,5 @@
-/**
- * Genera una paleta de 11 tonos (50 a 950, al estilo Tailwind) a partir de
- * un solo color hexadecimal — así "Color principal"/"Color de acento" en
- * Configuración pueden recolorear todo el sitio (botones, hovers, fondos
- * claros...) sin tener que pedirle al administrador 11 colores distintos.
- * No es ciencia del color perfecta, pero da un resultado visualmente
- * coherente manteniendo el mismo matiz (H) que el color elegido.
- */
+// Genera una paleta de 11 tonos (50-950, al estilo Tailwind) a partir de un
+// solo hex, para que en Configuración baste con elegir un color y no 11.
 function hexToHsl(hex: string): [number, number, number] {
   const clean = hex.replace("#", "");
   const r = parseInt(clean.slice(0, 2), 16) / 255;
@@ -80,8 +74,7 @@ export function generateColorShades(baseHex: string): Record<string, string> {
   const shades: Record<string, string> = {};
 
   for (const [key, lightness] of Object.entries(SHADE_LIGHTNESS)) {
-    // Un poco menos saturado en los extremos muy claros/oscuros para que no
-    // se vea "quemado" — mismo criterio visual que usan las paletas de Tailwind.
+    // menos saturación en los extremos para que no se vea "quemado"
     const adjustedSaturation = lightness > 90 || lightness < 20 ? s * 0.85 : s;
     shades[key] = hslToHex(h, adjustedSaturation, lightness);
   }

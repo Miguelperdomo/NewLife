@@ -3,12 +3,9 @@ import { getPastorBySlug as getStaticPastorBySlug, getPastors as getStaticPastor
 import { createPublicClient } from "@/lib/supabase/publicClient";
 import type { Campus, FirstTimeCard, HelpOption, HeroPhoto, Ministry, Pastor, SocialLink, Verse } from "@/lib/types";
 
-/**
- * Capa de acceso a contenido. Ministerios y Sedes ya leen de Supabase (lo que
- * crea/edita el panel admin); Eventos y Noticias todavía leen de /data —
- * están planeados para una migración aparte. Páginas y componentes solo
- * llaman a estas funciones, nunca a Supabase ni a /data directamente.
- */
+// Ministerios y Sedes ya leen de Supabase (lo que crea/edita el admin).
+// Eventos y Noticias todavía están en /data, falta migrarlos.
+// Las páginas siempre pasan por estas funciones, nunca directo a Supabase/data.
 interface MinistryRow {
   slug: string;
   name: string;
@@ -173,14 +170,9 @@ interface PastorProfileRow {
   instagram_enabled: boolean;
 }
 
-/**
- * New Life solo tiene un pastor a propósito (ver data/pastors.ts) — su slug
- * y su lugar en la pirámide de liderazgo siguen viviendo ahí (fijo, lo usa
- * también CampusForm para el selector de "pastor responsable", un
- * componente "use client" que no puede depender de Supabase). Lo que SÍ es
- * editable desde Configuración (nombre, foto, biografía, redes) vive en la
- * tabla `pastor` — esta función junta ambas fuentes.
- */
+// El slug/jerarquía del pastor sigue fijo en data/pastors.ts (CampusForm lo
+// necesita y es "use client", no puede tocar Supabase). Lo editable desde
+// Configuración (foto, bio, redes) vive en la tabla `pastor` — esto junta las dos.
 async function fetchPastorProfile(): Promise<PastorProfileRow | null> {
   const supabase = createPublicClient();
   const { data, error } = await supabase
@@ -213,9 +205,8 @@ function mergePastorProfile(base: Pastor, profile: PastorProfileRow | null): Pas
     bio: profile.bio || base.bio,
     imageSrc: profile.image_url ?? base.imageSrc,
     whatsappNumber: profile.whatsapp_number ?? base.whatsappNumber,
-    // base.social puede traer enlaces de ejemplo ("#") de data/pastors.ts —
-    // se descartan para no mostrar redes muertas mientras Configuración no
-    // tenga ninguna activada todavía.
+    // data/pastors.ts puede traer links de ejemplo ("#") — los descartamos
+    // para no mostrar redes muertas si Configuración no tiene nada activo aún.
     social:
       resolvedSocial.length > 0
         ? resolvedSocial
@@ -299,11 +290,9 @@ export async function getHeroPhotos(): Promise<HeroPhoto[]> {
   }));
 }
 
-// Reexportadas desde archivos sin dependencias de servidor, para que el
-// código existente que las importaba desde aquí siga funcionando igual —
-// ver lib/eventsContent.ts y lib/newsContent.ts para el motivo real (evitar
-// que lib/agenda.ts y componentes "use client" arrastren el cliente de
-// Supabase de este archivo a su paquete).
+// Reexportadas para no romper imports existentes — viven en su propio
+// archivo para que lib/agenda.ts (usado por componentes "use client") no
+// arrastre el cliente de Supabase de aquí.
 export {
   getEvents,
   getEventBySlug,
@@ -314,7 +303,7 @@ export {
 } from "@/lib/eventsContent";
 export { getNews, getNewsBySlug, getFeaturedNews, getRelatedNews } from "@/lib/newsContent";
 
-/** Elige un versículo distinto cada día del año, de forma estable (mismo resultado todo el día). */
+/** Un versículo distinto cada día, estable durante todo el día. */
 export function getDailyVerse(): Verse {
   const now = new Date();
   const startOfYear = new Date(now.getFullYear(), 0, 0);

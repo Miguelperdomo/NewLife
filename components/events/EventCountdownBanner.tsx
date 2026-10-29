@@ -37,16 +37,9 @@ function CountdownRow({ event }: { event: ChurchEvent }) {
   );
 }
 
-/**
- * Cuenta regresiva de eventos. Si hay un evento marcado "Destacado", se
- * muestra con estilo llamativo (degradado + estrella) Y, debajo, el próximo
- * evento que sigue (sin marcar) con el estilo sencillo de siempre — así se
- * ve la diferencia entre los dos, sin que el no-destacado desaparezca. Si
- * nadie marcó ninguno como destacado, se muestra solo uno: el más próximo,
- * con el estilo sencillo (igual que antes). Nunca cuenta un evento que ya es
- * "hoy" (un contador de días no tiene sentido para algo que está pasando
- * ahora). Se usa tanto en el Home (UpcomingEventsSection) como en /eventos.
- */
+// cuenta regresiva de eventos. Si hay uno "Destacado" se muestra con estilo
+// llamativo + el siguiente evento debajo con estilo normal; si no hay destacado,
+// solo el más próximo. Nunca cuenta uno que ya es "hoy".
 export function EventCountdownBanner({ events, className = "" }: { events: ChurchEvent[]; className?: string }) {
   const upcomingNotToday = events
     .filter((event) => getEventStatus(event.date, event.endDate) === "proximo")

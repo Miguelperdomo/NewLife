@@ -43,11 +43,7 @@ function toPreviewNews(article: AdminNews): NewsArticle {
 
 type PreviewItem = { type: "event"; data: AdminEvent } | { type: "news"; data: AdminNews };
 
-/**
- * Renderiza literalmente EventCard/NewsCard (los mismos componentes del
- * sitio público) con los datos del borrador, para que la vista previa sea
- * exacta por construcción en vez de una aproximación aparte.
- */
+// usa EventCard/NewsCard tal cual del sitio público, así la vista previa queda exacta
 export function ContentPreview({ item }: { item: PreviewItem }) {
   return (
     <div className="space-y-4">

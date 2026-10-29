@@ -6,10 +6,8 @@ export interface HelpOption {
   description: string;
 }
 
-// [CONTENIDO TEMPORAL] Textos y opciones del widget flotante de ayuda. Se
-// mantienen separados del componente para que, cuando exista una sección
-// "Ayuda y donaciones" en /admin, solo haya que reemplazar este archivo por
-// datos del panel — ver components/sections/HelpWidget.tsx, que no cambiaría.
+// [CONTENIDO TEMPORAL] textos del widget de ayuda, separados del componente
+// por si algún día se mueven a un panel admin
 export const helpWidgetContent = {
   title: "Sé parte de algo más grande",
   description: "Hay muchas formas de bendecir y ayudar a nuestra comunidad.",

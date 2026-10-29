@@ -10,7 +10,7 @@ interface RawPageViewRow {
   view_count: number;
 }
 
-/** Lee el conteo de visitas por página (tabla `page_views`) — más vistas primero. */
+/** Conteo de visitas por página, más vistas primero. */
 export async function loadPageViews(): Promise<PageViewRow[]> {
   const supabase = createClient();
   const { data, error } = await supabase

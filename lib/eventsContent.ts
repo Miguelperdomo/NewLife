@@ -2,16 +2,9 @@ import { createPublicClient } from "@/lib/supabase/publicClient";
 import { formatEventTime, getEventStatus } from "@/lib/events";
 import type { ChurchEvent } from "@/lib/types";
 
-/**
- * Acceso a Eventos — Supabase (tabla `events`), con el mismo cliente sin
- * cookies que Ministerios/Sedes en lib/content.ts (createPublicClient, sin
- * dependencia de next/headers, seguro también en build time). Vive en su
- * propio archivo (no en lib/content.ts) porque lib/agenda.ts lo usan
- * componentes "use client" (EventCalendarView, AgendaSection) — ver ese
- * archivo para el motivo completo. RLS en Supabase ya filtra qué filas ve el
- * público (solo "published", o "scheduled" con publish_at ya vencido) — no
- * hace falta repetir ese filtro acá.
- */
+// Tabla `events`, mismo cliente sin cookies que lib/content.ts. Separado de
+// ahí porque lib/agenda.ts (componentes "use client") necesita importar esto
+// sin arrastrar nada de servidor. RLS ya filtra lo publicado, no hace falta repetirlo acá.
 interface EventRow {
   slug: string;
   title: string;
@@ -42,11 +35,9 @@ function rowToEvent(row: EventRow): ChurchEvent {
     .map((item) => item.ministry?.slug)
     .filter((slug): slug is string => Boolean(slug));
 
-  // "Aplica a todos los ministerios" y "sin ministerio" se muestran igual en
-  // el sitio público (no existe una vista separada para "todos"). Si el
-  // evento tiene varios ministerios asociados, se usa el primero como el
-  // principal — cubre el caso normal (un ministerio por evento); el admin sí
-  // guarda la lista completa, solo la vista pública simplifica a uno.
+  // El público no distingue "aplica a todos" de "sin ministerio". Si hay
+  // varios ministerios asociados, mostramos solo el primero (el admin
+  // guarda la lista completa, la vista pública simplifica).
   const ministry = row.applies_to_all_ministries ? undefined : ministrySlugs[0];
 
   return {
@@ -73,7 +64,7 @@ function rowToEvent(row: EventRow): ChurchEvent {
 
 const statusOrder = { hoy: 0, proximo: 1, finalizado: 2 } as const;
 
-/** Ordenados: hoy primero, luego los próximos (más cercano primero), y al final los ya finalizados (más reciente primero). */
+/** hoy primero, luego próximos, al final los finalizados */
 export async function getEvents(): Promise<ChurchEvent[]> {
   const supabase = createPublicClient();
   const { data, error } = await supabase
@@ -113,14 +104,14 @@ export async function getUpcomingEventsByMinistry(ministrySlug: string, limit?: 
   return limit ? filtered.slice(0, limit) : filtered;
 }
 
-/** Eventos próximos en una sede específica (la que se eligió como "Sede" al crear el evento). */
+/** Eventos próximos de una sede en particular. */
 export async function getUpcomingEventsByCampus(campusSlug: string, limit?: number): Promise<ChurchEvent[]> {
   const upcoming = await getUpcomingEvents();
   const filtered = upcoming.filter((event) => event.campus === campusSlug);
   return limit ? filtered.slice(0, limit) : filtered;
 }
 
-/** Prioriza eventos del mismo ministerio; completa con los próximos si hacen falta. Análoga a getRelatedNews. */
+/** Prioriza el mismo ministerio, completa con próximos si hace falta (igual que getRelatedNews). */
 export async function getRelatedEvents(event: ChurchEvent, limit = 3): Promise<ChurchEvent[]> {
   const events = await getEvents();
   const rest = events.filter((candidate) => candidate.slug !== event.slug);

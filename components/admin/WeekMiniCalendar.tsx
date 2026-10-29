@@ -11,11 +11,7 @@ function toISODate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-/**
- * Mini calendario de los próximos 7 días (hoy incluido) con un punto en los
- * días que tienen algún evento — en vez de solo una lista de texto, para
- * captar de un vistazo qué tan cargada viene la semana.
- */
+// calendario de los próximos 7 días con un punto en los días con evento
 export function WeekMiniCalendar({ events }: { events: AdminEvent[] }) {
   const today = new Date();
   const days = Array.from({ length: 7 }, (_, i) => {

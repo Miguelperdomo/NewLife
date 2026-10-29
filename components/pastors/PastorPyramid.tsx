@@ -1,11 +1,8 @@
 import type { Pastor } from "@/lib/types";
 import { PastorCard } from "./PastorCard";
 
-/**
- * Organiza a los pastores/líderes por `tier` (1 = cabeza, 2 = siguiente
- * nivel...) y los dibuja como una pirámide: el nivel 1 arriba, solo, y cada
- * nivel siguiente en una fila más ancha debajo, conectados por una línea.
- */
+// agrupa por tier (1 = cabeza) y los pinta en pirámide: nivel 1 solo arriba,
+// cada nivel siguiente más ancho debajo
 export function PastorPyramid({ pastors }: { pastors: Pastor[] }) {
   const tiers = Array.from(new Set(pastors.map((pastor) => pastor.tier))).sort((a, b) => a - b);
 

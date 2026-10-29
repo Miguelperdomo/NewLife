@@ -8,12 +8,9 @@ export function todayISO() {
   return `${y}-${m}-${d}`;
 }
 
-/**
- * Compara strings "YYYY-MM-DD" directamente (orden lexicográfico == orden
- * cronológico en ese formato), evitando líos de zona horaria con `Date`.
- * Un evento con `endDate` (varios días) cuenta como "hoy" en cualquier día
- * dentro del rango, no solo en su fecha de inicio.
- */
+// Comparamos los strings "YYYY-MM-DD" tal cual (ordenan igual que las fechas),
+// así nos ahorramos líos de zona horaria con Date. Un evento de varios días
+// cuenta como "hoy" en cualquier punto del rango.
 export function getEventStatus(date: string, endDate?: string): EventStatus {
   const today = todayISO();
   const effectiveEnd = endDate ?? date;
@@ -21,7 +18,7 @@ export function getEventStatus(date: string, endDate?: string): EventStatus {
   return today < date ? "proximo" : "finalizado";
 }
 
-/** Días que faltan para `date` (0 si es hoy, negativo si ya pasó). Compara a medianoche local, nunca con la hora exacta, para que no cambie según a qué hora del día se calcule. */
+/** Días hasta `date` (0 = hoy, negativo = ya pasó). Compara a medianoche para que no varíe según la hora del día. */
 export function getDaysUntil(date: string): number {
   const today = new Date(`${todayISO()}T00:00:00`);
   const target = new Date(`${date}T00:00:00`);
@@ -44,7 +41,7 @@ function formatTimeLabel(time: string) {
   return new Intl.DateTimeFormat("es-CO", { hour: "numeric", minute: "2-digit", hour12: true }).format(parsed);
 }
 
-/** Convierte "19:00"/"21:00" (input type="time" del admin) a "7:00 p. m." o "7:00 p. m. – 9:00 p. m.". */
+/** "19:00"/"21:00" del admin -> "7:00 p. m." o "7:00 p. m. – 9:00 p. m." */
 export function formatEventTime(startTime?: string, endTime?: string): string | undefined {
   if (!startTime) return undefined;
   const start = formatTimeLabel(startTime);

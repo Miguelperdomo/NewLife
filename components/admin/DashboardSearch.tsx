@@ -5,12 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { useGlobalSearchResults } from "@/lib/admin/useGlobalSearchResults";
 
-/**
- * Versión grande y visible del buscador — mismo buscador que ya vive
- * chiquito en el encabezado (ver GlobalSearch.tsx y el hook compartido), solo
- * que aquí es lo primero que se ve al entrar al Dashboard, como punto de
- * partida del día en vez de algo escondido arriba.
- */
+// versión grande del buscador de GlobalSearch.tsx, para el Dashboard
 export function DashboardSearch() {
   const router = useRouter();
   const { query, setQuery, results } = useGlobalSearchResults();

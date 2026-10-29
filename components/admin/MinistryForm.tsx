@@ -39,8 +39,7 @@ export function MinistryForm({
   onSubmit: (values: MinistryFormValues) => void | Promise<void>;
   onPreview: (values: MinistryFormValues) => void;
 }) {
-  // En edición no se debe pisar un slug ya existente solo por cambiar el
-  // nombre — el auto-slug solo sigue al nombre mientras se está creando.
+  // en edición no pisar un slug ya existente solo por cambiar el nombre
   const [slugTouched, setSlugTouched] = useState(Boolean(defaultValues?.slug));
 
   const {

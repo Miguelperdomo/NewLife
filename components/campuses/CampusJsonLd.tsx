@@ -3,8 +3,7 @@ import type { Campus } from "@/lib/types";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-// schema.org pide el día en inglés, sin importar el idioma del sitio — 0 =
-// domingo, igual que Campus.schedules[].dayOfWeek (y que Date.getDay()).
+// schema.org quiere el día en inglés siempre; 0 = domingo igual que dayOfWeek/Date.getDay()
 const SCHEMA_DAY_NAMES = [
   "Sunday",
   "Monday",
@@ -15,14 +14,8 @@ const SCHEMA_DAY_NAMES = [
   "Saturday",
 ];
 
-/**
- * Datos estructurados (schema.org/Church) de una sede — le dicen a Google
- * (y a asistentes de IA que leen schema.org) que esto es un lugar de culto
- * real, con esta dirección, coordenadas, teléfono y horarios, en un formato
- * que las máquinas entienden directo, sin tener que "adivinar" leyendo el
- * texto de la página. Esto es lo que ayuda a aparecer en Google Maps y en
- * búsquedas por ubicación ("iglesia cerca de mí"), además del SEO normal.
- */
+// datos estructurados schema.org/Church, ayuda a aparecer en Google Maps y
+// búsquedas por ubicación ("iglesia cerca de mí")
 export function CampusJsonLd({ campus }: { campus: Campus }) {
   const coords = resolveCampusCoordinates(campus.mapQuery);
 
@@ -45,8 +38,7 @@ export function CampusJsonLd({ campus }: { campus: Campus }) {
         }
       : undefined,
     telephone: campus.whatsappNumber || undefined,
-    // imageSrc puede ser una URL completa (Supabase Storage) o una ruta local
-    // (/img/...) — solo se le antepone el dominio en el segundo caso.
+    // imageSrc puede ser URL completa (Storage) o ruta local (/img/...), solo esta última necesita el dominio
     image: campus.imageSrc
       ? campus.imageSrc.startsWith("http")
         ? campus.imageSrc

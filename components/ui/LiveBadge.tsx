@@ -3,15 +3,12 @@ import { cn } from "@/lib/utils";
 const BAR_DELAYS_MS = [-900, -500, -200, -700];
 const BAR_DURATIONS_MS = [800, 1000, 700, 900];
 
-/**
- * Indicador de "transmisiones en vivo". Deliberadamente NO dice "estamos en
- * vivo" — la iglesia no transmite todo el tiempo. Cuando exista integración
- * con la YouTube API para detectar un directo activo, este componente puede
- * cambiar de texto/estado sin tocar dónde se usa.
- *
- * Las barras tipo ecualizador (en vez de solo un punto parpadeando) imitan
- * el visualizador de audio de las plataformas de streaming grandes.
- */
+// Ojo: dice "transmisiones en vivo", no "estamos en vivo" a propósito — la
+// iglesia no transmite todo el tiempo. Si en algún momento se conecta la
+// YouTube API para detectar un directo activo, el texto/estado cambia acá
+// sin tocar quién lo usa.
+// Las barritas tipo ecualizador en vez de un punto parpadeando, al estilo
+// de las apps de streaming grandes.
 export function LiveBadge({ className }: { className?: string }) {
   return (
     <span

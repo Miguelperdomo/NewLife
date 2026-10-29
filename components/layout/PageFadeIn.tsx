@@ -2,14 +2,8 @@
 
 import { usePathname } from "next/navigation";
 
-/**
- * Fundido corto al entrar a cada página, en vez del corte seco de antes.
- * Versión simple a propósito (CSS puro, sin librería de animación): el
- * `key={pathname}` hace que React vuelva a montar este div en cada cambio de
- * ruta, lo que por sí solo reinicia la animación de @keyframes — no hace
- * falta manejar estados de "saliendo/entrando" con JavaScript, que es donde
- * este tipo de transición suele romperse con Server Components.
- */
+// fundido corto al entrar a cada página. key={pathname} hace que React remonte
+// el div en cada cambio de ruta, lo que reinicia la animación solo — sin JS extra
 export function PageFadeIn({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   return (

@@ -3,7 +3,7 @@
 import { RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/** Botón "Actualizar" junto a un título — para refrescar una lista sin F5, cuando llega información nueva mientras la pantalla está abierta. */
+// botón "Actualizar" para refrescar una lista sin F5
 export function RefreshButton({ onClick, refreshing }: { onClick: () => void; refreshing: boolean }) {
   return (
     <button

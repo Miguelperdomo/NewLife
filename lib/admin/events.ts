@@ -3,19 +3,12 @@ import { logActivity } from "@/lib/admin/activityLog";
 import { slugify, uniqueSlug } from "@/lib/admin/slug";
 import type { AdminEvent, MinistryAudience } from "@/lib/admin/types";
 
-/**
- * Capa de datos de Eventos contra Supabase. Dos relaciones que el formulario
- * maneja por slug (para no tener que rediseñar la UI) pero que en la base de
- * datos son de verdad:
- *  - `campus` (slug) <-> `campus_id` (uuid, FK a campuses.id) — mismo patrón
- *    que "pastor responsable" en lib/admin/campuses.ts.
- *  - `audience` (todos / algunos ministerios / general) <-> `applies_to_all_ministries`
- *    + filas en `event_ministries` (N:N). Sin filas = "general".
- *
- * El slug NUNCA lo edita el formulario (a diferencia de Ministerios/Pastores)
- * — se genera solo al crear y no vuelve a tocarse, igual que en el hook
- * anterior basado en localStorage.
- */
+// Capa de datos de Eventos. Dos relaciones que el formulario maneja por slug
+// pero que en la BD son de verdad:
+//  - campus (slug) <-> campus_id (FK a campuses.id), igual que en campuses.ts
+//  - audience <-> applies_to_all_ministries + filas en event_ministries (N:N),
+//    sin filas = "general"
+// El slug no lo edita el formulario, se genera al crear y ya.
 interface EventRow {
   id: string;
   slug: string;
@@ -98,7 +91,7 @@ async function resolveMinistryIds(slugs: string[]): Promise<string[]> {
   return ((data as { id: string }[] | null) ?? []).map((row) => row.id);
 }
 
-/** Reemplaza por completo las filas de event_ministries de un evento según su audiencia actual. */
+/** Reemplaza las filas de event_ministries de un evento según su audiencia actual. */
 async function syncEventMinistries(eventId: string, audience: MinistryAudience) {
   const supabase = createClient();
   await supabase.from("event_ministries").delete().eq("event_id", eventId);
@@ -113,7 +106,7 @@ async function syncEventMinistries(eventId: string, audience: MinistryAudience) 
   }
 }
 
-/** Campos legibles para el informe de Actividad. */
+/** Para el informe de Actividad. */
 function eventDetails(input: {
   title?: string;
   shortDescription?: string;
@@ -224,12 +217,9 @@ export async function createEvent(input: NewEventInput, existingSlugs: string[])
 export async function updateEvent(id: string, input: Partial<AdminEvent>): Promise<AdminEvent> {
   const supabase = createClient();
 
-  // Sin condicionales "si viene definido" para los campos opcionales: en la
-  // práctica este método siempre se llama con el formulario completo (ver
-  // ContentEditFlow), y un campo que el usuario deja vacío se convierte en
-  // `undefined` en lib/admin/mappers.ts (orUndefined) — con un filtro
-  // `!== undefined` eso nunca se borraba en la base de datos aunque en
-  // pantalla se viera vacío (ej. quitar la sede de un evento).
+  // mismo motivo que en campuses.ts: sin filtro "si viene definido" porque
+  // un campo vacío llega como undefined y con `!== undefined` nunca se
+  // borraba en la BD (ej. quitar la sede de un evento)
   const patch: Record<string, unknown> = {
     title: input.title,
     short_description: input.shortDescription,
@@ -278,9 +268,7 @@ export async function duplicateEvent(event: AdminEvent, existingSlugs: string[])
       description: event.description,
       category: event.category || null,
       image_url: event.imageSrc || null,
-      // Sin estado "draft" propio distinto al de eventos/noticias normales:
-      // una copia recién creada arranca en borrador, igual que en el store anterior.
-      status: "draft",
+      status: "draft", // una copia arranca siempre en borrador
       publish_at: null,
       start_date: event.startDate,
       end_date: event.endDate || null,
@@ -294,10 +282,7 @@ export async function duplicateEvent(event: AdminEvent, existingSlugs: string[])
       whatsapp_number: event.whatsappNumber || null,
       capacity: event.capacity ?? null,
       featured: event.featured ?? false,
-      // Una copia arranca sin destacar en el Hero a propósito — evita que de
-      // repente aparezcan dos anuncios del "mismo" evento mientras alguien
-      // termina de editar la copia.
-      highlight_home: false,
+      highlight_home: false, // una copia no sale destacada en el Hero, para no duplicar el anuncio
     })
     .select("id")
     .single();
@@ -328,8 +313,7 @@ export async function setEventStatus(
 
 export async function removeEvent(id: string, title?: string): Promise<void> {
   const supabase = createClient();
-  // Primero las filas de event_ministries (FK a este evento) — mismo motivo
-  // que en syncEventMinistries: sin esto, borrar el evento fallaría.
+  // borramos primero event_ministries (FK a este evento) o falla el delete
   await supabase.from("event_ministries").delete().eq("event_id", id);
   const { error } = await supabase.from("events").delete().eq("id", id);
   if (error) throw new Error(error.message);

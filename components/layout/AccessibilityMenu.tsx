@@ -8,24 +8,16 @@ type TextScale = "1" | "2" | "3";
 const TEXT_SCALE_KEY = "newlife-text-scale";
 const CONTRAST_KEY = "newlife-a11y-contrast";
 
-/**
- * Menú de accesibilidad del sitio público — tamaño de texto (3 pasos) y
- * alto contraste. Pensado para adultos mayores de la congregación con
- * dificultad para leer letra pequeña. La preferencia se guarda en el propio
- * navegador de quien visita (localStorage) — no le llega a nadie más ni se
- * puede leer desde el panel admin, es solo una comodidad de ese visitante.
- */
+// menú de accesibilidad: tamaño de texto (3 pasos) y alto contraste, pensado
+// para adultos mayores de la congregación. Se guarda solo en el navegador de quien visita
 export function AccessibilityMenu() {
   const [open, setOpen] = useState(false);
   const [textScale, setTextScale] = useState<TextScale>("1");
   const [contrast, setContrast] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Se lee guardado solo después de montar (localStorage no existe en el
-  // servidor) — evita el error de hidratación de leerlo durante el render.
+  // se lee recién al montar (localStorage no existe en servidor, evita error de hidratación)
   useEffect(() => {
-    // Excepción deliberada, igual que en HelpWidget: localStorage no existe
-    // en el render de servidor, así que se lee una sola vez tras el montaje.
     try {
       const savedScale = localStorage.getItem(TEXT_SCALE_KEY);
       if (savedScale === "1" || savedScale === "2" || savedScale === "3") {
@@ -37,7 +29,7 @@ export function AccessibilityMenu() {
         setContrast(true);
       }
     } catch {
-      // Privado/bloqueado: se queda en los valores por defecto, sin romper nada.
+      // modo privado o localStorage bloqueado, se queda en los valores por defecto
     }
   }, []);
 

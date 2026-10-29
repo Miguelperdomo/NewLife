@@ -1,9 +1,5 @@
-/**
- * Lee las variables de entorno de Supabase con un mensaje claro si faltan —
- * en vez de dejar que `createClient(...)` truene con un TypeError críptico
- * ("Cannot read properties of undefined") cuando a un despliegue le falta
- * configurarlas.
- */
+// Si faltan las env vars, mejor este error claro que el TypeError críptico
+// que tira createClient(...) cuando le llega undefined.
 export function getSupabaseEnv() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

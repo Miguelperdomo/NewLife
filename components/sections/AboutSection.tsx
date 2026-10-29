@@ -14,11 +14,8 @@ const FALLBACK_TEXT = {
   valores: "[CONTENIDO TEMPORAL] Fe, comunidad, servicio, excelencia y autenticidad guían todo lo que hacemos.",
 };
 
-/**
- * Teaser de "Quiénes somos" del Home — mismo contenido de Configuración que
- * usa /nosotros (settings.aboutQuienesSomos/aboutMision/aboutVision/
- * aboutValores), para que editar ahí actualice las dos páginas a la vez.
- */
+// usa el mismo contenido de Configuración que /nosotros, así que editarlo
+// ahí actualiza las dos páginas a la vez
 export async function AboutSection() {
   const settings = await getPublicSiteSettings();
 
